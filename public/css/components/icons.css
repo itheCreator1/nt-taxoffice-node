@@ -1,0 +1,59 @@
+/* ===================================
+   ICONS
+   =================================== */
+.section-icon {
+    background: var(--secondary-color);
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-md);
+    color: white;
+    font-size: var(--font-size-xl);
+    transition: transform var(--transition-base);
+}
+
+.section-icon:hover {
+    transform: scale(1.1);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: var(--space-md);
+    transition: transform var(--transition-base);
+}
+
+.feature-icon {
+    color: var(--secondary-color);
+    font-size: var(--font-size-lg);
+    flex-shrink: 0;
+}
+
+.contact-icon {
+    background: var(--secondary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    transition: transform var(--transition-base);
+}
+
+.media-icon {
+    background: var(--secondary-color);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
+}

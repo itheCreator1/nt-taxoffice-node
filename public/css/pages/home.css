@@ -1,0 +1,80 @@
+/* ===================================
+   HOME PAGE (INDEX) STYLES
+   =================================== */
+
+/* Main Content */
+main {
+    max-width: 1200px;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-xl);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    position: relative;
+    padding: var(--space-md) 0;
+}
+
+.section-header h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+/* Services Grid */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-xl);
+    margin: var(--space-xl) 0;
+}
+
+/* Service Details Section */
+.service-detail-section {
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    margin: var(--space-xl) 0;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow var(--transition-base);
+    border: 1px solid var(--border-color);
+}
+
+.service-detail-section:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-list {
+    list-style: none;
+    margin: var(--space-xl) 0;
+}
+
+.feature-list li {
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: var(--light-gray);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.feature-list li:hover {
+    transform: translateX(5px);
+    background: #e0e6e8;
+}
+
+/* Contact Section on Home Page */
+.contact-section {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--space-3xl) 0;
+    margin-top: var(--space-3xl);
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+}

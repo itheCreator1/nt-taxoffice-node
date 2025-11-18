@@ -1,0 +1,101 @@
+/* ===================================
+   ACCESSIBILITY & THEME SUPPORT
+   =================================== */
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #60a5fa;
+        --secondary-color: #3b82f6;
+        --accent-color: #ef4444;
+        --light-gray: #1e293b;
+        --dark-gray: #cbd5e1;
+        --text-color: #f1f5f9;
+        --text-muted: #94a3b8;
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --border-color: #334155;
+    }
+
+    .service-card,
+    .service-detail-section,
+    .media-card,
+    .contact-card,
+    .form-section,
+    .media-intro {
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+
+    .feature-list li,
+    .badge {
+        background: var(--light-gray);
+        color: var(--text-color);
+    }
+
+    .form-control {
+        background: var(--light-gray);
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
+
+    .nav-menu a {
+        color: var(--dark-gray);
+    }
+
+    nav {
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .media-description,
+    .form-header p,
+    .media-intro p {
+        color: var(--text-muted);
+    }
+
+    .section-header h2,
+    .media-title,
+    .category-header h3 {
+        color: var(--primary-color);
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Skip Link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--secondary-color);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    text-decoration: none;
+    transition: top var(--transition-base);
+    z-index: 10000;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Focus visible for all interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}
