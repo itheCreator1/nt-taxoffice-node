@@ -1,0 +1,58 @@
+/* ===================================
+   MEDIA PAGE STYLES
+   =================================== */
+.media-section {
+    max-width: 1200px;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-xl);
+}
+
+.media-intro {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    padding: var(--space-xl);
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.media-intro h2 {
+    color: var(--primary-color);
+    margin-bottom: var(--space-md);
+}
+
+.media-intro p {
+    color: var(--text-muted);
+    font-size: var(--font-size-lg);
+    line-height: 1.8;
+}
+
+.media-category {
+    margin-bottom: var(--space-2xl);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 3px solid var(--secondary-color);
+}
+
+.category-header i {
+    font-size: 2rem;
+    color: var(--secondary-color);
+}
+
+.category-header h3 {
+    color: var(--primary-color);
+    font-size: var(--font-size-2xl);
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}

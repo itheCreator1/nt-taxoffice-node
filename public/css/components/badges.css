@@ -1,0 +1,36 @@
+/* ===================================
+   CONSULTANT BADGES
+   =================================== */
+.consultant-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+}
+
+.badge {
+    background: var(--light-gray);
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.badge:hover {
+    transform: translateY(-3px);
+    background: #e0e6e8;
+}
+
+.badge i {
+    font-size: var(--font-size-xl);
+    color: var(--secondary-color);
+    transition: transform var(--transition-base);
+}
+
+.badge:hover i {
+    transform: scale(1.2);
+}

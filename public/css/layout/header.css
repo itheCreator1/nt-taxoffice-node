@@ -1,0 +1,37 @@
+/* ===================================
+   HEADER STYLES
+   =================================== */
+header {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--space-xl) 0;
+    box-shadow: var(--shadow-md);
+    transition: background-color var(--transition-base);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo-container h1 {
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: var(--space-sm);
+}
+
+.highlight {
+    color: var(--secondary-color);
+}
+
+.tagline {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--light-gray);
+    margin-top: var(--space-sm);
+}
