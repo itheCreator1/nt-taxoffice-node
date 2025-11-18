@@ -1,22 +1,20 @@
 {
   "name": "nt-taxoffice-node",
   "version": "1.0.0",
-  "description": "The awesome NT-TAXOFFICE website",
-  "main": "index.js",
+  "description": "NT - TAXOFFICE website built with Node.js and Express",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/itheCreator1/nt-taxoffice-node.git"
-  },
-  "author": "itheCreator1",
+  "keywords": [
+    "express",
+    "tax",
+    "accounting"
+  ],
+  "author": "Teo",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/itheCreator1/nt-taxoffice-node/issues"
-  },
-  "homepage": "https://github.com/itheCreator1/nt-taxoffice-node#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^4.18.2"
   }
 }
