@@ -316,20 +316,303 @@ The site showcases these service categories:
 
  
 
+## Appointment Booking System (In Development)
+
+**Status**: Implementation Ready - Phased Approach
+**Database**: MySQL 8.x
+**Estimated Time**: 44-57 hours across 9 phases
+
+### System Overview
+
+A comprehensive online appointment booking system with:
+- Public calendar with real-time availability checking
+- Client booking interface with email notifications
+- Admin panel for appointment management
+- Email system with Greek language support
+- Concurrent booking protection with MySQL transactions
+- Client self-cancellation via email tokens
+- Admin availability settings management
+- Full audit trail for all changes
+
+### Technology Stack (Appointment System)
+
+- **Backend**: Node.js + Express 4.18.2
+- **Database**: MySQL 8.x with mysql2 driver
+- **Authentication**: express-session + bcrypt
+- **Email**: Nodemailer + Gmail SMTP
+- **Session Storage**: express-mysql-session
+- **Security**: helmet, express-rate-limit
+- **Timezone**: moment-timezone (Europe/Athens)
+- **Frontend**: Vanilla JavaScript ES6 modules (maintaining existing patterns)
+- **Styling**: Extending existing modular CSS architecture
+
+### Implementation Phases
+
+1. **Phase 1**: Foundation & Database (5-6h)
+   - MySQL setup, connection pooling
+   - Core services (database, email, appointments)
+   - Utilities (validation, sanitization, timezone, logger)
+   - Middleware (auth, rate limiting, error handling)
+
+2. **Phase 2**: Public Availability API (6-8h)
+   - Availability calculation service
+   - Calendar API endpoints
+   - Business rules (24h notice, 60-day window)
+
+3. **Phase 3**: Public Booking System (7-9h)
+   - Appointments service with transactions
+   - Booking API endpoints
+   - Calendar UI and booking form
+   - Concurrent booking protection
+
+4. **Phase 4**: Admin Authentication (4-5h)
+   - Setup wizard for first admin
+   - Login/logout system
+   - Session management
+   - Authentication middleware
+
+5. **Phase 5**: Admin Dashboard (6-8h)
+   - Appointment management interface
+   - Filtering and pagination
+   - Approval/decline workflow
+   - Client history view
+
+6. **Phase 6**: Email System (5-6h)
+   - Nodemailer configuration
+   - Email queue with retry logic
+   - 12 Greek email templates (6 pairs HTML+TXT)
+   - Integration with booking flow
+
+7. **Phase 7**: Cancellation System (3-4h)
+   - Token-based cancellation page
+   - Cancellation API
+   - Admin notifications
+
+8. **Phase 8**: Availability Management (4-5h)
+   - Weekly schedule editor
+   - Blocked dates management
+   - Conflict detection
+
+9. **Phase 9**: Polish & Testing (4-6h)
+   - Integration testing
+   - Responsive design verification
+   - Accessibility improvements
+   - Documentation
+
+### Database Schema
+
+**6 Main Tables**:
+- `admin_users` - Admin authentication
+- `appointments` - Booking data with versioning
+- `availability_settings` - Weekly schedule
+- `blocked_dates` - Holidays and closures
+- `appointment_history` - Audit trail
+- `email_queue` - Email notification queue
+
+### Git Commit Strategy
+
+**Critical Rule**: One commit per file creation or significant change
+
+**Commit Format**:
+```
+<type>(<scope>): <description>
+
+🤖 Generated with Claude Code
+```
+
+**Types**: feat, fix, docs, style, refactor, test, chore
+
+**Estimated**: ~67 commits across all phases
+
+### Service Types (Greek)
+
+- Φορολογική Δήλωση (Tax return consultation)
+- Λογιστική Υποστήριξη (Accounting support)
+- Έναρξη Επιχείρησης (Business startup consultation)
+- Μισθοδοσία (Payroll services)
+- Γενική Συμβουλευτική (General consultation)
+
+### Business Rules
+
+- **Operating Hours**: Monday-Friday 09:00-17:00 (Europe/Athens timezone)
+- **Weekends**: Closed
+- **Appointment Duration**: 1 hour
+- **Available Slots**: 09:00, 10:00, 11:00, 12:00, 13:00, 14:00, 15:00, 16:00
+- **Minimum Notice**: 24 hours
+- **Maximum Booking Window**: 60 days
+- **Timezone**: Europe/Athens (EEST/EET)
+
+### Appointment Statuses
+
+- `pending` - Awaiting admin review
+- `confirmed` - Accepted by admin
+- `declined` - Rejected by admin
+- `cancelled` - Cancelled by client
+- `completed` - Past appointment (auto-updated)
+
+### Environment Configuration Required
+
+```env
+# MySQL Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=nt_taxoffice
+DB_PASSWORD=<password>
+DB_NAME=nt_taxoffice_appointments
+
+# Gmail SMTP (requires App Password)
+GMAIL_USER=ntallas@ntallas.com
+GMAIL_APP_PASSWORD=<16-char-app-password>
+ADMIN_EMAIL=ntallas@ntallas.com
+
+# Session Security
+SESSION_SECRET=<32+ character random string>
+
+# Application
+APP_URL=http://localhost:3000
+TIMEZONE=Europe/Athens
+```
+
+### Key Features
+
+- **Concurrent Booking Protection**: MySQL transactions with row-level locking
+- **Email Notifications**: Queued system with retry logic (3 attempts)
+- **Token-based Cancellation**: UUID v4 tokens for secure cancellation links
+- **Audit Trail**: Complete history tracking for compliance
+- **Rate Limiting**: Protection against abuse (5 bookings/hour, 5 logins/15min)
+- **Security**: Helmet headers, bcrypt password hashing, session security
+- **Accessibility**: WCAG AA compliance, Greek language support
+- **Responsive**: Mobile-first design across all breakpoints
+
+### File Structure (New Additions)
+
+```
+nt-taxoffice-node/
+├── database/
+│   ├── schema.sql
+│   ├── init.js
+│   └── migrations/
+├── services/
+│   ├── database.js
+│   ├── appointments.js
+│   ├── availability.js
+│   ├── email.js
+│   └── emailQueue.js
+├── utils/
+│   ├── validation.js
+│   ├── sanitization.js
+│   ├── timezone.js
+│   └── logger.js
+├── middleware/
+│   ├── auth.js
+│   ├── setupCheck.js
+│   ├── rateLimiter.js
+│   └── errorHandler.js
+├── routes/
+│   ├── api/
+│   │   ├── appointments.js
+│   │   └── availability.js
+│   └── admin/
+│       ├── auth.js
+│       ├── appointments.js
+│       └── availability.js
+├── views/
+│   └── emails/
+│       ├── booking-received.html
+│       ├── booking-received.txt
+│       ├── booking-confirmed.html
+│       ├── booking-confirmed.txt
+│       ├── booking-declined.html
+│       ├── booking-declined.txt
+│       ├── booking-cancelled.html
+│       ├── booking-cancelled.txt
+│       ├── admin-new-booking.html
+│       ├── admin-new-booking.txt
+│       ├── admin-cancellation.html
+│       └── admin-cancellation.txt
+├── public/
+│   ├── appointments.html
+│   ├── cancel-appointment.html
+│   ├── admin/
+│   │   ├── setup.html
+│   │   ├── login.html
+│   │   ├── dashboard.html
+│   │   └── availability.html
+│   ├── css/
+│   │   └── pages/
+│   │       ├── appointments.css
+│   │       └── admin.css
+│   └── js/
+│       ├── appointments.js
+│       ├── cancel-appointment.js
+│       └── admin/
+│           ├── setup.js
+│           ├── login.js
+│           ├── dashboard.js
+│           └── availability.js
+└── tests/
+    ├── unit/
+    └── integration/
+```
+
+### MySQL-Specific Implementation Notes
+
+**Key Differences from SQLite**:
+- Auto Increment: `INT AUTO_INCREMENT PRIMARY KEY`
+- Booleans: `BOOLEAN` or `TINYINT(1)`
+- Timestamps: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
+- Date Functions: `DATE_SUB(NOW(), INTERVAL 1 DAY)`
+- Foreign Keys: Enabled by default with InnoDB engine
+- Transactions: `START TRANSACTION`, `COMMIT`, `ROLLBACK`
+
+**Connection Pooling**:
+- 10 concurrent connections
+- Automatic reconnection
+- UTC timezone for storage
+
+**Concurrent Booking Protection**:
+```javascript
+const connection = await pool.getConnection();
+await connection.beginTransaction();
+try {
+    // SELECT ... FOR UPDATE for row-level locking
+    await connection.commit();
+} catch (error) {
+    await connection.rollback();
+    throw error;
+} finally {
+    connection.release();
+}
+```
+
+### Prerequisites Before Implementation
+
+1. **MySQL 8.x** installed and running
+2. **Gmail App Password** generated (requires 2FA enabled)
+3. **Node.js 18+** installed
+4. **Git** configured for commits
+5. Environment variables prepared
+
+### Documentation
+
+- **Implementation Plan**: `/docs/Appointment Booking System Plan - Implementatio Plan.md`
+- **Compiled Plan**: `~/.claude/plans/compiled-gliding-narwhal.md`
+- **API Documentation**: To be created in Phase 9
+- **Deployment Guide**: To be created in Phase 9
+
 ## Notes for AI Assistant
 
- 
 
-- The project uses a simple Express setup with static file serving
 
-- No database or backend API currently implemented
-
+- The project uses Express with static file serving for main site
+- **NEW**: Appointment system adds MySQL database and backend API
+- No database or backend API for main site (contact form client-side only)
+- Appointment system follows same frontend patterns (ES6 modules, modular CSS)
 - Focus on frontend improvements and user experience
-
 - Maintain the professional, clean aesthetic
-
-- Keep accessibility in mind for all changes
-
+- Keep accessibility in mind for all changes (WCAG AA compliance)
 - Test responsive design when making layout changes
-
 - Follow the established modular patterns for CSS and JS
+- **NEW**: Use strict Git commit discipline (one commit per file/change)
+- **NEW**: Greek language support for all appointment-related content
+- **NEW**: Security-first approach (rate limiting, input validation, transaction safety)
