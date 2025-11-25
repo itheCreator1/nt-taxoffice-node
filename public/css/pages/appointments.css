@@ -1,0 +1,466 @@
+/**
+ * Appointments Page Styles
+ * Styling for the appointment booking interface
+ */
+
+/* ========================================
+   Appointments Section
+   ======================================== */
+
+.appointments-section {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: calc(100vh - 200px);
+}
+
+.appointments-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.appointments-header h2 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.appointments-header h2 i {
+  color: #3498db;
+  margin-right: 15px;
+}
+
+.appointments-header .subtitle {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   Messages
+   ======================================== */
+
+.message {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message i {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.message-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+}
+
+.message-content p {
+  margin: 5px 0;
+}
+
+.success-message {
+  background-color: #d4edda;
+  border: 2px solid #28a745;
+  color: #155724;
+}
+
+.success-message i {
+  color: #28a745;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;
+  color: #721c24;
+}
+
+.error-message i {
+  color: #dc3545;
+}
+
+.cancellation-info {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #28a745;
+}
+
+.cancellation-info p {
+  font-size: 0.95rem;
+}
+
+/* ========================================
+   Loading Indicator
+   ======================================== */
+
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Booking Form Container
+   ======================================== */
+
+.booking-form-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   Form Steps
+   ======================================== */
+
+.form-step {
+  display: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.form-step.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.step-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #3498db;
+}
+
+.step-title i {
+  background: #3498db;
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* ========================================
+   Form Groups
+   ======================================== */
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.required {
+  color: #e74c3c;
+  margin-left: 3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #dde1e7;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: #f5f7fa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.help-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* ========================================
+   Form Actions (Buttons)
+   ======================================== */
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.btn {
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  flex: 1;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #7f8c8d;
+}
+
+.btn-success {
+  background-color: #27ae60;
+  color: white;
+  flex: 1;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #229954;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+/* ========================================
+   Booking Summary
+   ======================================== */
+
+.booking-summary {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  margin-top: 30px;
+  border: 2px solid #3498db;
+}
+
+.booking-summary h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  margin: 0;
+}
+
+.summary-details dt {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.summary-details dd {
+  margin: 0;
+  color: #495057;
+}
+
+/* ========================================
+   Info Box
+   ======================================== */
+
+.info-box {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.info-box h3 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-box li {
+  padding: 10px 0;
+  color: #495057;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.info-box li i {
+  color: #27ae60;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .appointments-section {
+    padding: 40px 15px;
+  }
+
+  .appointments-header h2 {
+    font-size: 2rem;
+  }
+
+  .booking-form-container {
+    padding: 25px 20px;
+  }
+
+  .step-title {
+    font-size: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .summary-details {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .summary-details dt {
+    margin-top: 10px;
+  }
+
+  .summary-details dd {
+    margin-left: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .summary-details dd:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointments-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .appointments-header .subtitle {
+    font-size: 1rem;
+  }
+
+  .booking-form-container {
+    padding: 20px 15px;
+  }
+
+  .step-title {
+    font-size: 1.3rem;
+  }
+
+  .step-title i {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+}
