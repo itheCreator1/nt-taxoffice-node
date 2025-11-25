@@ -18,6 +18,7 @@ const { apiLimiter } = require('./middleware/rateLimiter');
 
 // Import routes
 const indexRoutes = require('./routes/index');
+const availabilityRoutes = require('./routes/api/availability');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -99,8 +100,8 @@ app.use(express.static(path.join(__dirname, 'public')));
  */
 app.use('/', indexRoutes);
 
-// Apply rate limiting to API routes
-app.use('/api', apiLimiter);
+// API routes with rate limiting
+app.use('/api/availability', apiLimiter, availabilityRoutes);
 
 /**
  * Error Handling
