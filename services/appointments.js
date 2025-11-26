@@ -8,6 +8,7 @@ const { getDb } = require('./database');
 const { isSlotAvailable } = require('./availability');
 const { toMySQLDate, toMySQLTime, formatGreekDate } = require('../utils/timezone');
 const { logAppointmentCreated, logAppointmentStatusChange, debug } = require('../utils/logger');
+const { queueEmail } = require('./emailQueue');
 
 /**
  * Create a new appointment with transaction protection
@@ -79,14 +80,25 @@ async function createAppointment(appointmentData) {
             appointmentData.appointment_time
         );
 
-        // Return created appointment
-        return {
+        const createdAppointment = {
             id: appointmentId,
             ...appointmentData,
             status: 'pending',
             cancellation_token: cancellationToken,
             version: 1
         };
+
+        // Queue email notifications (async, non-blocking)
+        queueEmail('booking-confirmation', appointmentData.client_email, createdAppointment).catch(err => {
+            debug('Failed to queue booking confirmation email:', err);
+        });
+
+        queueEmail('admin-notification', process.env.ADMIN_EMAIL, createdAppointment).catch(err => {
+            debug('Failed to queue admin notification email:', err);
+        });
+
+        // Return created appointment
+        return createdAppointment;
 
     } catch (error) {
         // Rollback on error
@@ -204,11 +216,18 @@ async function cancelAppointment(cancellationToken) {
 
         logAppointmentStatusChange(appointment.id, appointment.status, 'cancelled', 'client');
 
-        return {
+        const cancelledAppointment = {
             ...appointment,
             status: 'cancelled',
             version: appointment.version + 1
         };
+
+        // Queue cancellation confirmation email (async, non-blocking)
+        queueEmail('cancellation-confirmation', appointment.client_email, cancelledAppointment).catch(err => {
+            debug('Failed to queue cancellation confirmation email:', err);
+        });
+
+        return cancelledAppointment;
 
     } catch (error) {
         await connection.rollback();

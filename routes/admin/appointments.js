@@ -10,7 +10,8 @@ const { requireAuth } = require('../../middleware/auth');
 const { apiLimiter } = require('../../middleware/rateLimiter');
 const { getDb } = require('../../services/database');
 const { toMySQLDate, formatGreekDate, formatGreekDateTime } = require('../../utils/timezone');
-const { logAppointmentStatusChange, logSecurityEvent } = require('../../utils/logger');
+const { logAppointmentStatusChange, logSecurityEvent, debug } = require('../../utils/logger');
+const { queueEmail } = require('../../services/emailQueue');
 
 // Apply authentication to all routes
 router.use(requireAuth);
@@ -267,6 +268,20 @@ router.put('/:id/status', asyncHandler(async (req, res) => {
         await connection.commit();
 
         logAppointmentStatusChange(id, oldStatus, status, req.session.username);
+
+        // Queue email notification based on new status (async, non-blocking)
+        if (status === 'confirmed') {
+            queueEmail('appointment-confirmed', appointment.client_email, appointment).catch(err => {
+                debug('Failed to queue appointment confirmed email:', err);
+            });
+        } else if (status === 'declined') {
+            queueEmail('appointment-declined', appointment.client_email, {
+                ...appointment,
+                decline_reason
+            }).catch(err => {
+                debug('Failed to queue appointment declined email:', err);
+            });
+        }
 
         res.json({
             success: true,
