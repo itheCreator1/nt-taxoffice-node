@@ -15,6 +15,7 @@ const { initializeDatabase, getDb } = require('./services/database');
 const { requestLoggerMiddleware, info, error: logError } = require('./utils/logger');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { apiLimiter } = require('./middleware/rateLimiter');
+const { startProcessor: startEmailQueue, stopProcessor: stopEmailQueue } = require('./services/emailQueue');
 
 // Import routes
 const indexRoutes = require('./routes/index');
@@ -127,6 +128,10 @@ async function startServer() {
         await initializeDatabase();
         info('Database initialized successfully');
 
+        // Start email queue processor
+        startEmailQueue();
+        info('Email queue processor started');
+
         // Start Express server
         app.listen(PORT, () => {
             info(`NT - TAXOFFICE server running on http://localhost:${PORT}`);
@@ -141,11 +146,13 @@ async function startServer() {
 // Handle graceful shutdown
 process.on('SIGTERM', () => {
     info('SIGTERM signal received: closing HTTP server');
+    stopEmailQueue();
     process.exit(0);
 });
 
 process.on('SIGINT', () => {
     info('SIGINT signal received: closing HTTP server');
+    stopEmailQueue();
     process.exit(0);
 });
 
