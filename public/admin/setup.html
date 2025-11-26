@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Αρχική Ρύθμιση - NT TAXOFFICE Admin</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .setup-container {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .setup-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .setup-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .setup-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .form-label .required {
+            color: var(--danger-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--danger-color);
+        }
+
+        .form-input.error:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-error {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--danger-color);
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .password-requirements {
+            margin-top: 10px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .password-requirements p {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .password-requirements li {
+            padding: 3px 0;
+            color: var(--text-secondary);
+        }
+
+        .password-requirements li::before {
+            content: "• ";
+            margin-right: 6px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .submit-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .setup-container {
+                padding: 30px 25px;
+            }
+
+            .setup-title {
+                font-size: 20px;
+            }
+
+            .setup-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .setup-container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <div class="setup-logo">NT</div>
+            <h1 class="setup-title">Καλώς ήρθατε</h1>
+            <p class="setup-subtitle">
+                Παρακαλώ δημιουργήστε τον πρώτο λογαριασμό διαχειριστή για να ξεκινήσετε.
+            </p>
+        </div>
+
+        <div id="message" class="alert"></div>
+
+        <form id="setupForm" novalidate>
+            <div class="form-group">
+                <label for="username" class="form-label">
+                    Όνομα χρήστη <span class="required">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-input"
+                    placeholder="π.χ. admin"
+                    required
+                    autocomplete="username"
+                    autofocus
+                >
+                <span class="form-error" id="username-error"></span>
+                <small class="form-help">3-50 χαρακτήρες (γράμματα, αριθμοί, _ -)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    Email <span class="required">*</span>
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="π.χ. admin@example.com"
+                    required
+                    autocomplete="email"
+                >
+                <span class="form-error" id="email-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    Κωδικός πρόσβασης <span class="required">*</span>
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-input"
+                    placeholder="Εισάγετε κωδικό πρόσβασης"
+                    required
+                    autocomplete="new-password"
+                >
+                <span class="form-error" id="password-error"></span>
+
+                <div class="password-requirements">
+                    <p>Απαιτήσεις κωδικού:</p>
+                    <ul>
+                        <li>Τουλάχιστον 8 χαρακτήρες</li>
+                        <li>Τουλάχιστον ένα κεφαλαίο γράμμα</li>
+                        <li>Τουλάχιστον ένα πεζό γράμμα</li>
+                        <li>Τουλάχιστον έναν αριθμό</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">
+                    Επιβεβαίωση κωδικού <span class="required">*</span>
+                </label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    class="form-input"
+                    placeholder="Επιβεβαιώστε τον κωδικό πρόσβασης"
+                    required
+                    autocomplete="new-password"
+                >
+                <span class="form-error" id="confirmPassword-error"></span>
+            </div>
+
+            <button type="submit" class="submit-button" id="submitBtn">
+                Δημιουργία λογαριασμού
+            </button>
+        </form>
+    </div>
+
+    <script src="/js/admin/setup.js" type="module"></script>
+</body>
+</html>
