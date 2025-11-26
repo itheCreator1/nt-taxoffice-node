@@ -1,0 +1,17 @@
+NT TAXOFFICE - Επιβεβαίωση Ραντεβού
+
+Αγαπητέ/ή {{clientName}},
+
+Το ραντεβού σας έχει επιβεβαιωθεί! Σας περιμένουμε στις:
+
+Ημερομηνία: {{appointmentDate}}
+Ώρα: {{appointmentTime}}
+Υπηρεσία: {{serviceType}}
+
+Διεύθυνση: {{officeAddress}}
+Τηλέφωνο: {{officePhone}}
+
+Αν χρειαστεί να ακυρώσετε:
+{{cancellationUrl}}
+
+© 2025 NT TAXOFFICE

@@ -1,0 +1,16 @@
+NT TAXOFFICE - Ενημέρωση Ραντεβού
+
+Αγαπητέ/ή {{clientName}},
+
+Δυστυχώς δεν μπορούμε να επιβεβαιώσουμε το ραντεβού για:
+
+Ημερομηνία: {{appointmentDate}}
+Ώρα: {{appointmentTime}}
+Λόγος: {{declineReason}}
+
+Παρακαλούμε επιλέξτε άλλη ημερομηνία:
+{{bookingUrl}}
+
+Για περισσότερες πληροφορίες: {{officePhone}}
+
+© 2025 NT TAXOFFICE

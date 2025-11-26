@@ -1,0 +1,17 @@
+NT TAXOFFICE - ΝΕΟ ΡΑΝΤΕΒΟΥ
+
+Νέο ραντεβού από {{clientName}}
+
+ΣΤΟΙΧΕΙΑ ΡΑΝΤΕΒΟΥ:
+Πελάτης: {{clientName}}
+Email: {{clientEmail}}
+Τηλέφωνο: {{clientPhone}}
+Ημερομηνία: {{appointmentDate}}
+Ώρα: {{appointmentTime}}
+Υπηρεσία: {{serviceType}}
+Σημειώσεις: {{notes}}
+
+Μετάβαση στο Dashboard:
+{{dashboardUrl}}
+
+© 2025 NT TAXOFFICE Admin
