@@ -21,6 +21,7 @@ const indexRoutes = require('./routes/index');
 const availabilityRoutes = require('./routes/api/availability');
 const appointmentsRoutes = require('./routes/api/appointments');
 const adminAuthRoutes = require('./routes/admin/auth');
+const adminAppointmentsRoutes = require('./routes/admin/appointments');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -106,6 +107,7 @@ app.use('/', indexRoutes);
 app.use('/api/availability', apiLimiter, availabilityRoutes);
 app.use('/api/appointments', appointmentsRoutes); // Has its own specific rate limiters
 app.use('/api/admin', adminAuthRoutes); // Has its own specific rate limiters
+app.use('/api/admin/appointments', adminAppointmentsRoutes); // Protected admin routes
 
 /**
  * Error Handling
