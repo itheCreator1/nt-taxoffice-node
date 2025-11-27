@@ -1,12 +1,52 @@
 /**
  * Appointments Booking Module
- * Handles the 3-step appointment booking form
+ *
+ * Handles 3-step appointment booking wizard:
+ * - Step 1: Service selection
+ * - Step 2: Date and time selection with DD/MM/YYYY format
+ * - Step 3: Personal information
+ *
+ * Features:
+ * - Flatpickr date picker with Greek date format (DD/MM/YYYY)
+ * - Automatic weekend blocking
+ * - Real-time summary updates
+ * - Manual date entry validation
+ * - Email confirmation queue
+ *
+ * @module appointments
+ * @requires flatpickr
+ *
+ * @example
+ * // Initialize on page load
+ * document.addEventListener('DOMContentLoaded', init);
  */
 
 // Import Flatpickr from CDN as ES6 module
 import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm';
 
-// State management
+/**
+ * Booking form data structure
+ * @typedef {Object} FormData
+ * @property {string} service_type - Selected service (e.g., "Φορολογική Δήλωση")
+ * @property {string} appointment_date - Date in YYYY-MM-DD format for API
+ * @property {string} appointment_time - Time in HH:MM:SS format (e.g., "10:00:00")
+ * @property {string} client_name - Client full name (min 2 chars)
+ * @property {string} client_email - Client email address (validated)
+ * @property {string} client_phone - Greek phone number (validated)
+ * @property {string} notes - Optional notes (max 1000 chars)
+ */
+
+/**
+ * Application state management
+ * @typedef {Object} AppointmentState
+ * @property {number} currentStep - Current wizard step (1-3)
+ * @property {string[]} availableDates - Array of available dates in YYYY-MM-DD format
+ * @property {FormData} formData - Booking form data
+ */
+
+/**
+ * @type {AppointmentState}
+ */
 const state = {
     currentStep: 1,
     availableDates: [],
@@ -138,7 +178,26 @@ function setupEventListeners() {
 }
 
 /**
- * Set up date picker constraints
+ * Initializes Flatpickr date picker with DD/MM/YYYY format
+ *
+ * Configures:
+ * - Date format: DD/MM/YYYY (Greek standard)
+ * - Min date: Tomorrow (24-hour advance booking required)
+ * - Max date: 60 days from today
+ * - Disabled days: Weekends (Saturday, Sunday)
+ * - First day of week: Monday
+ *
+ * On date selection:
+ * - Converts display format (DD/MM/YYYY) to API format (YYYY-MM-DD)
+ * - Updates state.formData.appointment_date
+ * - Loads available time slots for selected date
+ *
+ * @throws {Error} If Flatpickr library fails to load
+ * @returns {void}
+ *
+ * @example
+ * setupDatePicker();
+ * // Date picker initialized, calendar shows DD/MM/YYYY
  */
 function setupDatePicker() {
     if (!elements.appointmentDate) {
@@ -206,8 +265,30 @@ function setupDatePicker() {
 }
 
 /**
- * Validate manually entered date in DD/MM/YYYY format
- * Fallback for users who type instead of using picker
+ * Validates manually entered date in DD/MM/YYYY format
+ *
+ * Validation rules:
+ * 1. Format: Must match DD/MM/YYYY (e.g., "29/11/2024")
+ * 2. Date validity: Must be real date (no 32/13/2024)
+ * 3. Day of week: Must not be weekend (Saturday/Sunday)
+ * 4. Range: Must be between tomorrow and 60 days ahead
+ *
+ * @param {string} dateStr - Date string in DD/MM/YYYY format
+ * @returns {Date|null} Valid Date object if all checks pass, null otherwise
+ *
+ * @example
+ * const date = validateManualDateEntry('29/11/2024');
+ * if (date) {
+ *     console.log('Valid date:', date);
+ * } else {
+ *     console.log('Invalid date');
+ * }
+ *
+ * @example
+ * // Invalid cases
+ * validateManualDateEntry('2024-11-29');  // Wrong format → null
+ * validateManualDateEntry('30/11/2024');  // Saturday → null
+ * validateManualDateEntry('32/11/2024');  // Invalid date → null
  */
 function validateManualDateEntry(dateStr) {
     // Match DD/MM/YYYY format
@@ -586,10 +667,23 @@ function hideLoading() {
 
 /**
  * Reset form to initial state
+ * Cleans up flatpickr instance to prevent memory leaks
  */
 function resetForm() {
+    // Clean up flatpickr instance to prevent memory leaks
+    if (elements.datePickerInstance) {
+        elements.datePickerInstance.destroy();
+        elements.datePickerInstance = null;
+    }
+
     if (elements.form) {
         elements.form.reset();
+    }
+
+    // Clear appointment time options
+    if (elements.appointmentTime) {
+        elements.appointmentTime.innerHTML = '<option value="">-- Επιλέξτε πρώτα ημερομηνία --</option>';
+        elements.appointmentTime.disabled = true;
     }
 
     state.currentStep = 1;
@@ -602,6 +696,9 @@ function resetForm() {
         client_phone: '',
         notes: ''
     };
+
+    // Reinitialize date picker for next booking
+    setupDatePicker();
 
     goToStep(1);
 }
