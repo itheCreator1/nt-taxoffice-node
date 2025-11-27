@@ -83,10 +83,12 @@ CREATE TABLE IF NOT EXISTS appointment_history (
 -- Email Queue Table
 CREATE TABLE IF NOT EXISTS email_queue (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    email_type VARCHAR(100) NOT NULL,
     recipient VARCHAR(255) NOT NULL,
-    subject VARCHAR(500) NOT NULL,
-    html_body TEXT NOT NULL,
-    text_body TEXT NOT NULL,
+    data JSON NOT NULL,
+    subject VARCHAR(500),
+    html_body TEXT,
+    text_body TEXT,
     status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
     attempts INT DEFAULT 0,
     error_message TEXT,
@@ -96,7 +98,8 @@ CREATE TABLE IF NOT EXISTS email_queue (
 
     INDEX idx_email_queue_status (status),
     INDEX idx_email_queue_created (created_at),
-    INDEX idx_email_queue_next_attempt (next_attempt_at)
+    INDEX idx_email_queue_next_attempt (next_attempt_at),
+    INDEX idx_email_queue_type (email_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert Default Availability (Monday-Friday 09:00-17:00)

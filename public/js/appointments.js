@@ -111,6 +111,12 @@ function setupEventListeners() {
             await submitBooking();
         }
     });
+
+    // Real-time summary updates for Step 3
+    elements.clientName?.addEventListener('input', updateBookingSummary);
+    elements.clientEmail?.addEventListener('input', updateBookingSummary);
+    elements.clientPhone?.addEventListener('input', updateBookingSummary);
+    elements.notes?.addEventListener('input', updateBookingSummary);
 }
 
 /**
@@ -329,6 +335,28 @@ function showBookingSummary() {
 }
 
 /**
+ * Update booking summary in real-time
+ */
+function updateBookingSummary() {
+    // Only update if we're on step 3
+    if (state.currentStep !== 3) return;
+
+    // Get current values from form inputs
+    const name = elements.clientName?.value.trim() || '';
+    const email = elements.clientEmail?.value.trim() || '';
+    const phone = elements.clientPhone?.value.trim() || '';
+
+    // Update summary elements
+    const summaryName = document.getElementById('summary-name');
+    const summaryEmail = document.getElementById('summary-email');
+    const summaryPhone = document.getElementById('summary-phone');
+
+    if (summaryName) summaryName.textContent = name || '-';
+    if (summaryEmail) summaryEmail.textContent = email || '-';
+    if (summaryPhone) summaryPhone.textContent = phone || '-';
+}
+
+/**
  * Submit booking to API
  */
 async function submitBooking() {
@@ -435,6 +463,13 @@ function showLoading(show) {
     if (elements.loadingIndicator) {
         elements.loadingIndicator.style.display = show ? 'block' : 'none';
     }
+}
+
+/**
+ * Hide loading indicator
+ */
+function hideLoading() {
+    showLoading(false);
 }
 
 /**
