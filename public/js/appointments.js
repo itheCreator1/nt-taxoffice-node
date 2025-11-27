@@ -306,14 +306,12 @@ async function loadAvailableTimesForDate(date) {
 function showBookingSummary() {
     if (!elements.bookingSummary) return;
 
-    // Format date
+    // Format date as DD/MM/YYYY
     const dateObj = new Date(state.formData.appointment_date + 'T00:00:00');
-    const formattedDate = dateObj.toLocaleDateString('el-GR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
 
     // Format time
     const formattedTime = state.formData.appointment_time.substring(0, 5);
