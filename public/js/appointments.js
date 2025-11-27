@@ -21,8 +21,8 @@
  * document.addEventListener('DOMContentLoaded', init);
  */
 
-// Import Flatpickr from local vendor file (production reliability)
-import flatpickr from '/js/vendor/flatpickr/flatpickr.esm.js';
+// Flatpickr loaded as global variable from /js/vendor/flatpickr/flatpickr.min.js (UMD build)
+// Available as window.flatpickr
 
 /**
  * Booking form data structure
