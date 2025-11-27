@@ -7,7 +7,7 @@ RUN apk add --no-cache mysql-client
 
 # Copy package files first for better caching
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --production
 
 # Copy source code
 COPY . .
