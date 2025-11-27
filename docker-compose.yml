@@ -1,31 +1,59 @@
 services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: nt_taxoffice
+      MYSQL_USER: nt_user
+      MYSQL_PASSWORD: nt_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
   app:
     build: .
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=taxoffice_appointments
-      - NODE_ENV=development
+      # Database Configuration
+      DB_HOST: mysql
+      DB_USER: nt_user
+      DB_PASSWORD: nt_password
+      DB_NAME: nt_taxoffice
+      DB_PORT: 3306
+
+      # Session Configuration
+      SESSION_SECRET: docker-dev-session-secret-change-in-production
+
+      # Email Configuration (using Ethereal for testing)
+      EMAIL_HOST: smtp.ethereal.email
+      EMAIL_PORT: 587
+      EMAIL_SECURE: false
+      EMAIL_USER: test@ethereal.email
+      EMAIL_PASSWORD: test-password
+      ADMIN_EMAIL: admin@nt-taxoffice.local
+      OFFICE_EMAIL: office@nt-taxoffice.local
+      OFFICE_PHONE: +30 210 8222 950
+
+      # Application Configuration
+      APP_URL: http://localhost:3000
+      NODE_ENV: development
+      PORT: 3000
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     volumes:
       - .:/app
       - /app/node_modules
-    restart: unless-stopped
-
-  mysql:
-    image: mysql:8.0
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=taxoffice_appointments
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
 
 volumes:

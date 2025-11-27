@@ -368,7 +368,95 @@ PORT=3000
 
 
 
-### Database Setup
+### Quick Start with Docker (Recommended for Testing)
+
+
+
+The easiest way to test the appointment system is using Docker Compose, which sets up both the application and MySQL database automatically:
+
+
+
+1. **Prerequisites**: Install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+
+
+2. **Start the services**:
+
+```bash
+
+docker-compose up -d
+
+```
+
+
+
+This will:
+
+- Start MySQL 8.0 with the correct configuration
+
+- Create the database and all tables automatically
+
+- Start the Node.js application
+
+- Wait for MySQL to be healthy before starting the app
+
+
+
+3. **Access the application**:
+
+```
+
+http://localhost:3000
+
+```
+
+
+
+4. **View logs**:
+
+```bash
+
+# All services
+
+docker-compose logs -f
+
+
+
+# Just the app
+
+docker-compose logs -f app
+
+
+
+# Just MySQL
+
+docker-compose logs -f mysql
+
+```
+
+
+
+5. **Stop the services**:
+
+```bash
+
+docker-compose down
+
+
+
+# To also remove the database volume (fresh start):
+
+docker-compose down -v
+
+```
+
+
+
+**Note**: The Docker setup uses test email credentials. To test with real emails, update the `EMAIL_*` environment variables in [docker-compose.yml](docker-compose.yml) or create a `.env` file (it will override docker-compose values).
+
+
+
+### Database Setup (Manual Installation)
 
 
 
