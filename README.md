@@ -1,371 +1,112 @@
-# NT - TAXOFFICE
+# NT TaxOffice Node
 
- 
+A modern Node.js application built for managing tax office workflows, designed with scalability, modularity, and real-world business logic in mind. The project currently includes a stable main branch and an active development branch focused on expanding functionality.
 
-A modern, professional web platform for NT - TAXOFFICE, providing comprehensive accounting, tax, and consulting services to businesses and individuals across Greece.
+## 🚀 Overview
 
- 
+NT TaxOffice Node is a backend service built with **Node.js** and **Express**, offering structured APIs for:
 
-## About
+* User and role management
+* Appointments and scheduling
+* Authentication flows
+* Database operations using modern patterns
 
- 
+The project is designed to be easy to extend and maintain, featuring clean architecture, modular routing, and organized controller/service layers.
 
-NT - TAXOFFICE is a leading accounting firm specializing in:
+## 🌿 Active Development Branch: `feature/appointment-system`
 
-- Professional accounting and bookkeeping
+A major upcoming feature is under development in the `feature/appointment-system` branch. This branch includes:
 
-- Tax planning and compliance
+* Full appointment booking system
+* Calendar & availability logic
+* Appointment validation rules
+* Improved error handling and response structure
+* Cleaner service patterns
 
-- Payroll and employment services
+This branch refactors parts of the existing project and adds new modules that will soon be merged into `main`.
 
-- Financial consulting and business advisory
+You can explore the branch here:
+`feature/appointment-system`
 
- 
-
-This website serves as the digital presence for the firm, showcasing their services and enabling clients to connect with their team.
-
- 
-
-## Technology
-
- 
-
-Built with a modern, lightweight stack:
-
- 
-
-- **Node.js & Express** - Fast, scalable server framework
-
-- **Vanilla JavaScript** - ES6 modules for clean, maintainable code
-
-- **Modular CSS** - Organized stylesheet architecture
-
-- **Font Awesome** - Professional iconography
-
-- **Google Fonts** - Poppins and Roboto typography
-
- 
-
-## Quick Start
-
- 
-
-Install dependencies:
-
-```bash
-
-npm install
+## 🏗 Project Structure
 
 ```
-
- 
-
-Run the server:
-
-```bash
-
-npm start
-
-```
-
- 
-
-Visit `http://localhost:3000` in your browser.
-
- 
-
-For development with a custom port:
-
-```bash
-
-PORT=8080 npm run dev
-
-```
-
- 
-
-## Architecture
-
- 
-
-### Directory Structure
-
- 
-
-```
-
 nt-taxoffice-node/
-
-├── public/                 # Static assets
-
-│   ├── css/
-
-│   │   ├── base/          # Variables, typography, reset
-
-│   │   ├── layout/        # Header, navigation, footer
-
-│   │   ├── components/    # Buttons, cards, forms, badges, icons
-
-│   │   └── utilities/     # Animations, responsive, accessibility, print
-
-│   ├── js/
-
-│   │   ├── main.js        # Application entry point
-
-│   │   ├── navigation.js  # Mobile menu and nav logic
-
-│   │   ├── animations.js  # Scroll animations and effects
-
-│   │   └── form-validation.js  # Client-side validation
-
-│   └── *.html             # Page templates
-
-├── routes/
-
-│   └── index.js           # Route definitions
-
-└── server.js              # Express application setup
-
+├── src/
+│   ├── controllers/       # Request handling
+│   ├── services/          # Business logic
+│   ├── routes/            # Express routing
+│   ├── middleware/        # Auth, validation, etc.
+│   ├── models/            # Database models
+│   └── config/            # Environment & database config
+├── tests/                 # Future test suite
+├── package.json
+└── README.md
 ```
 
- 
-
-### CSS Architecture
-
- 
-
-The stylesheets follow a modular pattern:
-
- 
-
-- **Base**: Foundation styles (variables, typography, normalization)
-
-- **Layout**: Page structure (header, footer, navigation)
-
-- **Components**: Reusable UI elements (buttons, cards, forms)
-
-- **Utilities**: Helper classes (animations, responsive utilities)
-
- 
-
-### JavaScript Modules
-
- 
-
-Client-side code is organized into ES6 modules:
-
- 
-
-- `main.js` - Initializes and coordinates all modules
-
-- `navigation.js` - Handles mobile menu and navigation interactions
-
-- `animations.js` - Manages scroll animations and visual effects
-
-- `form-validation.js` - Validates contact forms before submission
-
- 
-
-## Pages
-
- 
-
-| Route | Page | Description |
-
-|-------|------|-------------|
-
-| `/` | Home | Service overview and company introduction |
-
-| `/contact` | Contact | Contact form and office information |
-
-| `/media` | Media | Press releases and media resources |
-
- 
-
-## Services
-
- 
-
-### For Businesses & Professionals
-
- 
-
-- Company formation and registration
-
-- Ongoing bookkeeping and accounting
-
-- Tax compliance and planning
-
-- Financial analysis and reporting
-
-- Business restructuring support
-
- 
-
-### Payroll Services
-
- 
-
-- Employee onboarding and registration
-
-- Monthly payroll processing
-
-- Social security submissions (EFKA)
-
-- ERGANI system management
-
-- Employment contract preparation
-
- 
-
-### For Individuals
-
- 
-
-- Personal tax returns
-
-- Property tax declarations (E9, ENFIA)
-
-- Social benefit applications
-
-- Tax planning for employees and retirees
-
- 
-
-### Consulting Services
-
- 
-
-- Financial strategy and planning
-
-- Legal and regulatory compliance
-
-- Business optimization
-
-- Specialized problem-solving
-
- 
-
-## Features
-
- 
-
-- **Responsive Design** - Optimized for desktop, tablet, and mobile
-
-- **Accessibility** - WCAG compliant with proper ARIA labels
-
-- **Performance** - Lightweight and fast-loading
-
-- **SEO Optimized** - Proper meta tags and semantic HTML
-
-- **Modern UI** - Clean, professional design with smooth animations
-
- 
-
-## Contact
-
- 
-
-**NT - TAXOFFICE**
-
- 
-
-📍 3ης Σεπτεμβρίου 103
-
-📞 +30 210 8222 950
-
-✉️ ntallas@ntallas.com
-
- 
-
-## Development
-
- 
-
-### Adding New Routes
-
- 
-
-Add route handlers in `routes/index.js`:
-
- 
-
-```javascript
-
-router.get('/new-page', (req, res) => {
-
-  res.sendFile(path.join(__dirname, '../public/new-page.html'));
-
-});
-
+## 📦 Installation
+
+```bash
+git clone https://github.com/itheCreator1/nt-taxoffice-node
+yarn install    # or npm install
 ```
 
- 
+### Environment Setup
 
-### Styling Guidelines
+Create a `.env` file:
 
- 
+```
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=yourpassword
+TOKEN_SECRET=your_secret
+```
 
-- Follow the existing modular CSS structure
+## ▶️ Running the Server
 
-- Use CSS variables defined in `base/variables.css`
+Development mode:
 
-- Keep components self-contained
+```bash
+yarn dev
+```
 
-- Use utility classes for common patterns
+Production mode:
 
- 
+```bash
+yarn start
+```
 
-### Code Standards
+## 📚 API Highlights
 
- 
+* **Auth API** – login, token validation
+* **Users API** – create, update, delete, roles
+* **Appointments API** *(in feature branch)* – book, cancel, fetch schedule
 
-- Use ES6+ JavaScript features
+Detailed documentation will be added after the appointment system merge.
 
-- Keep functions small and focused
+## 🧪 Tests
 
-- Comment complex logic
+Test suite will be expanded in upcoming versions.
+Run tests (if present):
 
-- Follow existing naming conventions
+```bash
+yarn test
+```
 
- 
+## 🗺 Roadmap
 
-## Browser Compatibility
+* [ ] Finalize appointment system
+* [ ] Merge feature branch into main
+* [ ] Add complete API documentation
+* [ ] Add automated tests
+* [ ] Docker support
+* [ ] CI/CD integration
 
- 
+## 🤝 Contributing
 
-- Chrome (latest)
+Contributions and feedback are welcome. Open issues or pull requests for improvements.
 
-- Firefox (latest)
+## 📄 License
 
-- Safari (latest)
-
-- Edge (latest)
-
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
- 
-
-## License
-
- 
-
-ISC
-
- 
-
-## Credits
-
- 
-
-**Author**: itheCreator1
-
-**Year**: 2025
-
- 
-
----
-
- 
-
-© 2025 NT - TAXOFFICE. All rights reserved.
+MIT License
