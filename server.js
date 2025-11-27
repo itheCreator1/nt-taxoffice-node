@@ -39,8 +39,7 @@ app.use(helmet({
             styleSrc: [
                 "'self'",
                 "'unsafe-inline'",
-                "https://fonts.googleapis.com",
-                "https://cdn.jsdelivr.net"  // Allow flatpickr CSS
+                "https://fonts.googleapis.com"
             ],
             fontSrc: [
                 "'self'",
@@ -48,13 +47,9 @@ app.use(helmet({
             ],
             scriptSrc: [
                 "'self'",
-                "https://cdnjs.cloudflare.com",  // Allow Font Awesome
-                "https://cdn.jsdelivr.net"        // Allow flatpickr ESM
+                "https://cdnjs.cloudflare.com"  // Allow Font Awesome only
             ],
-            connectSrc: [
-                "'self'",
-                "https://cdn.jsdelivr.net"        // Allow source maps
-            ],
+            connectSrc: ["'self'"],
             imgSrc: ["'self'", "data:", "https:"],
         }
     }

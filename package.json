@@ -16,17 +16,18 @@
   "author": "Teo",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.5",
     "bcrypt": "^5.1.1",
-    "express-session": "^1.18.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "express-mysql-session": "^3.0.0",
-    "nodemailer": "^6.9.14",
-    "uuid": "^9.0.1",
-    "moment-timezone": "^0.5.45",
     "express-rate-limit": "^7.1.5",
+    "express-session": "^1.18.0",
+    "flatpickr": "^4.6.13",
     "helmet": "^7.1.0",
-    "dotenv": "^16.3.1"
+    "moment-timezone": "^0.5.45",
+    "mysql2": "^3.6.5",
+    "nodemailer": "^6.9.14",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

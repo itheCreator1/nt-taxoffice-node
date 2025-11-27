@@ -21,8 +21,8 @@
  * document.addEventListener('DOMContentLoaded', init);
  */
 
-// Import Flatpickr from CDN as ES6 module
-import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm';
+// Import Flatpickr from local vendor file (production reliability)
+import flatpickr from '/js/vendor/flatpickr/flatpickr.esm.js';
 
 /**
  * Booking form data structure
