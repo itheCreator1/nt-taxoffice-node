@@ -36,9 +36,25 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            scriptSrc: ["'self'"],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com",
+                "https://cdn.jsdelivr.net"  // Allow flatpickr CSS
+            ],
+            fontSrc: [
+                "'self'",
+                "https://fonts.gstatic.com"
+            ],
+            scriptSrc: [
+                "'self'",
+                "https://cdnjs.cloudflare.com",  // Allow Font Awesome
+                "https://cdn.jsdelivr.net"        // Allow flatpickr ESM
+            ],
+            connectSrc: [
+                "'self'",
+                "https://cdn.jsdelivr.net"        // Allow source maps
+            ],
             imgSrc: ["'self'", "data:", "https:"],
         }
     }

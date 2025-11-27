@@ -3,6 +3,9 @@
  * Handles the 3-step appointment booking form
  */
 
+// Import Flatpickr from CDN as ES6 module
+import flatpickr from 'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/+esm';
+
 // State management
 const state = {
     currentStep: 1,
@@ -96,11 +99,26 @@ function setupEventListeners() {
         goToStep(2);
     });
 
-    // Date change - load available times
-    elements.appointmentDate?.addEventListener('change', (e) => {
-        const selectedDate = e.target.value;
-        if (selectedDate) {
-            loadAvailableTimesForDate(selectedDate);
+    // Note: Date change is now handled by Flatpickr's onChange callback in setupDatePicker()
+
+    // Manual date entry validation (fallback if user types instead of clicking)
+    elements.appointmentDate?.addEventListener('blur', (e) => {
+        const dateStr = e.target.value.trim();
+        if (!dateStr) return;
+
+        const validDate = validateManualDateEntry(dateStr);
+        if (validDate) {
+            // Convert to YYYY-MM-DD for API
+            const year = validDate.getFullYear();
+            const month = String(validDate.getMonth() + 1).padStart(2, '0');
+            const day = String(validDate.getDate()).padStart(2, '0');
+            const apiDate = `${year}-${month}-${day}`;
+
+            state.formData.appointment_date = apiDate;
+            loadAvailableTimesForDate(apiDate);
+        } else if (dateStr.length > 0) {
+            showError('Μη έγκυρη ημερομηνία. Χρησιμοποιήστε μορφή ΗΗ/ΜΜ/ΕΕΕΕ (Δευτέρα-Παρασκευή).');
+            e.target.value = '';
         }
     });
 
@@ -123,18 +141,108 @@ function setupEventListeners() {
  * Set up date picker constraints
  */
 function setupDatePicker() {
-    if (!elements.appointmentDate) return;
+    if (!elements.appointmentDate) {
+        console.error('Date picker element not found');
+        return;
+    }
 
-    const today = new Date();
-    today.setDate(today.getDate() + 1); // Minimum: tomorrow
-    const minDate = today.toISOString().split('T')[0];
+    // Verify flatpickr is available
+    if (typeof flatpickr !== 'function') {
+        console.error('Flatpickr library not loaded');
+        showError('Σφάλμα φόρτωσης του επιλογέα ημερομηνίας. Παρακαλώ ανανεώστε τη σελίδα.');
+        return;
+    }
+
+    try {
+        const today = new Date();
+        today.setDate(today.getDate() + 1); // Minimum: tomorrow
+
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 60); // Maximum: 60 days ahead
+
+        // Initialize Flatpickr with DD/MM/YYYY format
+        const picker = flatpickr(elements.appointmentDate, {
+            dateFormat: "d/m/Y",
+            minDate: today,
+            maxDate: maxDate,
+            locale: {
+                firstDayOfWeek: 1 // Monday
+            },
+            // Disable weekends
+            disable: [
+                function(date) {
+                    return (date.getDay() === 0 || date.getDay() === 6);
+                }
+            ],
+            // Trigger change event for available time slots
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    // Convert to YYYY-MM-DD format for API
+                    const date = selectedDates[0];
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const apiDate = `${year}-${month}-${day}`;
+
+                    // Update state
+                    state.formData.appointment_date = apiDate;
+
+                    // Load available times for this date
+                    loadAvailableTimesForDate(apiDate);
+                }
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                console.log('Flatpickr initialized successfully');
+            }
+        });
+
+        // Store picker instance for potential cleanup
+        elements.datePickerInstance = picker;
+
+    } catch (error) {
+        console.error('Error initializing Flatpickr:', error);
+        showError('Σφάλμα αρχικοποίησης του επιλογέα ημερομηνίας. Παρακαλώ ανανεώστε τη σελίδα.');
+    }
+}
+
+/**
+ * Validate manually entered date in DD/MM/YYYY format
+ * Fallback for users who type instead of using picker
+ */
+function validateManualDateEntry(dateStr) {
+    // Match DD/MM/YYYY format
+    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = dateStr.match(dateRegex);
+
+    if (!match) return null;
+
+    const [_, day, month, year] = match;
+    const date = new Date(year, month - 1, day);
+
+    // Verify it's a valid date
+    if (date.getDate() != day || date.getMonth() != (month - 1) || date.getFullYear() != year) {
+        return null;
+    }
+
+    // Check it's not a weekend
+    if (date.getDay() === 0 || date.getDay() === 6) {
+        return null;
+    }
+
+    // Check it's within allowed range
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
     const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 60); // Maximum: 60 days ahead
-    const maxDateStr = maxDate.toISOString().split('T')[0];
+    maxDate.setDate(maxDate.getDate() + 60);
+    maxDate.setHours(23, 59, 59, 999);
 
-    elements.appointmentDate.setAttribute('min', minDate);
-    elements.appointmentDate.setAttribute('max', maxDateStr);
+    if (date < tomorrow || date > maxDate) {
+        return null;
+    }
+
+    return date;
 }
 
 /**
@@ -186,7 +294,11 @@ function validateStep2() {
         return false;
     }
 
-    state.formData.appointment_date = date;
+    // Don't overwrite appointment_date if already set by Flatpickr in YYYY-MM-DD format
+    // Only set it if not already set (fallback for manual entry)
+    if (!state.formData.appointment_date) {
+        state.formData.appointment_date = date;
+    }
     state.formData.appointment_time = time;
     return true;
 }
@@ -500,3 +612,16 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
+// Handle module import errors
+window.addEventListener('error', (e) => {
+    if (e.message && e.message.includes('flatpickr')) {
+        console.error('Failed to load Flatpickr module:', e);
+        const errorMsg = document.getElementById('error-message');
+        if (errorMsg) {
+            document.getElementById('error-text').textContent =
+                'Σφάλμα φόρτωσης της βιβλιοθήκης ημερολογίου. Παρακαλώ ελέγξτε τη σύνδεσή σας στο Internet.';
+            errorMsg.style.display = 'flex';
+        }
+    }
+});
