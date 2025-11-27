@@ -34,4 +34,4 @@ RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh && \
 
 EXPOSE 3000
 
-CMD ["/app/docker-entrypoint.sh"]
+CMD ["sh", "/app/docker-entrypoint.sh"]
