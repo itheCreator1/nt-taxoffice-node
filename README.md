@@ -18,7 +18,7 @@ This branch is intended to eventually merge into `main` after full testing and v
 
 ```
 feature/appointment-system/
-├── src/
+├── src/                  # Application source code
 │   ├── controllers/       # Handles appointment HTTP requests
 │   ├── services/          # Business logic for scheduling
 │   ├── routes/            # API routes for appointments
@@ -26,6 +26,7 @@ feature/appointment-system/
 │   ├── models/            # Appointment DB models
 │   └── config/            # Branch-specific configuration
 ├── tests/                 # Appointment-related tests
+├── docker-compose.yml     # Docker Compose setup for app + DB
 ├── package.json
 └── README.md
 ```
@@ -38,14 +39,37 @@ Clone the repository and checkout the feature branch:
 git clone https://github.com/itheCreator1/nt-taxoffice-node
 cd nt-taxoffice-node
 git checkout feature/appointment-system
-yarn install    # or npm install
 ```
 
-Set up environment variables in `.env`:
+### Docker Compose Setup
+
+The easiest way to get the full environment running is via Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+This will start the Node.js server and any dependent services such as the database.
+
+Check logs with:
+
+```bash
+docker-compose logs -f
+```
+
+Stop the environment:
+
+```bash
+docker-compose down
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and update values if needed:
 
 ```
 PORT=3000
-DB_HOST=localhost
+DB_HOST=db
 DB_USER=root
 DB_PASS=yourpassword
 TOKEN_SECRET=your_secret
@@ -53,8 +77,11 @@ TOKEN_SECRET=your_secret
 
 ## ▶️ Running the Server
 
+With Docker Compose, the server runs automatically. For local development without Docker:
+
 ```bash
-yarn dev    # Runs the server in development mode
+yarn install
+yarn dev
 ```
 
 ## 📚 Appointment System API Endpoints
