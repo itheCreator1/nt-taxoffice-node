@@ -47,7 +47,8 @@ async function queueEmail(type, recipient, data) {
  */
 async function processEmail(queueItem) {
     const db = getDb();
-    const data = JSON.parse(queueItem.data);
+    // MySQL JSON columns return already-parsed objects, no need to JSON.parse()
+    const data = queueItem.data;
 
     try {
         debug(`Processing email: ${queueItem.email_type} to ${queueItem.recipient}`);
