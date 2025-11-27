@@ -89,12 +89,14 @@ CREATE TABLE IF NOT EXISTS email_queue (
     text_body TEXT NOT NULL,
     status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
     attempts INT DEFAULT 0,
-    last_error TEXT,
+    error_message TEXT,
+    next_attempt_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     sent_at TIMESTAMP NULL,
 
     INDEX idx_email_queue_status (status),
-    INDEX idx_email_queue_created (created_at)
+    INDEX idx_email_queue_created (created_at),
+    INDEX idx_email_queue_next_attempt (next_attempt_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert Default Availability (Monday-Friday 09:00-17:00)

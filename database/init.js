@@ -40,11 +40,16 @@ async function initializeSchema() {
         const schemaPath = path.join(__dirname, 'schema.sql');
         const schema = fs.readFileSync(schemaPath, 'utf8');
 
-        // Split by semicolons and execute each statement
-        const statements = schema
+        // Remove comment lines and split by semicolons
+        const cleanedSchema = schema
+            .split('\n')
+            .filter(line => !line.trim().startsWith('--'))
+            .join('\n');
+
+        const statements = cleanedSchema
             .split(';')
             .map(stmt => stmt.trim())
-            .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+            .filter(stmt => stmt.length > 0);
 
         console.log(`\nExecuting ${statements.length} SQL statements...\n`);
 
