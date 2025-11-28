@@ -81,6 +81,16 @@ function formatGreekDate(date) {
 }
 
 /**
+ * Format time in Greek format (HH:mm)
+ * Alias for formatTime to maintain naming consistency
+ * @param {moment.Moment|string|Date} time
+ * @returns {string}
+ */
+function formatGreekTime(time) {
+    return formatTime(time);
+}
+
+/**
  * Get Greek day name
  * @param {number} dayOfWeek - 0=Sunday, 6=Saturday
  * @returns {string}
@@ -282,6 +292,7 @@ module.exports = {
     formatTime,
     formatDateTime,
     formatGreekDate,
+    formatGreekTime,
     getGreekDayName,
     getGreekMonthName,
 
