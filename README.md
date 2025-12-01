@@ -1,75 +1,63 @@
-# NT TaxOffice Node - Appointment System
+# NT TaxOffice Node
 
-This branch introduces the **Appointment System** feature for the NT TaxOffice Node application. It focuses on enabling structured scheduling, managing bookings, and handling calendar availability for tax office operations.
+A modern Node.js application built for managing tax office workflows, designed with scalability, modularity, and real-world business logic in mind. The project currently includes a stable main branch and an active development branch focused on expanding functionality.
 
 ## 🚀 Overview
 
-The `feature/appointment-system` branch is actively being developed to provide:
+NT TaxOffice Node is a backend service built with **Node.js** and **Express**, offering structured APIs for:
 
-* Appointment creation, updating, and cancellation
-* Availability management for staff and offices
-* Validation rules for overlapping appointments
-* Integration with user roles and authentication
-* Clear and structured API responses for front-end consumption
+* User and role management
+* Appointments and scheduling
+* Authentication flows
+* Database operations using modern patterns
 
-This branch is intended to eventually merge into `main` after full testing and validation.
+The project is designed to be easy to extend and maintain, featuring clean architecture, modular routing, and organized controller/service layers.
 
-## 🏗 Project Structure (Branch)
+## 🌿 Active Development Branch: `feature/appointment-system`
+
+A major upcoming feature is under development in the `feature/appointment-system` branch. This branch includes:
+
+* Full appointment booking system
+* Calendar & availability logic
+* Appointment validation rules
+* Improved error handling and response structure
+* Cleaner service patterns
+
+This branch refactors parts of the existing project and adds new modules that will soon be merged into `main`.
+
+You can explore the branch here:
+`feature/appointment-system`
+
+## 🏗 Project Structure
 
 ```
-feature/appointment-system/
-├── src/                  # Application source code
-│   ├── controllers/       # Handles appointment HTTP requests
-│   ├── services/          # Business logic for scheduling
-│   ├── routes/            # API routes for appointments
-│   ├── middleware/        # Validation, auth, error handling
-│   ├── models/            # Appointment DB models
-│   └── config/            # Branch-specific configuration
-├── tests/                 # Appointment-related tests
-├── docker-compose.yml     # Docker Compose setup for app + DB
+nt-taxoffice-node/
+├── src/
+│   ├── controllers/       # Request handling
+│   ├── services/          # Business logic
+│   ├── routes/            # Express routing
+│   ├── middleware/        # Auth, validation, etc.
+│   ├── models/            # Database models
+│   └── config/            # Environment & database config
+├── tests/                 # Future test suite
 ├── package.json
 └── README.md
 ```
 
-## 📦 Installation & Setup
-
-Clone the repository and checkout the feature branch:
+## 📦 Installation
 
 ```bash
 git clone https://github.com/itheCreator1/nt-taxoffice-node
-cd nt-taxoffice-node
-git checkout feature/appointment-system
+yarn install    # or npm install
 ```
 
-### Docker Compose Setup
+### Environment Setup
 
-The easiest way to get the full environment running is via Docker Compose:
-
-```bash
-docker-compose up -d
-```
-
-This will start the Node.js server and any dependent services such as the database.
-
-Check logs with:
-
-```bash
-docker-compose logs -f
-```
-
-Stop the environment:
-
-```bash
-docker-compose down
-```
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and update values if needed:
+Create a `.env` file:
 
 ```
 PORT=3000
-DB_HOST=db
+DB_HOST=localhost
 DB_USER=root
 DB_PASS=yourpassword
 TOKEN_SECRET=your_secret
@@ -77,44 +65,47 @@ TOKEN_SECRET=your_secret
 
 ## ▶️ Running the Server
 
-With Docker Compose, the server runs automatically. For local development without Docker:
+Development mode:
 
 ```bash
-yarn install
 yarn dev
 ```
 
-## 📚 Appointment System API Endpoints
+Production mode:
 
-* **POST /appointments** – create a new appointment
-* **GET /appointments** – list appointments
-* **GET /appointments/:id** – fetch specific appointment details
-* **PUT /appointments/:id** – update an appointment
-* **DELETE /appointments/:id** – cancel an appointment
+```bash
+yarn start
+```
 
-### Notes
+## 📚 API Highlights
 
-* Validations prevent overlapping appointments
-* Responses are structured for easy front-end integration
-* Role-based access control is enforced for staff and admin users
+* **Auth API** – login, token validation
+* **Users API** – create, update, delete, roles
+* **Appointments API** *(in feature branch)* – book, cancel, fetch schedule
+
+Detailed documentation will be added after the appointment system merge.
 
 ## 🧪 Tests
 
+Test suite will be expanded in upcoming versions.
+Run tests (if present):
+
 ```bash
-yarn test    # Runs appointment-related tests
+yarn test
 ```
 
-## 🗺 Roadmap for Branch
+## 🗺 Roadmap
 
-* [ ] Finalize all validation rules
-* [ ] Complete full test coverage
-* [ ] Merge into `main` branch
-* [ ] Add API documentation
-* [ ] Ensure backward compatibility with existing system
+* [ ] Finalize appointment system
+* [ ] Merge feature branch into main
+* [ ] Add complete API documentation
+* [ ] Add automated tests
+* [ ] Docker support
+* [ ] CI/CD integration
 
 ## 🤝 Contributing
 
-Feedback and contributions are welcome. Please open issues or pull requests.
+Contributions and feedback are welcome. Open issues or pull requests for improvements.
 
 ## 📄 License
 
