@@ -1,0 +1,127 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: nt_taxoffice_appointments_test
+          MYSQL_USER: nt_taxoffice_test
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Wait for MySQL
+      run: |
+        until mysqladmin ping -h 127.0.0.1 -P 3306 --silent; do
+          echo 'Waiting for MySQL...'
+          sleep 2
+        done
+
+    - name: Initialize test database
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u root -proot_password nt_taxoffice_appointments_test < database/schema.sql
+
+    - name: Create .env.test
+      run: |
+        cat > .env.test << EOF
+        PORT=3001
+        NODE_ENV=test
+        SESSION_SECRET=test_secret_key_for_ci_testing_only
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_USER=nt_taxoffice_test
+        DB_PASSWORD=test_password
+        DB_NAME=nt_taxoffice_appointments_test
+        GMAIL_USER=test@example.com
+        GMAIL_APP_PASSWORD=test_app_password
+        ADMIN_EMAIL=admin@example.com
+        APP_URL=http://localhost:3001
+        APP_NAME=NT - TAXOFFICE (TEST)
+        RATE_LIMIT_WINDOW_MS=60000
+        RATE_LIMIT_MAX_REQUESTS=1000
+        TIMEZONE=Europe/Athens
+        DEFAULT_SLOT_DURATION=30
+        BCRYPT_ROUNDS=4
+        EOF
+
+    - name: Run unit tests
+      run: npm run test:unit
+
+    - name: Run integration tests
+      run: npm run test:integration
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Start application for E2E tests
+      run: |
+        npm start &
+        sleep 5
+      env:
+        NODE_ENV: test
+
+    - name: Run E2E tests
+      run: npm run test:e2e
+
+    - name: Generate coverage report
+      run: npm run test:coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+      continue-on-error: true
+
+    - name: Archive test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-node-${{ matrix.node-version }}
+        path: |
+          coverage/
+          test-results/
+        retention-days: 30
+
+    - name: Archive Playwright report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report-node-${{ matrix.node-version }}
+        path: playwright-report/
+        retention-days: 30
