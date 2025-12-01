@@ -316,11 +316,11 @@ The site showcases these service categories:
 
  
 
-## Appointment Booking System (In Development)
+## Appointment Booking System
 
-**Status**: Implementation Ready - Phased Approach
-**Database**: MySQL 8.x
-**Estimated Time**: 44-57 hours across 9 phases
+**Status**: ✅ IMPLEMENTED AND MERGED (December 2025)
+**Database**: MySQL 8.0
+**Branch**: Merged into `main` from `feature/appointment-system`
 
 ### System Overview
 
@@ -346,58 +346,99 @@ A comprehensive online appointment booking system with:
 - **Frontend**: Vanilla JavaScript ES6 modules (maintaining existing patterns)
 - **Styling**: Extending existing modular CSS architecture
 
-### Implementation Phases
+### Implementation Status
 
-1. **Phase 1**: Foundation & Database (5-6h)
-   - MySQL setup, connection pooling
-   - Core services (database, email, appointments)
-   - Utilities (validation, sanitization, timezone, logger)
-   - Middleware (auth, rate limiting, error handling)
+**Completed Phases:**
 
-2. **Phase 2**: Public Availability API (6-8h)
-   - Availability calculation service
-   - Calendar API endpoints
-   - Business rules (24h notice, 60-day window)
+1. **Phase 1**: Foundation & Database ✅
+   - MySQL 8.0 connection pooling with mysql2
+   - Services: database, email, emailQueue, appointments, availability
+   - Utils: validation, sanitization, timezone, logger
+   - Middleware: auth, rateLimiter, errorHandler, setupCheck
+   - **Key Achievement**: Robust service-oriented architecture
 
-3. **Phase 3**: Public Booking System (7-9h)
-   - Appointments service with transactions
-   - Booking API endpoints
-   - Calendar UI and booking form
-   - Concurrent booking protection
+2. **Phase 2**: Public Availability API ✅
+   - Availability calculation with slot generation
+   - 4 API endpoints: /dates, /slots/:date, /check, /next
+   - Configurable booking window (30 days default)
+   - **Key Achievement**: Real-time availability checking
 
-4. **Phase 4**: Admin Authentication (4-5h)
-   - Setup wizard for first admin
-   - Login/logout system
-   - Session management
-   - Authentication middleware
+3. **Phase 3**: Public Booking System ✅
+   - Appointments service with MySQL transactions
+   - Optimistic locking (version column) prevents race conditions
+   - 3-step booking interface (service → date/time → form)
+   - Flatpickr date picker with DD/MM/YYYY format
+   - **Key Achievement**: Zero double-booking guarantee via database locks
 
-5. **Phase 5**: Admin Dashboard (6-8h)
-   - Appointment management interface
-   - Filtering and pagination
-   - Approval/decline workflow
-   - Client history view
+4. **Phase 4**: Admin Authentication ✅
+   - First-time setup wizard at /admin/setup.html
+   - Session-based auth with bcrypt (12 rounds)
+   - Login/logout with session persistence
+   - Setup check middleware redirects
+   - **Key Achievement**: Secure, simple authentication without JWTs
 
-6. **Phase 6**: Email System (5-6h)
-   - Nodemailer configuration
-   - Email queue with retry logic
-   - 12 Greek email templates (6 pairs HTML+TXT)
-   - Integration with booking flow
+5. **Phase 5**: Admin Dashboard ✅
+   - Comprehensive appointment management UI
+   - Filters: status, date range, search
+   - Sorting and pagination (50 per page)
+   - Approve/decline with reasons
+   - Real-time summary statistics
+   - **Key Achievement**: CSP-compliant event delegation (no inline handlers)
 
-7. **Phase 7**: Cancellation System (3-4h)
+6. **Phase 6**: Email System ✅
+   - Nodemailer with Gmail SMTP
+   - Email queue table with retry logic (max 3 attempts)
+   - 10 EJS templates (HTML + text versions)
+   - Runs every 30 seconds in background
+   - **Key Achievement**: Reliable delivery with automatic retries
+
+7. **Phase 7**: Cancellation System ✅
    - Token-based cancellation page
-   - Cancellation API
-   - Admin notifications
+   - DELETE /api/appointments/cancel/:token endpoint
+   - Secure UUID tokens (36 characters)
+   - Email notifications on cancellation
+   - **Key Achievement**: One-click cancellation via email links
 
-8. **Phase 8**: Availability Management (4-5h)
-   - Weekly schedule editor
-   - Blocked dates management
-   - Conflict detection
+8. **Phase 8**: Availability Management ✅
+   - Per-day working hours configuration (7 days/week)
+   - Blocked dates management for holidays
+   - Changes take effect immediately
+   - MySQL transactions for atomic updates
+   - **Key Achievement**: Flexible scheduling with per-day customization
 
-9. **Phase 9**: Polish & Testing (4-6h)
-   - Integration testing
-   - Responsive design verification
-   - Accessibility improvements
-   - Documentation
+9. **Phase 9**: Testing & Polish ✅
+   - Playwright E2E test infrastructure
+   - Complete booking flow test
+   - CSP compliance fixes (event delegation)
+   - Responsive design verified
+   - Comprehensive documentation (README, API docs, CHANGELOG)
+   - **Key Achievement**: Production-ready with test coverage
+
+### Post-Implementation Fixes
+
+**CSP Compliance** (November 2025):
+- Removed all inline onclick handlers
+- Implemented event delegation pattern throughout
+- Dashboard action buttons now use data-action attributes
+- Blocked dates removal uses event delegation
+- Result: Zero CSP violations, modern JavaScript practices
+
+**Schema Alignment** (November 2025):
+- Fixed availability settings to use per-day structure (7 rows)
+- Updated admin panel to handle array of days
+- Added transaction support for availability updates
+- Result: Consistent data model across frontend/backend
+
+**Flatpickr Integration** (November 2025):
+- Switched from ESM to UMD build
+- Hosted flatpickr locally for reliability
+- Corrected Font Awesome SRI hashes
+- Result: Stable date picker in production
+
+**Email & Timezone** (November 2025):
+- Added formatGreekTime function to timezone utils
+- Fixed MySQL JSON column parsing
+- Result: Accurate timestamps in all email templates
 
 ### Database Schema
 
