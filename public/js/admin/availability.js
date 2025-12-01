@@ -11,13 +11,12 @@ const userName = document.getElementById('userName');
 const userEmail = document.getElementById('userEmail');
 const userInitials = document.getElementById('userInitials');
 const settingsForm = document.getElementById('settingsForm');
-const officeHoursStart = document.getElementById('officeHoursStart');
-const officeHoursEnd = document.getElementById('officeHoursEnd');
-const slotDuration = document.getElementById('slotDuration');
 const blockDateForm = document.getElementById('blockDateForm');
 const blockDate = document.getElementById('blockDate');
 const blockReason = document.getElementById('blockReason');
 const blockedDatesList = document.getElementById('blockedDatesList');
+
+const dayNames = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
 
 function showAlert(message, type = 'info') {
     const alert = document.createElement('div');
@@ -25,6 +24,51 @@ function showAlert(message, type = 'info') {
     alert.textContent = message;
     alertContainer.appendChild(alert);
     setTimeout(() => alert.remove(), 5000);
+}
+
+function renderDaysForm(days) {
+    const container = document.getElementById('daysContainer');
+    if (!container) return;
+
+    container.innerHTML = days.map(day => `
+        <div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <h3 style="font-size:16px;font-weight:600;margin:0;">${dayNames[day.day_of_week]}</h3>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox"
+                           class="day-checkbox"
+                           data-day="${day.day_of_week}"
+                           ${day.is_working_day ? 'checked' : ''}>
+                    <span>Εργάσιμη</span>
+                </label>
+            </div>
+            <div class="day-hours" id="hours-${day.day_of_week}" style="display:${day.is_working_day ? 'grid' : 'none'};grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                    <label style="display:block;font-size:14px;margin-bottom:6px;">Ώρα Έναρξης</label>
+                    <input type="time"
+                           class="form-control day-start"
+                           data-day="${day.day_of_week}"
+                           value="${day.start_time ? day.start_time.substring(0, 5) : '09:00'}">
+                </div>
+                <div>
+                    <label style="display:block;font-size:14px;margin-bottom:6px;">Ώρα Λήξης</label>
+                    <input type="time"
+                           class="form-control day-end"
+                           data-day="${day.day_of_week}"
+                           value="${day.end_time ? day.end_time.substring(0, 5) : '17:00'}">
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Add event listeners for checkboxes
+    document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const day = e.target.dataset.day;
+            const hoursDiv = document.getElementById(`hours-${day}`);
+            hoursDiv.style.display = e.target.checked ? 'grid' : 'none';
+        });
+    });
 }
 
 async function checkAuth() {
@@ -50,37 +94,46 @@ async function loadSettings() {
         const response = await fetch('/api/admin/availability/settings');
         const data = await response.json();
         if (data.success) {
-            const settings = data.data;
-            officeHoursStart.value = settings.office_hours_start.substring(0, 5);
-            officeHoursEnd.value = settings.office_hours_end.substring(0, 5);
-            slotDuration.value = settings.slot_duration;
-            const days = settings.working_days.split(',');
-            document.querySelectorAll('input[name="workingDays"]').forEach(checkbox => {
-                checkbox.checked = days.includes(checkbox.value);
-            });
+            const days = data.data.days;
+            renderDaysForm(days);
+        } else {
+            showAlert(data.message || 'Σφάλμα φόρτωσης ρυθμίσεων.', 'error');
         }
     } catch (error) {
+        console.error('Error loading settings:', error);
         showAlert('Σφάλμα φόρτωσης ρυθμίσεων.', 'error');
     }
 }
 
 async function saveSettings(e) {
     e.preventDefault();
-    const workingDays = Array.from(document.querySelectorAll('input[name="workingDays"]:checked')).map(cb => cb.value);
-    if (workingDays.length === 0) {
-        showAlert('Επιλέξτε τουλάχιστον μία ημέρα λειτουργίας.', 'error');
+
+    // Collect data from all 7 days
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+        const checkbox = document.querySelector(`.day-checkbox[data-day="${i}"]`);
+        const startInput = document.querySelector(`.day-start[data-day="${i}"]`);
+        const endInput = document.querySelector(`.day-end[data-day="${i}"]`);
+
+        days.push({
+            day_of_week: i,
+            is_working_day: checkbox.checked,
+            start_time: checkbox.checked ? startInput.value + ':00' : null,
+            end_time: checkbox.checked ? endInput.value + ':00' : null
+        });
+    }
+
+    // Validation: at least one working day
+    if (!days.some(d => d.is_working_day)) {
+        showAlert('Επιλέξτε τουλάχιστον μία εργάσιμη ημέρα.', 'error');
         return;
     }
+
     try {
         const response = await fetch('/api/admin/availability/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                office_hours_start: officeHoursStart.value + ':00',
-                office_hours_end: officeHoursEnd.value + ':00',
-                slot_duration: parseInt(slotDuration.value),
-                working_days: workingDays.join(',')
-            })
+            body: JSON.stringify({ days })
         });
         const data = await response.json();
         if (data.success) {
@@ -111,7 +164,7 @@ async function loadBlockedDates() {
                         <strong>${formattedDate}</strong>
                         ${bd.reason ? '<br><small style="color:#6b7280;">' + bd.reason + '</small>' : ''}
                     </div>
-                    <button class="btn btn-sm btn-danger" onclick="removeBlockedDate(${bd.id})">Αφαίρεση</button>
+                    <button class="btn btn-sm btn-danger remove-blocked-date" data-id="${bd.id}">Αφαίρεση</button>
                 </div>
                 `;
             }).join('');
@@ -147,7 +200,7 @@ async function addBlockedDate(e) {
     }
 }
 
-window.removeBlockedDate = async function(id) {
+async function removeBlockedDate(id) {
     if (!confirm('Είστε σίγουροι ότι θέλετε να αφαιρέσετε αυτή την αποκλεισμένη ημερομηνία;')) return;
     try {
         const response = await fetch('/api/admin/availability/blocked-dates/' + id, { method: 'DELETE' });
@@ -161,7 +214,15 @@ window.removeBlockedDate = async function(id) {
     } catch (error) {
         showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
     }
-};
+}
+
+// Event delegation for remove blocked date buttons
+blockedDatesList.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('remove-blocked-date')) {
+        const id = e.target.dataset.id;
+        await removeBlockedDate(id);
+    }
+});
 
 sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
 logoutBtn.addEventListener('click', async () => {

@@ -18,90 +18,97 @@ router.use(apiLimiter);
 
 /**
  * GET /api/admin/availability/settings
- * Get current availability settings
+ * Get current availability settings (per-day structure)
  */
 router.get('/settings', asyncHandler(async (req, res) => {
     const db = getDb();
 
+    // Fetch all 7 days
     const [settings] = await db.query(
-        'SELECT * FROM availability_settings ORDER BY id DESC LIMIT 1'
+        'SELECT day_of_week, is_working_day, start_time, end_time FROM availability_settings ORDER BY day_of_week'
     );
 
     if (settings.length === 0) {
-        // Return default settings
+        // Return empty structure (should not happen if schema populated correctly)
         return res.json({
             success: true,
-            data: {
-                office_hours_start: '09:00:00',
-                office_hours_end: '17:00:00',
-                slot_duration: 60,
-                working_days: 'monday,tuesday,wednesday,thursday,friday'
-            }
+            data: { days: [] }
         });
     }
 
+    // Transform to admin-friendly format
+    const days = settings.map(row => ({
+        day_of_week: row.day_of_week,
+        is_working_day: Boolean(row.is_working_day),
+        start_time: row.start_time,
+        end_time: row.end_time
+    }));
+
     res.json({
         success: true,
-        data: settings[0]
+        data: { days }
     });
 }));
 
 /**
  * PUT /api/admin/availability/settings
- * Update availability settings
+ * Update availability settings (per-day structure)
  */
 router.put('/settings', asyncHandler(async (req, res) => {
     const db = getDb();
-    const { office_hours_start, office_hours_end, slot_duration, working_days } = req.body;
+    const { days } = req.body;
 
-    // Validation
-    if (!office_hours_start || !office_hours_end || !slot_duration || !working_days) {
+    // Validation: must have all 7 days
+    if (!days || !Array.isArray(days) || days.length !== 7) {
         return res.status(400).json({
             success: false,
-            message: 'Όλα τα πεδία είναι υποχρεωτικά.'
+            message: 'Πρέπει να παρέχετε ρυθμίσεις για όλες τις 7 ημέρες.'
         });
     }
 
-    // Validate slot duration
-    if (slot_duration < 15 || slot_duration > 240) {
-        return res.status(400).json({
-            success: false,
-            message: 'Η διάρκεια ραντεβού πρέπει να είναι μεταξύ 15 και 240 λεπτών.'
+    // Validate each working day has hours
+    for (const day of days) {
+        if (day.is_working_day && (!day.start_time || !day.end_time)) {
+            return res.status(400).json({
+                success: false,
+                message: `Η ημέρα ${day.day_of_week} είναι εργάσιμη αλλά δεν έχει ώρες λειτουργίας.`
+            });
+        }
+    }
+
+    // Update each day using transaction
+    await db.query('START TRANSACTION');
+
+    try {
+        for (const day of days) {
+            await db.query(
+                `UPDATE availability_settings
+                 SET is_working_day = ?, start_time = ?, end_time = ?
+                 WHERE day_of_week = ?`,
+                [
+                    day.is_working_day,
+                    day.is_working_day ? day.start_time : null,
+                    day.is_working_day ? day.end_time : null,
+                    day.day_of_week
+                ]
+            );
+        }
+
+        await db.query('COMMIT');
+
+        logSecurityEvent('Availability settings updated', {
+            adminUsername: req.session.username,
+            changes: days.filter(d => d.is_working_day).length + ' working days configured'
         });
+
+        res.json({
+            success: true,
+            message: 'Οι ρυθμίσεις διαθεσιμότητας ενημερώθηκαν επιτυχώς.'
+        });
+    } catch (error) {
+        await db.query('ROLLBACK');
+        throw error;
     }
-
-    // Check if settings exist
-    const [existing] = await db.query('SELECT id FROM availability_settings LIMIT 1');
-
-    if (existing.length === 0) {
-        // Insert new settings
-        await db.query(
-            `INSERT INTO availability_settings
-             (office_hours_start, office_hours_end, slot_duration, working_days)
-             VALUES (?, ?, ?, ?)`,
-            [office_hours_start, office_hours_end, slot_duration, working_days]
-        );
-    } else {
-        // Update existing settings
-        await db.query(
-            `UPDATE availability_settings
-             SET office_hours_start = ?, office_hours_end = ?,
-                 slot_duration = ?, working_days = ?
-             WHERE id = ?`,
-            [office_hours_start, office_hours_end, slot_duration, working_days, existing[0].id]
-        );
-    }
-
-    logSecurityEvent('Availability settings updated', {
-        adminUsername: req.session.username,
-        office_hours: `${office_hours_start} - ${office_hours_end}`,
-        slot_duration
-    });
-
-    res.json({
-        success: true,
-        message: 'Οι ρυθμίσεις διαθεσιμότητας ενημερώθηκαν επιτυχώς.'
-    });
 }));
 
 /**

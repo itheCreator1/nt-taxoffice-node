@@ -31,23 +31,8 @@
 <section style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:30px;margin-bottom:30px;">
 <h2 style="font-size:18px;font-weight:600;margin-bottom:20px;">Ρυθμίσεις Ωραρίου</h2>
 <form id="settingsForm">
-<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:20px;">
-<div><label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;">Ώρα Έναρξης</label><input type="time" id="officeHoursStart" class="form-control" required></div>
-<div><label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;">Ώρα Λήξης</label><input type="time" id="officeHoursEnd" class="form-control" required></div>
-</div>
-<div style="margin-bottom:20px;"><label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;">Διάρκεια Ραντεβού (λεπτά)</label><input type="number" id="slotDuration" class="form-control" min="15" max="240" step="15" required></div>
-<div style="margin-bottom:20px;"><label style="display:block;font-size:14px;font-weight:500;margin-bottom:12px;">Ημέρες Λειτουργίας</label>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="monday"> Δευτέρα</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="tuesday"> Τρίτη</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="wednesday"> Τετάρτη</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="thursday"> Πέμπτη</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="friday"> Παρασκευή</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="saturday"> Σάββατο</label>
-<label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="workingDays" value="sunday"> Κυριακή</label>
-</div>
-</div>
-<button type="submit" class="btn btn-primary" id="saveSettingsBtn">Αποθήκευση Ρυθμίσεων</button>
+<div id="daysContainer"></div>
+<button type="submit" class="btn btn-primary" id="saveSettingsBtn" style="margin-top:20px;">Αποθήκευση Ρυθμίσεων</button>
 </form>
 </section>
 <section style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:30px;">

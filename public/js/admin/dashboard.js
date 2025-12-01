@@ -204,20 +204,20 @@ function renderAppointmentsTable() {
             <td><span class="status-badge status-${apt.status}">${getStatusLabel(apt.status)}</span></td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn view-btn" onclick="viewAppointment(${apt.id})" title="Προβολή">
+                    <button class="action-btn view-btn" data-action="view" data-id="${apt.id}" title="Προβολή">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                     </button>
                     ${apt.status !== 'cancelled' ? `
-                    <button class="action-btn status-btn" onclick="openStatusModal(${apt.id})" title="Αλλαγή κατάστασης">
+                    <button class="action-btn status-btn" data-action="status" data-id="${apt.id}" title="Αλλαγή κατάστασης">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </button>
                     ` : ''}
-                    <button class="action-btn delete-btn" onclick="openDeleteModal(${apt.id})" title="Διαγραφή">
+                    <button class="action-btn delete-btn" data-action="delete" data-id="${apt.id}" title="Διαγραφή">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -242,7 +242,7 @@ function updatePagination(pagination) {
 /**
  * View appointment details
  */
-window.viewAppointment = async function(id) {
+async function viewAppointment(id) {
     try {
         const response = await fetch(`/api/admin/appointments/${id}`);
         const data = await response.json();
@@ -341,7 +341,7 @@ window.viewAppointment = async function(id) {
 /**
  * Open status change modal
  */
-window.openStatusModal = function(id) {
+function openStatusModal(id) {
     statusAppointmentId.value = id;
     newStatus.value = '';
     declineReason.value = '';
@@ -398,7 +398,7 @@ statusForm.addEventListener('submit', async (e) => {
 /**
  * Open delete modal
  */
-window.openDeleteModal = function(id) {
+function openDeleteModal(id) {
     deleteAppointmentId.value = id;
     deleteModal.classList.add('show');
 };
@@ -608,6 +608,32 @@ newStatus.addEventListener('change', (e) => {
             modal.classList.remove('show');
         }
     });
+});
+
+/**
+ * Event delegation for action buttons
+ * Handles view, status, and delete actions for appointments
+ */
+appointmentsTableBody.addEventListener('click', (e) => {
+    const button = e.target.closest('.action-btn');
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const id = parseInt(button.dataset.id);
+
+    if (!action || !id) return;
+
+    switch (action) {
+        case 'view':
+            viewAppointment(id);
+            break;
+        case 'status':
+            openStatusModal(id);
+            break;
+        case 'delete':
+            openDeleteModal(id);
+            break;
+    }
 });
 
 /**
