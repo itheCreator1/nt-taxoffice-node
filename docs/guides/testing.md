@@ -39,28 +39,33 @@ The project uses a comprehensive testing strategy with multiple layers:
 
 ```
 tests/
-├── setup.js                      # Frontend test setup (jsdom)
-├── setup-backend.js              # Backend test setup (node)
+├── setup.js                           # Frontend test setup (jsdom)
+├── setup-backend.js                   # Backend test setup (node)
 ├── helpers/
-│   ├── database.js               # Database test utilities
-│   ├── fixtures.js               # Test data factories
-│   └── mocks.js                  # Mock implementations
+│   ├── database.js                    # Database test utilities
+│   ├── fixtures.js                    # Test data factories
+│   ├── mocks.js                       # Mock implementations
+│   └── testApp.js                     # Test Express app setup
 ├── unit/
 │   ├── utils/
-│   │   ├── validation.test.js    # Validation utility tests
-│   │   ├── sanitization.test.js  # Sanitization utility tests
-│   │   └── timezone.test.js      # Timezone utility tests
+│   │   ├── validation.test.js         # Validation utility tests
+│   │   ├── sanitization.test.js       # Sanitization utility tests
+│   │   └── timezone.test.js           # Timezone utility tests
 │   ├── services/
-│   │   └── appointments.test.js  # Appointments service tests
+│   │   └── appointments.test.js       # Appointments service tests
 │   └── middleware/
 │       └── (middleware tests)
 ├── integration/
-│   └── api/
-│       └── appointments.test.js  # Appointments API integration tests
+│   ├── api/
+│   │   └── appointments.test.js       # Public API integration tests
+│   └── admin/
+│       ├── auth.test.js               # Admin auth tests (10 tests)
+│       ├── appointments.test.js       # Admin appointments tests (26 tests)
+│       └── availability.test.js       # Admin availability tests (22 tests)
 ├── frontend/
 │   └── (frontend component tests)
 └── e2e/
-    └── appointmentBooking.spec.js # E2E appointment booking test
+    └── appointmentBooking.spec.js     # E2E appointment booking test
 ```
 
 ---
@@ -121,6 +126,16 @@ npm run test:frontend
 **Run integration tests**:
 ```bash
 npm run test:integration
+```
+
+**Run admin integration tests only**:
+```bash
+npm run test:integration -- tests/integration/admin/
+```
+
+**Run specific admin test file**:
+```bash
+npm run test:integration -- tests/integration/admin/appointments.test.js
 ```
 
 **Run E2E tests**:
@@ -541,8 +556,77 @@ Add to README.md:
 
 ---
 
+## Admin Integration Tests
+
+The project includes comprehensive admin integration tests covering authentication, appointment management, and availability settings.
+
+### Test Coverage
+
+- **Admin Authentication** (`tests/integration/admin/auth.test.js`): 10 tests
+  - Admin setup, login, logout, session management
+
+- **Admin Appointments** (`tests/integration/admin/appointments.test.js`): 26 tests
+  - GET /api/admin/appointments (filtering, pagination, sorting)
+  - GET /api/admin/appointments/stats (statistics)
+  - GET /api/admin/appointments/:id (details with history)
+  - PUT /api/admin/appointments/:id/status (confirm, decline, complete)
+  - PUT /api/admin/appointments/:id (update details)
+  - DELETE /api/admin/appointments/:id (deletion)
+
+- **Admin Availability** (`tests/integration/admin/availability.test.js`): 22 tests
+  - GET /api/admin/availability/settings (retrieve settings)
+  - PUT /api/admin/availability/settings (update with validation)
+  - GET /api/admin/availability/blocked-dates (future dates)
+  - POST /api/admin/availability/blocked-dates (add blocked date)
+  - DELETE /api/admin/availability/blocked-dates/:id (remove blocked date)
+
+### Running Admin Tests
+
+```bash
+# All admin tests
+npm run test:integration -- tests/integration/admin/
+
+# Specific test file
+npm run test:integration -- tests/integration/admin/appointments.test.js
+
+# Single test by name
+npm run test:integration -- tests/integration/admin/appointments.test.js -t "should get appointments with pagination"
+```
+
+### Admin Test Patterns
+
+Admin tests use session-based authentication:
+
+```javascript
+// Create admin and login
+await request(app)
+    .post('/api/admin/setup')
+    .send({
+        username: 'admin',
+        email: 'admin@example.com',
+        password: 'SecurePass123!',
+        confirmPassword: 'SecurePass123!'
+    });
+
+agent = request.agent(app);
+await agent
+    .post('/api/admin/login')
+    .send({
+        username: 'admin',
+        password: 'SecurePass123!'
+    });
+
+// Now agent maintains session cookies
+await agent.get('/api/admin/appointments').expect(200);
+```
+
+**Learn More**: See [Admin Testing Guide](./admin-testing.md) for comprehensive admin testing documentation.
+
+---
+
 ## Further Reading
 
+- [Admin Testing Guide](./admin-testing.md) - Detailed guide for admin integration tests
 - [Jest Documentation](https://jestjs.io/docs/getting-started)
 - [Playwright Documentation](https://playwright.dev/)
 - [Supertest Documentation](https://github.com/visionmedia/supertest)

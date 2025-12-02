@@ -17,7 +17,9 @@
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:setup": "bash scripts/test-setup.sh",
     "test:db:init": "node scripts/init-test-db.js",
-    "test:db:reset": "node scripts/init-test-db.js"
+    "test:db:reset": "node scripts/init-test-db.js",
+    "coverage:report": "bash scripts/coverage-report.sh",
+    "coverage:view": "bash scripts/coverage-report.sh no"
   },
   "keywords": [
     "express",

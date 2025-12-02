@@ -186,7 +186,7 @@ docker-compose exec mysql mysql -uroot -p -e "SHOW DATABASES;"
 docker-compose down
 ```
 
-**Learn More:** See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for production deployment.
+**Learn More:** See [docs/guides/deployment.md](docs/guides/deployment.md) for production deployment.
 
 ---
 
@@ -401,7 +401,7 @@ Protected by session authentication:
 - **POST `/api/admin/availability/blocked-dates`** - Add a blocked date
 - **DELETE `/api/admin/availability/blocked-dates/:id`** - Remove a blocked date
 
-**Learn More:** See [docs/API.md](docs/API.md) for complete API documentation with examples.
+**Learn More:** See [docs/api/endpoints.md](docs/api/endpoints.md) for complete API documentation with examples.
 
 ---
 
@@ -443,7 +443,7 @@ Protected by session authentication:
 | **Completed** | Appointment occurred (manual update) | (Final state) |
 | **Cancelled** | Client cancelled before appointment | (Final state) |
 
-**Learn More:** See [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) for detailed admin documentation.
+**Learn More:** See [docs/guides/admin-panel.md](docs/guides/admin-panel.md) for detailed admin documentation.
 
 ---
 
@@ -487,7 +487,7 @@ Set `GMAIL_USER` and `GMAIL_APP_PASSWORD` in `.env` to see real emails.
 5. **`email_queue`** - Queued emails with retry logic
 6. **`security_audit_log`** - Security event tracking (logins, changes)
 
-**Learn More:** See [docs/DATABASE.md](docs/DATABASE.md) for complete schema documentation.
+**Learn More:** Database schema is documented in the migration files at [database/schema.sql](database/schema.sql).
 
 ---
 
@@ -520,7 +520,7 @@ Unit tests are planned for:
 - `utils/validation.js` - Validation rules
 - `utils/timezone.js` - Timezone conversions
 
-**Learn More:** See [docs/TESTING.md](docs/TESTING.md) for testing guidelines.
+**Learn More:** See [docs/guides/testing.md](docs/guides/testing.md) for comprehensive testing guidelines.
 
 ---
 
@@ -555,7 +555,7 @@ docker-compose -f docker-compose.prod.yml up -d
 5. Initialize database: `mysql < database/schema.sql`
 6. Start with PM2: `pm2 start server.js --name nt-taxoffice`
 
-**Learn More:** See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for complete deployment guide.
+**Learn More:** See [docs/guides/deployment.md](docs/guides/deployment.md) for complete deployment guide.
 
 ---
 
@@ -600,7 +600,7 @@ docker-compose -f docker-compose.prod.yml up -d
 4. Check that the date isn't in "blocked dates"
 5. Verify `DEFAULT_SLOT_DURATION` in `.env` is reasonable (e.g., 30 minutes)
 
-**Learn More:** See [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) for troubleshooting.
+**Learn More:** See [docs/guides/admin-panel.md](docs/guides/admin-panel.md) for troubleshooting.
 
 ---
 
@@ -628,7 +628,7 @@ Contributions are welcome! Please:
 
 ## Support
 
-- **Documentation:** See the `docs/` directory for detailed guides
+- **Documentation:** See the [docs/README.md](docs/README.md) for all available guides
 - **Issues:** Report bugs or request features on [GitHub Issues](https://github.com/itheCreator1/nt-taxoffice-node/issues)
 - **Email:** For deployment support, contact the development team
 
