@@ -33,6 +33,8 @@ function createTestApp() {
     app.use('/api/appointments', require('../../routes/api/appointments'));
     app.use('/api/availability', require('../../routes/api/availability'));
     app.use('/api/admin', require('../../routes/admin/auth'));
+    app.use('/api/admin/appointments', require('../../routes/admin/appointments'));
+    app.use('/api/admin/availability', require('../../routes/admin/availability'));
 
     // Error handling middleware
     app.use((err, req, res, next) => {
