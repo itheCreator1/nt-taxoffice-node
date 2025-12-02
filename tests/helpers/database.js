@@ -138,7 +138,7 @@ async function query(sql, params = []) {
     });
 
     try {
-        const [results] = await connection.query(sql, params);
+        const results = await connection.query(sql, params);
         return results;
     } finally {
         await connection.end();
