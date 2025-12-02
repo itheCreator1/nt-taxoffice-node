@@ -15,6 +15,7 @@
     "test:coverage": "jest --coverage --runInBand",
     "test:e2e": "playwright test",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:setup": "bash scripts/test-setup.sh",
     "test:db:init": "node scripts/init-test-db.js",
     "test:db:reset": "node scripts/init-test-db.js"
   },
