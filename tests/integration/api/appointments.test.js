@@ -41,16 +41,16 @@ describe('Appointments API Integration Tests', () => {
                 .expect(201);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.appointment).toMatchObject({
+            expect(response.body.data).toMatchObject({
                 client_name: appointmentData.client_name,
                 client_email: appointmentData.client_email,
                 status: 'pending'
             });
-            expect(response.body.appointment.id).toBeDefined();
-            expect(response.body.appointment.cancellation_token).toBeDefined();
+            expect(response.body.data.id).toBeDefined();
+            expect(response.body.data.cancellation_token).toBeDefined();
 
             // Verify in database
-            const [rows] = await query('SELECT * FROM appointments WHERE id = ?', [response.body.appointment.id]);
+            const [rows] = await query('SELECT * FROM appointments WHERE id = ?', [response.body.data.id]);
             expect(rows.length).toBe(1);
             expect(rows[0].client_email).toBe(appointmentData.client_email);
         });
@@ -133,7 +133,7 @@ describe('Appointments API Integration Tests', () => {
                 .send(appointmentData)
                 .expect(201);
 
-            const token = createResponse.body.appointment.cancellation_token;
+            const token = createResponse.body.data.cancellation_token;
 
             // Get appointment by token
             const response = await request(app)
@@ -141,7 +141,7 @@ describe('Appointments API Integration Tests', () => {
                 .expect(200);
 
             expect(response.body.success).toBe(true);
-            expect(response.body.appointment).toMatchObject({
+            expect(response.body.data).toMatchObject({
                 client_email: appointmentData.client_email,
                 status: 'pending'
             });
@@ -176,11 +176,11 @@ describe('Appointments API Integration Tests', () => {
                 .send(appointmentData)
                 .expect(201);
 
-            const token = createResponse.body.appointment.cancellation_token;
+            const token = createResponse.body.data.cancellation_token;
 
             // Cancel appointment
             const response = await request(app)
-                .delete(`/api/appointments/cancel/${token}`)
+                .post(`/api/appointments/${token}/cancel`)
                 .expect(200);
 
             expect(response.body.success).toBe(true);
@@ -193,7 +193,7 @@ describe('Appointments API Integration Tests', () => {
 
         test('should return 404 for non-existent token', async () => {
             const response = await request(app)
-                .delete('/api/appointments/cancel/00000000-0000-0000-0000-000000000000')
+                .post('/api/appointments/00000000-0000-0000-0000-000000000000/cancel')
                 .expect(404);
 
             expect(response.body.success).toBe(false);
@@ -210,15 +210,15 @@ describe('Appointments API Integration Tests', () => {
                 .send(appointmentData)
                 .expect(201);
 
-            const token = createResponse.body.appointment.cancellation_token;
+            const token = createResponse.body.data.cancellation_token;
 
             await request(app)
-                .delete(`/api/appointments/cancel/${token}`)
+                .post(`/api/appointments/${token}/cancel`)
                 .expect(200);
 
             // Try to cancel again
             const response = await request(app)
-                .delete(`/api/appointments/cancel/${token}`)
+                .post(`/api/appointments/${token}/cancel`)
                 .expect(400);
 
             expect(response.body.success).toBe(false);
