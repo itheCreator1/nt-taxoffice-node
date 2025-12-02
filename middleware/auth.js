@@ -19,7 +19,7 @@ function requireAuth(req, res, next) {
         });
 
         // For API requests, return JSON error
-        if (req.path.startsWith('/api/')) {
+        if (req.originalUrl.startsWith('/api/')) {
             return res.status(401).json({
                 success: false,
                 message: 'Απαιτείται έλεγχος ταυτότητας.'

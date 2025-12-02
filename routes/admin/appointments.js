@@ -89,10 +89,16 @@ router.get('/', asyncHandler(async (req, res) => {
         [...params, parseInt(limit), offset]
     );
 
+    // Format dates to YYYY-MM-DD for consistent API response
+    const formattedAppointments = appointments.map(apt => ({
+        ...apt,
+        appointment_date: toMySQLDate(apt.appointment_date)
+    }));
+
     res.json({
         success: true,
         data: {
-            appointments,
+            appointments: formattedAppointments,
             pagination: {
                 page: parseInt(page),
                 limit: parseInt(limit),
@@ -184,10 +190,16 @@ router.get('/:id', asyncHandler(async (req, res) => {
         [id]
     );
 
+    // Format appointment date
+    const appointment = {
+        ...appointments[0],
+        appointment_date: toMySQLDate(appointments[0].appointment_date)
+    };
+
     res.json({
         success: true,
         data: {
-            appointment: appointments[0],
+            appointment,
             history
         }
     });
