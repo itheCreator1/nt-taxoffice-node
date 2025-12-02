@@ -368,16 +368,42 @@ test.describe('My Feature', () => {
 
 ### GitHub Actions
 
-The project includes a GitHub Actions workflow that:
+The project uses GitHub Actions for automated testing on every push and pull request. View the latest test results:
 
-- Runs on every push and pull request
-- Tests on multiple Node.js versions
-- Sets up MySQL test database
-- Runs unit, integration, and E2E tests
-- Generates coverage reports
-- Uploads coverage to Codecov (if configured)
+[![Test Suite](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml/badge.svg)](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml)
 
-Workflow file: `.github/workflows/test.yml`
+**Workflow Configuration** (`.github/workflows/test.yml`)
+
+The CI pipeline:
+
+1. **Environment Setup**
+   - Runs on Ubuntu latest
+   - Uses Node.js 18
+   - Starts MySQL 8.0 service container
+
+2. **Test Execution**
+   - Initializes test database with schema
+   - Runs unit tests (`npm run test:unit`)
+   - Runs integration tests (`npm run test:integration`)
+   - Generates coverage report (`npm run test:coverage`)
+
+3. **Artifacts**
+   - Uploads coverage reports (retained for 30 days)
+   - Available in Actions tab for each run
+
+**Viewing CI Results:**
+
+- Check the [Actions tab](https://github.com/itheCreator1/nt-taxoffice-node/actions) on GitHub
+- Pull request checks show inline test results
+- Click on workflow runs to view detailed logs
+
+**Local vs CI Environment:**
+
+The CI environment differs from local:
+- Uses `DB_HOST=127.0.0.1` (GitHub Actions MySQL service)
+- Tests run with `NODE_ENV=test`
+- All environment variables are explicitly set
+- Fresh database for each run (no state carryover)
 
 ### Pre-commit Hooks (Optional)
 

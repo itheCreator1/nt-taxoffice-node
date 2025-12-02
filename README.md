@@ -1,5 +1,7 @@
 # NT TaxOffice Node
 
+[![Test Suite](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml/badge.svg)](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml)
+
 A professional tax office management system featuring a comprehensive appointment booking platform. This project demonstrates modern web development practices with Node.js, including secure authentication, real-time availability management, and automated email workflows.
 
 **Last Updated:** December 1, 2025
