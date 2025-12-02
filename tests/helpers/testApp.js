@@ -32,6 +32,7 @@ function createTestApp() {
     // Mount API routes
     app.use('/api/appointments', require('../../routes/api/appointments'));
     app.use('/api/availability', require('../../routes/api/availability'));
+    app.use('/api/admin', require('../../routes/admin/auth'));
 
     // Error handling middleware
     app.use((err, req, res, next) => {
