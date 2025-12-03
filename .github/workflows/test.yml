@@ -2,9 +2,9 @@ name: Test Suite
 
 on:
   push:
-    branches: [ main, testing ]
+    branches: [main, testing]
   pull_request:
-    branches: [ main, testing ]
+    branches: [main, testing]
 
 jobs:
   test:
@@ -40,6 +40,12 @@ jobs:
 
       - name: Security audit
         run: npm audit --audit-level=high
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Check code formatting
+        run: npm run format:check
 
       - name: Wait for MySQL
         run: |
