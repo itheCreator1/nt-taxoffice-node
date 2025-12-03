@@ -27,7 +27,9 @@
     "test:db:init": "node scripts/init-test-db.js",
     "test:db:reset": "node scripts/init-test-db.js",
     "coverage:report": "bash scripts/coverage-report.sh",
-    "coverage:view": "bash scripts/coverage-report.sh no"
+    "coverage:view": "bash scripts/coverage-report.sh no",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [
     "express",
@@ -56,6 +58,9 @@
     "@playwright/test": "^1.57.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.32.0",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "nodemon": "^3.0.2",
