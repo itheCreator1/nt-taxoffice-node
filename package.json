@@ -29,7 +29,9 @@
     "coverage:report": "bash scripts/coverage-report.sh",
     "coverage:view": "bash scripts/coverage-report.sh no",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "express",
@@ -60,11 +62,14 @@
     "@testing-library/jest-dom": "^6.9.1",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "nodemon": "^3.0.2",
     "playwright": "^1.57.0",
+    "prettier": "^3.7.4",
     "supertest": "^7.0.0"
   }
 }
