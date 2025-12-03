@@ -6,6 +6,7 @@
 const request = require('supertest');
 const { clearTestDatabase } = require('../../helpers/database');
 const { createTestApp } = require('../../helpers/testApp');
+const { getTestDatabase } = require('../../helpers/testDatabase');
 
 jest.mock('../../../services/emailQueue');
 
@@ -13,8 +14,7 @@ describe('Admin Auth API Integration Tests', () => {
     let app;
 
     beforeAll(async () => {
-        const { initializeDatabase } = require('../../../services/database');
-        await initializeDatabase();
+        await getTestDatabase();
         app = createTestApp();
     });
 

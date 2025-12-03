@@ -80,16 +80,14 @@ async function initializeTestSchema() {
 
 /**
  * Clear all data from test database tables
+ * Uses the shared connection pool for better performance
+ * @param {mysql.Pool} [pool] - Optional connection pool, will use shared pool if not provided
  * @returns {Promise<void>}
  */
-async function clearTestDatabase() {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT || 3306,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    });
+async function clearTestDatabase(pool = null) {
+    // Use provided pool or get the shared test database pool
+    const dbPool = pool || require('./testDatabase').getTestDatabaseSync();
+    const connection = await dbPool.getConnection();
 
     try {
         // Disable foreign key checks temporarily
@@ -118,30 +116,30 @@ async function clearTestDatabase() {
             (6, FALSE, NULL, NULL)   -- Saturday
         `);
     } finally {
-        await connection.end();
+        // Release connection back to pool instead of closing it
+        connection.release();
     }
 }
 
 /**
  * Execute raw SQL query on test database
+ * Uses the shared connection pool for better performance
  * @param {string} sql
  * @param {Array} params
+ * @param {mysql.Pool} [pool] - Optional connection pool, will use shared pool if not provided
  * @returns {Promise<Array>}
  */
-async function query(sql, params = []) {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT || 3306,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    });
+async function query(sql, params = [], pool = null) {
+    // Use provided pool or get the shared test database pool
+    const dbPool = pool || require('./testDatabase').getTestDatabaseSync();
+    const connection = await dbPool.getConnection();
 
     try {
         const results = await connection.query(sql, params);
         return results;
     } finally {
-        await connection.end();
+        // Release connection back to pool instead of closing it
+        connection.release();
     }
 }
 

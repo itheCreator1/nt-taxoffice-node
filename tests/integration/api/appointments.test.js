@@ -7,6 +7,7 @@ const request = require('supertest');
 const { clearTestDatabase, query } = require('../../helpers/database');
 const { createAppointmentData, getFutureWorkingDate } = require('../../helpers/fixtures');
 const { createTestApp } = require('../../helpers/testApp');
+const { getTestDatabase } = require('../../helpers/testDatabase');
 
 // Mock email queue to prevent sending emails during tests
 jest.mock('../../../services/emailQueue');
@@ -15,9 +16,8 @@ describe('Appointments API Integration Tests', () => {
     let app;
 
     beforeAll(async () => {
-        // Initialize test database
-        const { initializeDatabase } = require('../../../services/database');
-        await initializeDatabase();
+        // Initialize shared test database pool
+        await getTestDatabase();
 
         // Create Express app with routes and middleware
         app = createTestApp();

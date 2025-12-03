@@ -23,6 +23,14 @@ global.console = {
 // Global test timeout (10 seconds for database operations)
 jest.setTimeout(10000);
 
+// Load custom Jest matchers for domain-specific assertions
+require('./helpers/customMatchers');
+
+// Initialize test performance monitoring (track slow tests)
+// Set DISABLE_PERF_MONITOR=true to disable
+const { initializePerformanceMonitoring } = require('./helpers/performanceMonitor');
+initializePerformanceMonitoring();
+
 // Clean up after all tests
 afterAll(async () => {
     // Close any open database connections

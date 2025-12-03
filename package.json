@@ -15,6 +15,14 @@
     "test:coverage": "jest --coverage --runInBand",
     "test:e2e": "playwright test",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:parallel": "jest",
+    "test:unit:parallel": "jest --selectProjects backend frontend",
+    "test:integration:parallel": "jest --testMatch='**/tests/integration/**/*.test.js' --maxWorkers=4",
+    "test:fast": "jest --testPathPattern=unit --maxWorkers=4",
+    "test:db": "jest --testPathPattern=integration --runInBand",
+    "test:admin": "jest --testMatch='**/integration/admin/**/*.test.js' --runInBand",
+    "test:api": "jest --testMatch='**/integration/api/**/*.test.js' --runInBand",
+    "test:services": "jest --testMatch='**/unit/services/**/*.test.js' --maxWorkers=4",
     "test:setup": "bash scripts/test-setup.sh",
     "test:db:init": "node scripts/init-test-db.js",
     "test:db:reset": "node scripts/init-test-db.js",
@@ -44,6 +52,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@playwright/test": "^1.57.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

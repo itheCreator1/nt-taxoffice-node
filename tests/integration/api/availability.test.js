@@ -7,6 +7,7 @@ const request = require('supertest');
 const { clearTestDatabase } = require('../../helpers/database');
 const { createTestApp } = require('../../helpers/testApp');
 const { getFutureWorkingDate } = require('../../helpers/fixtures');
+const { getTestDatabase } = require('../../helpers/testDatabase');
 
 // Mock email queue
 jest.mock('../../../services/emailQueue');
@@ -15,8 +16,7 @@ describe('Public Availability API Integration Tests', () => {
     let app;
 
     beforeAll(async () => {
-        const { initializeDatabase } = require('../../../services/database');
-        await initializeDatabase();
+        await getTestDatabase();
         app = createTestApp();
     });
 

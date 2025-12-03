@@ -8,39 +8,46 @@ const { clearTestDatabase } = require('../../helpers/database');
 const { createTestApp } = require('../../helpers/testApp');
 const { getDb } = require('../../../services/database');
 const { toMySQLDate } = require('../../../utils/timezone');
+const { getTestDatabase } = require('../../helpers/testDatabase');
+const { seedAdminUser } = require('../../helpers/seeders');
 
 jest.mock('../../../services/emailQueue');
 
 describe('Admin Appointments API Integration Tests', () => {
     let app;
     let agent;
+    let adminCredentials;
 
     beforeAll(async () => {
-        const { initializeDatabase } = require('../../../services/database');
-        await initializeDatabase();
+        await getTestDatabase();
         app = createTestApp();
+
+        // Create admin once and login once for all tests
+        adminCredentials = await seedAdminUser({
+            username: 'admin',
+            password: 'SecurePass123!',
+            email: 'admin@example.com'
+        });
+
+        // Create agent and login once
+        agent = request.agent(app);
+        await agent
+            .post('/api/admin/login')
+            .send({
+                username: adminCredentials.username,
+                password: adminCredentials.password
+            });
     });
 
     beforeEach(async () => {
         await clearTestDatabase();
 
-        // Create admin and login
-        await request(app)
-            .post('/api/admin/setup')
-            .send({
-                username: 'admin',
-                email: 'admin@example.com',
-                password: 'SecurePass123!',
-                confirmPassword: 'SecurePass123!'
-            });
-
-        agent = request.agent(app);
-        await agent
-            .post('/api/admin/login')
-            .send({
-                username: 'admin',
-                password: 'SecurePass123!'
-            });
+        // Re-seed admin user (DB was cleared, but session is still valid)
+        await seedAdminUser({
+            username: adminCredentials.username,
+            password: adminCredentials.password,
+            email: adminCredentials.email
+        });
     });
 
     describe('GET /api/admin/appointments', () => {
