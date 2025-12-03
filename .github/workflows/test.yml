@@ -2,9 +2,9 @@ name: Test Suite
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, testing ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, testing ]
 
 jobs:
   test:
