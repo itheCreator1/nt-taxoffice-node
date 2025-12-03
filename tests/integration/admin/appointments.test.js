@@ -22,11 +22,11 @@ describe('Admin Appointments API Integration Tests', () => {
         await getTestDatabase();
         app = createTestApp();
 
-        // Create admin once and login once for all tests
+        // Create admin once and login once for all tests (unique username per test file)
         adminCredentials = await seedAdminUser({
-            username: 'admin',
+            username: 'admin_appt',
             password: 'SecurePass123!',
-            email: 'admin@example.com'
+            email: 'admin_appt@example.com'
         });
 
         // Create agent and login once
@@ -426,7 +426,7 @@ describe('Admin Appointments API Integration Tests', () => {
 
             const db = getDb();
             const [rows] = await db.query('SELECT * FROM appointments WHERE id = ?', [appointmentId]);
-            expect(rows[0].appointment_date).toBe('2025-12-15');
+            expect(toMySQLDate(rows[0].appointment_date)).toBe('2025-12-15');
             expect(rows[0].appointment_time).toBe('14:00:00');
         });
 
