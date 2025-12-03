@@ -22,11 +22,11 @@ describe('Admin Availability API Integration Tests', () => {
         await getTestDatabase();
         app = createTestApp();
 
-        // Create admin once and login once for all tests
+        // Create admin once and login once for all tests (unique username per test file)
         adminCredentials = await seedAdminUser({
-            username: 'admin',
+            username: 'admin_avail',
             password: 'SecurePass123!',
-            email: 'admin@example.com'
+            email: 'admin_avail@example.com'
         });
 
         // Create agent and login once

@@ -35,6 +35,7 @@ describe('Auth Middleware', () => {
         test('should return 401 JSON for unauthenticated API requests', () => {
             req.session = {};
             req.path = '/api/admin/appointments';
+            req.originalUrl = '/api/admin/appointments';
 
             auth.requireAuth(req, res, next);
 
@@ -62,6 +63,7 @@ describe('Auth Middleware', () => {
         test('should handle missing session', () => {
             req.session = null;
             req.path = '/api/admin/test';
+            req.originalUrl = '/api/admin/test';
 
             auth.requireAuth(req, res, next);
 
@@ -72,6 +74,7 @@ describe('Auth Middleware', () => {
         test('should handle missing adminId in session', () => {
             req.session = { someOtherData: 'value' };
             req.path = '/api/admin/test';
+            req.originalUrl = '/api/admin/test';
 
             auth.requireAuth(req, res, next);
 
