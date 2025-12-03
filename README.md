@@ -1,15 +1,23 @@
 # NT TaxOffice Node
 
-[![Test Suite](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml/badge.svg)](https://github.com/itheCreator1/nt-taxoffice-node/actions/workflows/test.yml)
-
 A professional tax office management system featuring a comprehensive appointment booking platform. This project demonstrates modern web development practices with Node.js, including secure authentication, real-time availability management, and automated email workflows.
 
 **Last Updated:** December 3, 2025
 
 ---
 
+## Branch Structure
+
+- **`main`** - Stable production-ready code
+- **`testing`** - Active test development and implementation (comprehensive test suite with 100+ tests)
+
+> **Note:** Full test suite documentation and implementation is available on the `testing` branch. Switch to that branch to access test utilities, coverage reports, and GitHub Actions workflows.
+
+---
+
 ## Table of Contents
 
+- [Branch Structure](#branch-structure)
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Architecture & Design Principles](#architecture--design-principles)
@@ -66,7 +74,6 @@ This application solves these problems by providing:
 - **🔒 Security First** - CSP-compliant code, rate limiting, input sanitization, bcrypt password hashing
 - **⚡ Performance** - Connection pooling, database indexes, optimistic locking
 - **🐳 Docker Ready** - Full containerization with docker-compose for easy deployment
-- **🧪 Test Coverage** - E2E tests with Playwright ensure reliability
 - **📮 Email Queue** - Reliable email delivery with retry logic
 
 ---
@@ -125,7 +132,6 @@ All JavaScript uses **event delegation** instead of inline handlers:
 | **Email** | Nodemailer + Gmail | Free, reliable, easy setup for small deployments |
 | **Date Picker** | Flatpickr | Lightweight, accessible, locale support |
 | **Containerization** | Docker + Docker Compose | Reproducible environments, easy deployment |
-| **Testing** | Jest + Playwright | Unit and E2E testing coverage |
 
 **Key Dependencies:**
 ```json
@@ -281,12 +287,6 @@ nt-taxoffice-node/
 │   ├── database.js          # MySQL connection pool
 │   ├── email.js             # Email sending (Nodemaaler)
 │   └── emailQueue.js        # Email queue processor
-├── tests/
-│   ├── e2e/                 # Playwright end-to-end tests
-│   │   └── appointmentBooking.spec.js
-│   ├── integration/         # Integration tests (future)
-│   ├── unit/                # Unit tests (future)
-│   └── setup.js             # Test configuration
 ├── utils/
 │   ├── logger.js            # Colored console logging
 │   ├── sanitization.js      # Input sanitization (XSS prevention)
@@ -298,8 +298,6 @@ nt-taxoffice-node/
 ├── .dockerignore            # Docker build exclusions
 ├── docker-compose.yml       # Multi-container Docker setup
 ├── Dockerfile               # Node.js container image
-├── jest.config.js           # Jest test configuration
-├── playwright.config.js     # Playwright test configuration
 ├── package.json             # Dependencies and scripts
 └── server.js                # Application entry point
 ```
@@ -495,122 +493,23 @@ Set `GMAIL_USER` and `GMAIL_APP_PASSWORD` in `.env` to see real emails.
 
 ## Testing
 
-The project includes a comprehensive test suite with optimized performance through connection pooling, parallel execution, and specialized test utilities.
+> **Note:** A comprehensive test suite with 100+ tests is under active development on the **`testing`** branch.
 
-### Quick Start
+The testing branch includes:
+- **Unit Tests** - Service layer and utility functions
+- **Integration Tests** - API endpoints with real database
+- **Admin Tests** - Complete admin panel functionality
+- **Test Utilities** - Data builders, seeders, and custom matchers
+- **GitHub Actions** - Automated CI/CD pipeline
+- **Coverage Reports** - Detailed test coverage analysis
 
+To access the full test suite:
 ```bash
-# Run all tests (sequential, stable for CI)
+git checkout testing
 npm test
-
-# Fast parallel execution (development)
-npm run test:parallel
-
-# Specific test categories
-npm run test:unit          # Unit tests only
-npm run test:integration   # Integration tests only
-npm run test:fast          # Fast unit tests in parallel
-
-# Specific areas
-npm run test:admin         # Admin API tests
-npm run test:api           # Public API tests
-npm run test:services      # Service layer tests
 ```
 
-### Test Infrastructure
-
-**Modern Testing Features:**
-- **Test Data Builders** - Fluent API for creating realistic test data ([AppointmentBuilder](tests/helpers/builders/AppointmentBuilder.js), [AdminBuilder](tests/helpers/builders/AdminBuilder.js))
-- **Database Seeders** - Direct DB inserts for 10x faster test setup (bypasses HTTP overhead)
-- **Custom Jest Matchers** - Domain-specific assertions like `toBeValidAppointment()`, `toExistInDatabase()`
-- **Transaction Isolation** - Fast test isolation using DB transactions (10-20x faster than truncate)
-- **Performance Monitoring** - Automatic tracking of slow tests with optimization suggestions
-- **Shared Connection Pool** - Eliminates redundant database connections across test files
-
-**Example: Using Test Builders**
-```javascript
-const { AppointmentBuilder } = require('./helpers/builders');
-
-// Create appointment with fluent API
-const appointment = new AppointmentBuilder()
-    .withName('Γιάννης Παπαδόπουλος')
-    .onDate('2025-12-15')
-    .atTime('14:00:00')
-    .forTaxReturn()
-    .build();
-
-// Create 10 random appointments
-const appointments = new AppointmentBuilder()
-    .onRandomFutureDate()
-    .buildMany(10);
-```
-
-**Example: Database Seeding**
-```javascript
-const { seedAdminUser, seedAppointments } = require('./helpers/seeders');
-
-// Fast admin creation (direct DB insert)
-const admin = await seedAdminUser({
-    username: 'admin',
-    password: 'SecurePass123!',
-    email: 'admin@example.com'
-});
-
-// Seed test appointments
-const appointmentIds = await seedAppointments(10);
-```
-
-### Performance Improvements
-
-Recent optimizations have achieved **30-40% faster test execution**:
-
-| Optimization | Impact | Time Saved |
-|--------------|--------|------------|
-| Shared Connection Pool | 100+ fewer connections | 1-2s |
-| Database Seeders | 10x faster setup | 10-20s |
-| Shared Admin Sessions | 70+ → 5 bcrypt ops | 10-14s |
-| Parallel Execution | 4 workers vs sequential | 30-50% faster |
-
-**Performance Monitoring** - All tests are automatically monitored:
-```bash
-📊 TEST PERFORMANCE REPORT
-Total Tests: 105
-Total Time: 224.34s
-Average: 2137ms per test
-Slowest: 63403ms
-
-🔴 VERY SLOW TESTS (>3000ms):
-  1. 63403ms - Admin Appointments API › PUT /api/admin/appointments/:id
-
-💡 OPTIMIZATION SUGGESTIONS:
-  • Use seedAdminUser() instead of HTTP for admin tests
-  • Consider transaction-based isolation for database tests
-```
-
-### End-to-End Tests
-
-```bash
-npm run test:e2e  # Run Playwright tests in headless mode
-```
-
-**E2E Test Coverage:**
-- Complete booking flow (service selection → date/time → form submission)
-- Availability slot calculation
-- Appointment status changes
-
-**Running tests with UI:**
-```bash
-npx playwright test --ui
-```
-
-### Comprehensive Testing Guide
-
-**Learn More:** See [tests/README.md](tests/README.md) for the complete testing guide including:
-- Test organization and best practices
-- How to use all test utilities
-- Performance optimization tips
-- Troubleshooting common issues
-- CI/CD integration examples
+**Learn More:** Switch to the `testing` branch and see [tests/README.md](tests/README.md) for the complete testing guide including test utilities, performance optimizations, and CI/CD integration
 
 ---
 
@@ -701,7 +600,7 @@ Contributions are welcome! Please:
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Run tests (`npm test`)
+4. Test your changes manually
 5. Commit with clear messages
 6. Push and open a pull request
 
@@ -709,8 +608,8 @@ Contributions are welcome! Please:
 - [ ] Code follows existing style conventions
 - [ ] All input is validated and sanitized
 - [ ] Error handling is comprehensive
-- [ ] Tests are added/updated
 - [ ] Documentation is updated
+- [ ] Manual testing completed
 
 **Learn More:** See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
