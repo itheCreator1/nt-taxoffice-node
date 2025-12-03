@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Security audit
+        run: npm audit --audit-level=high
+
       - name: Wait for MySQL
         run: |
           until mysqladmin ping -h 127.0.0.1 -P 3306 -u root -ptestpassword --silent; do
