@@ -1,0 +1,1 @@
+echo "Pre-commit hook will be configured with lint-staged"
