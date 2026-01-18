@@ -1,17 +1,14 @@
 services:
   mysql:
     image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: nt_taxoffice
-      MYSQL_USER: nt_user
-      MYSQL_PASSWORD: nt_password
+    env_file:
+      - .env.docker
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -23,31 +20,8 @@ services:
     build: .
     ports:
       - "3000:3000"
-    environment:
-      # Database Configuration
-      DB_HOST: mysql
-      DB_USER: nt_user
-      DB_PASSWORD: nt_password
-      DB_NAME: nt_taxoffice
-      DB_PORT: 3306
-
-      # Session Configuration
-      SESSION_SECRET: docker-dev-session-secret-change-in-production
-
-      # Email Configuration (using Ethereal for testing)
-      EMAIL_HOST: smtp.ethereal.email
-      EMAIL_PORT: 587
-      EMAIL_SECURE: false
-      EMAIL_USER: test@ethereal.email
-      EMAIL_PASSWORD: test-password
-      ADMIN_EMAIL: admin@nt-taxoffice.local
-      OFFICE_EMAIL: office@nt-taxoffice.local
-      OFFICE_PHONE: +30 210 8222 950
-
-      # Application Configuration
-      APP_URL: http://localhost:3000
-      NODE_ENV: development
-      PORT: 3000
+    env_file:
+      - .env.docker
     depends_on:
       mysql:
         condition: service_healthy

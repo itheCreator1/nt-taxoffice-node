@@ -10,6 +10,12 @@ const helmet = require('helmet');
 const path = require('path');
 require('dotenv').config();
 
+// Validate critical environment variables at startup
+if (!process.env.SESSION_SECRET) {
+    console.error('FATAL: SESSION_SECRET environment variable is required');
+    process.exit(1);
+}
+
 // Import utilities and middleware
 const { initializeDatabase, getDb } = require('./services/database');
 const { requestLoggerMiddleware, info, error: logError } = require('./utils/logger');
@@ -167,6 +173,18 @@ process.on('SIGINT', () => {
     info('SIGINT signal received: closing HTTP server');
     stopEmailQueue();
     process.exit(0);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+    logError('Unhandled Rejection at:', { promise, reason });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    logError('Uncaught Exception:', error);
+    stopEmailQueue();
+    process.exit(1);
 });
 
 // Start the server

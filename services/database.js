@@ -5,6 +5,7 @@
 
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+const { info, error: logError } = require('../utils/logger');
 
 // Load appropriate environment file based on NODE_ENV
 // Test environment loads .env.test, otherwise loads default .env
@@ -42,12 +43,12 @@ async function initializeDatabase() {
 
     // Test connection
     const connection = await pool.getConnection();
-    console.log('✓ MySQL database connected successfully');
+    info('MySQL database connected successfully');
     connection.release();
 
     return pool;
   } catch (error) {
-    console.error('✗ MySQL connection error:', error.message);
+    logError('MySQL connection error:', error);
     throw error;
   }
 }
@@ -71,7 +72,7 @@ async function closeDatabase() {
   if (pool) {
     await pool.end();
     pool = null;
-    console.log('✓ MySQL database connection closed');
+    info('MySQL database connection closed');
   }
 }
 

@@ -4,6 +4,7 @@
  */
 
 const { getDb } = require('../services/database');
+const { error: logError } = require('../utils/logger');
 
 /**
  * Check if initial setup is required
@@ -15,7 +16,7 @@ async function isSetupRequired() {
         const [rows] = await db.query('SELECT COUNT(*) as count FROM admin_users');
         return rows[0].count === 0;
     } catch (error) {
-        console.error('Error checking setup status:', error);
+        logError('Error checking setup status:', error);
         return false;
     }
 }

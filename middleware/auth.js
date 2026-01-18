@@ -4,7 +4,7 @@
  */
 
 const { unauthorized } = require('./errorHandler');
-const { logSecurityEvent } = require('../utils/logger');
+const { logSecurityEvent, error: logError } = require('../utils/logger');
 
 /**
  * Check if user is authenticated
@@ -67,7 +67,7 @@ async function attachAdminUser(req, res, next) {
                 req.admin = rows[0];
             }
         } catch (error) {
-            console.error('Error loading admin user:', error);
+            logError('Error loading admin user:', error);
         }
     }
 
@@ -78,17 +78,16 @@ async function attachAdminUser(req, res, next) {
  * Logout helper
  * Destroys session and clears admin data
  */
-function logout(req, res) {
+async function logout(req, res) {
     const adminId = req.session?.adminId;
 
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.status(500).json({
-                success: false,
-                message: 'Σφάλμα κατά την αποσύνδεση.'
+    try {
+        await new Promise((resolve, reject) => {
+            req.session.destroy((err) => {
+                if (err) reject(err);
+                else resolve();
             });
-        }
+        });
 
         if (adminId) {
             logSecurityEvent('Admin logout', { adminId });
@@ -104,7 +103,13 @@ function logout(req, res) {
 
         // For page requests
         res.redirect('/admin/login.html');
-    });
+    } catch (err) {
+        logError('Error destroying session:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Σφάλμα κατά την αποσύνδεση.'
+        });
+    }
 }
 
 module.exports = {

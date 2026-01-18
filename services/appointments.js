@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('./database');
 const { isSlotAvailable } = require('./availability');
 const { toMySQLDate, toMySQLTime, formatGreekDate } = require('../utils/timezone');
-const { logAppointmentCreated, logAppointmentStatusChange, debug } = require('../utils/logger');
+const { logAppointmentCreated, logAppointmentStatusChange, warn } = require('../utils/logger');
 const { queueEmail } = require('./emailQueue');
 
 /**
@@ -90,11 +90,11 @@ async function createAppointment(appointmentData) {
 
         // Queue email notifications (async, non-blocking)
         queueEmail('booking-confirmation', appointmentData.client_email, createdAppointment).catch(err => {
-            debug('Failed to queue booking confirmation email:', err);
+            warn('Failed to queue booking confirmation email:', { error: err.message, email: appointmentData.client_email });
         });
 
         queueEmail('admin-notification', process.env.ADMIN_EMAIL, createdAppointment).catch(err => {
-            debug('Failed to queue admin notification email:', err);
+            warn('Failed to queue admin notification email:', { error: err.message });
         });
 
         // Return created appointment
@@ -224,7 +224,7 @@ async function cancelAppointment(cancellationToken) {
 
         // Queue cancellation confirmation email (async, non-blocking)
         queueEmail('cancellation-confirmation', appointment.client_email, cancelledAppointment).catch(err => {
-            debug('Failed to queue cancellation confirmation email:', err);
+            warn('Failed to queue cancellation confirmation email:', { error: err.message, email: appointment.client_email });
         });
 
         return cancelledAppointment;

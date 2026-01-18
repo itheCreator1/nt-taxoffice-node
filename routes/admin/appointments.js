@@ -10,7 +10,7 @@ const { requireAuth } = require('../../middleware/auth');
 const { apiLimiter } = require('../../middleware/rateLimiter');
 const { getDb } = require('../../services/database');
 const { toMySQLDate, formatGreekDate, formatGreekDateTime } = require('../../utils/timezone');
-const { logAppointmentStatusChange, logSecurityEvent, debug } = require('../../utils/logger');
+const { logAppointmentStatusChange, logSecurityEvent, warn } = require('../../utils/logger');
 const { queueEmail } = require('../../services/emailQueue');
 
 // Apply authentication to all routes
@@ -28,11 +28,13 @@ router.get('/', asyncHandler(async (req, res) => {
         startDate,
         endDate,
         search,
-        page = 1,
-        limit = 50,
         sortBy = 'appointment_date',
         sortOrder = 'DESC'
     } = req.query;
+
+    // Validate and sanitize pagination parameters
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
 
     // Build WHERE clause
     const conditions = [];
@@ -67,7 +69,7 @@ router.get('/', asyncHandler(async (req, res) => {
     const safeSortOrder = sortOrder.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
     // Calculate pagination
-    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const offset = (page - 1) * limit;
 
     // Get total count
     const [countResult] = await db.query(
@@ -284,14 +286,14 @@ router.put('/:id/status', asyncHandler(async (req, res) => {
         // Queue email notification based on new status (async, non-blocking)
         if (status === 'confirmed') {
             queueEmail('appointment-confirmed', appointment.client_email, appointment).catch(err => {
-                debug('Failed to queue appointment confirmed email:', err);
+                warn('Failed to queue appointment confirmed email:', { error: err.message, email: appointment.client_email });
             });
         } else if (status === 'declined') {
             queueEmail('appointment-declined', appointment.client_email, {
                 ...appointment,
                 decline_reason
             }).catch(err => {
-                debug('Failed to queue appointment declined email:', err);
+                warn('Failed to queue appointment declined email:', { error: err.message, email: appointment.client_email });
             });
         }
 

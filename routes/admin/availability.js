@@ -76,12 +76,14 @@ router.put('/settings', asyncHandler(async (req, res) => {
         }
     }
 
-    // Update each day using transaction
-    await db.query('START TRANSACTION');
+    // Update each day using transaction with proper connection handling
+    const connection = await db.getConnection();
 
     try {
+        await connection.beginTransaction();
+
         for (const day of days) {
-            await db.query(
+            await connection.query(
                 `UPDATE availability_settings
                  SET is_working_day = ?, start_time = ?, end_time = ?
                  WHERE day_of_week = ?`,
@@ -94,7 +96,7 @@ router.put('/settings', asyncHandler(async (req, res) => {
             );
         }
 
-        await db.query('COMMIT');
+        await connection.commit();
 
         logSecurityEvent('Availability settings updated', {
             adminUsername: req.session.username,
@@ -106,8 +108,10 @@ router.put('/settings', asyncHandler(async (req, res) => {
             message: 'Οι ρυθμίσεις διαθεσιμότητας ενημερώθηκαν επιτυχώς.'
         });
     } catch (error) {
-        await db.query('ROLLBACK');
+        await connection.rollback();
         throw error;
+    } finally {
+        connection.release();
     }
 }));
 
