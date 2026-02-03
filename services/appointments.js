@@ -5,8 +5,6 @@
 
 const { v4: uuidv4 } = require('uuid');
 const { getDb } = require('./database');
-const { isSlotAvailable } = require('./availability');
-const { toMySQLDate, toMySQLTime, formatGreekDate } = require('../utils/timezone');
 const { logAppointmentCreated, logAppointmentStatusChange, warn } = require('../utils/logger');
 const { queueEmail } = require('./emailQueue');
 

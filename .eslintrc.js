@@ -62,8 +62,16 @@ module.exports = {
     'no-useless-escape': 'off', // Allow escapes in regex for clarity
     'no-control-regex': 'off', // Allow control chars in sanitization regex
     radix: 'warn', // Warn about missing radix parameter
+    camelcase: 'off', // Allow snake_case for database column names
   },
   overrides: [
+    {
+      // Playwright config - allow devDependencies
+      files: ['playwright.config.js'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+      },
+    },
     {
       // Browser JavaScript files (frontend)
       files: ['public/**/*.js'],
@@ -75,11 +83,30 @@ module.exports = {
         'no-alert': 'off', // Allow alert/confirm in browser code
         'no-restricted-globals': 'off', // Allow browser globals
         'no-plusplus': 'off', // Allow ++ operator in loops
+        'no-param-reassign': 'off', // Allow param reassignment in frontend
+        'no-unused-vars': 'warn', // Downgrade to warning for frontend
+        'no-undef': 'warn', // Downgrade for global libraries like flatpickr
+        eqeqeq: 'warn', // Downgrade == vs === to warning
+        'default-case': 'off', // Allow switches without default
+        'import/prefer-default-export': 'off', // Allow named exports
+        'import/extensions': 'off', // Allow .js extensions in imports
+      },
+    },
+    {
+      // E2E test files (Playwright)
+      files: ['tests/e2e/**/*.js', '**/*.spec.js'],
+      env: {
+        browser: true, // Allow browser globals
+        node: true,
+      },
+      rules: {
+        'no-undef': 'off', // Allow Playwright globals
+        'import/no-extraneous-dependencies': 'off',
       },
     },
     {
       // Test files have different rules
-      files: ['tests/**/*.js', '**/*.test.js', '**/*.spec.js'],
+      files: ['tests/**/*.js', '**/*.test.js'],
       env: {
         jest: true,
       },

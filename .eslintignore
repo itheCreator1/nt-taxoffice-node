@@ -1,0 +1,15 @@
+# Ignore vendor files
+public/js/vendor/
+
+# Ignore minified files
+*.min.js
+
+# Ignore coverage reports
+coverage/
+
+# Ignore node_modules (redundant but explicit)
+node_modules/
+
+# Ignore build artifacts
+dist/
+build/

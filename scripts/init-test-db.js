@@ -97,7 +97,7 @@ if (require.main === module) {
     .then(() => {
       process.exit(0);
     })
-    .catch((error) => {
+    .catch(() => {
       console.error('\n❌❌❌ Test database initialization failed ❌❌❌\n');
       process.exit(1);
     });

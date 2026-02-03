@@ -8,7 +8,9 @@
       "Bash(git push:*)",
       "Bash(docker exec:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh run list:*)",
+      "Bash(git remote:*)"
     ]
   }
 }

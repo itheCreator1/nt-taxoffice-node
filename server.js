@@ -17,7 +17,7 @@ if (!process.env.SESSION_SECRET) {
 }
 
 // Import utilities and middleware
-const { initializeDatabase, getDb } = require('./services/database');
+const { initializeDatabase } = require('./services/database');
 const { requestLoggerMiddleware, info, error: logError } = require('./utils/logger');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { apiLimiter } = require('./middleware/rateLimiter');

@@ -10,7 +10,7 @@ const { asyncHandler } = require('../../middleware/errorHandler');
 const { requireAuth } = require('../../middleware/auth');
 const { apiLimiter } = require('../../middleware/rateLimiter');
 const { getDb } = require('../../services/database');
-const { toMySQLDate, formatGreekDate, formatGreekDateTime } = require('../../utils/timezone');
+const { toMySQLDate } = require('../../utils/timezone');
 const { logAppointmentStatusChange, logSecurityEvent, warn } = require('../../utils/logger');
 const { queueEmail } = require('../../services/emailQueue');
 
