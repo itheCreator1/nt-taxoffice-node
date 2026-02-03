@@ -8,15 +8,15 @@
  * @returns {object}
  */
 function createMockEmailTransporter() {
-    return {
-        sendMail: jest.fn().mockResolvedValue({
-            messageId: 'test-message-id',
-            accepted: ['test@example.com'],
-            rejected: [],
-            response: '250 Message accepted'
-        }),
-        verify: jest.fn().mockResolvedValue(true)
-    };
+  return {
+    sendMail: jest.fn().mockResolvedValue({
+      messageId: 'test-message-id',
+      accepted: ['test@example.com'],
+      rejected: [],
+      response: '250 Message accepted',
+    }),
+    verify: jest.fn().mockResolvedValue(true),
+  };
 }
 
 /**
@@ -24,14 +24,14 @@ function createMockEmailTransporter() {
  * @returns {object}
  */
 function createMockDbConnection() {
-    return {
-        query: jest.fn(),
-        execute: jest.fn(),
-        beginTransaction: jest.fn().mockResolvedValue(),
-        commit: jest.fn().mockResolvedValue(),
-        rollback: jest.fn().mockResolvedValue(),
-        release: jest.fn()
-    };
+  return {
+    query: jest.fn(),
+    execute: jest.fn(),
+    beginTransaction: jest.fn().mockResolvedValue(),
+    commit: jest.fn().mockResolvedValue(),
+    rollback: jest.fn().mockResolvedValue(),
+    release: jest.fn(),
+  };
 }
 
 /**
@@ -39,15 +39,15 @@ function createMockDbConnection() {
  * @returns {object}
  */
 function createMockDbPool() {
-    const mockConnection = createMockDbConnection();
+  const mockConnection = createMockDbConnection();
 
-    return {
-        getConnection: jest.fn().mockResolvedValue(mockConnection),
-        query: jest.fn(),
-        execute: jest.fn(),
-        end: jest.fn().mockResolvedValue(),
-        _mockConnection: mockConnection // For test assertions
-    };
+  return {
+    getConnection: jest.fn().mockResolvedValue(mockConnection),
+    query: jest.fn(),
+    execute: jest.fn(),
+    end: jest.fn().mockResolvedValue(),
+    _mockConnection: mockConnection, // For test assertions
+  };
 }
 
 /**
@@ -56,15 +56,15 @@ function createMockDbPool() {
  * @returns {object}
  */
 function createMockRequest(options = {}) {
-    return {
-        body: {},
-        params: {},
-        query: {},
-        headers: {},
-        session: {},
-        ip: '127.0.0.1',
-        ...options
-    };
+  return {
+    body: {},
+    params: {},
+    query: {},
+    headers: {},
+    session: {},
+    ip: '127.0.0.1',
+    ...options,
+  };
 }
 
 /**
@@ -72,17 +72,17 @@ function createMockRequest(options = {}) {
  * @returns {object}
  */
 function createMockResponse() {
-    const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn().mockReturnThis(),
-        send: jest.fn().mockReturnThis(),
-        render: jest.fn().mockReturnThis(),
-        redirect: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        cookie: jest.fn().mockReturnThis(),
-        clearCookie: jest.fn().mockReturnThis()
-    };
-    return res;
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+    send: jest.fn().mockReturnThis(),
+    render: jest.fn().mockReturnThis(),
+    redirect: jest.fn().mockReturnThis(),
+    set: jest.fn().mockReturnThis(),
+    cookie: jest.fn().mockReturnThis(),
+    clearCookie: jest.fn().mockReturnThis(),
+  };
+  return res;
 }
 
 /**
@@ -90,7 +90,7 @@ function createMockResponse() {
  * @returns {jest.Mock}
  */
 function createMockNext() {
-    return jest.fn();
+  return jest.fn();
 }
 
 /**
@@ -98,15 +98,15 @@ function createMockNext() {
  * @returns {object}
  */
 function createMockLogger() {
-    return {
-        info: jest.fn(),
-        error: jest.fn(),
-        warn: jest.fn(),
-        debug: jest.fn(),
-        logEmail: jest.fn(),
-        logAppointmentCreated: jest.fn(),
-        logAppointmentStatusChange: jest.fn()
-    };
+  return {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    logEmail: jest.fn(),
+    logAppointmentCreated: jest.fn(),
+    logAppointmentStatusChange: jest.fn(),
+  };
 }
 
 /**
@@ -115,30 +115,30 @@ function createMockLogger() {
  * @returns {object}
  */
 function createMockSession(data = {}) {
-    return {
-        save: jest.fn((callback) => callback && callback()),
-        destroy: jest.fn((callback) => callback && callback()),
-        regenerate: jest.fn((callback) => callback && callback()),
-        reload: jest.fn((callback) => callback && callback()),
-        ...data
-    };
+  return {
+    save: jest.fn((callback) => callback && callback()),
+    destroy: jest.fn((callback) => callback && callback()),
+    regenerate: jest.fn((callback) => callback && callback()),
+    reload: jest.fn((callback) => callback && callback()),
+    ...data,
+  };
 }
 
 /**
  * Reset all mocks
  */
 function resetAllMocks() {
-    jest.clearAllMocks();
+  jest.clearAllMocks();
 }
 
 module.exports = {
-    createMockEmailTransporter,
-    createMockDbConnection,
-    createMockDbPool,
-    createMockRequest,
-    createMockResponse,
-    createMockNext,
-    createMockLogger,
-    createMockSession,
-    resetAllMocks
+  createMockEmailTransporter,
+  createMockDbConnection,
+  createMockDbPool,
+  createMockRequest,
+  createMockResponse,
+  createMockNext,
+  createMockLogger,
+  createMockSession,
+  resetAllMocks,
 };

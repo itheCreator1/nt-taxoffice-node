@@ -28,32 +28,32 @@ const { getTestDatabaseSync } = require('./testDatabase');
  * });
  */
 async function setupTransactionIsolation() {
-    const pool = getTestDatabaseSync();
-    const connection = await pool.getConnection();
+  const pool = getTestDatabaseSync();
+  const connection = await pool.getConnection();
 
-    // Start transaction
-    await connection.beginTransaction();
+  // Start transaction
+  await connection.beginTransaction();
 
-    return {
-        connection,
-        pool,
+  return {
+    connection,
+    pool,
 
-        /**
-         * Execute a query within the transaction
-         * @param {string} sql - SQL query
-         * @param {Array} params - Query parameters
-         * @returns {Promise<Array>} Query results
-         */
-        query: async (sql, params = []) => {
-            return await connection.query(sql, params);
-        },
+    /**
+     * Execute a query within the transaction
+     * @param {string} sql - SQL query
+     * @param {Array} params - Query parameters
+     * @returns {Promise<Array>} Query results
+     */
+    query: async (sql, params = []) => {
+      return connection.query(sql, params);
+    },
 
-        /**
-         * Get the underlying connection for advanced usage
-         * @returns {Connection} MySQL connection
-         */
-        getConnection: () => connection
-    };
+    /**
+     * Get the underlying connection for advanced usage
+     * @returns {Connection} MySQL connection
+     */
+    getConnection: () => connection,
+  };
 }
 
 /**
@@ -64,19 +64,19 @@ async function setupTransactionIsolation() {
  * @returns {Promise<void>}
  */
 async function cleanupTransactionIsolation(transactionHelper) {
-    if (!transactionHelper || !transactionHelper.connection) {
-        return;
-    }
+  if (!transactionHelper || !transactionHelper.connection) {
+    return;
+  }
 
-    try {
-        // Rollback transaction (discards all changes)
-        await transactionHelper.connection.rollback();
-    } catch (error) {
-        // Ignore rollback errors (transaction might be already rolled back)
-    } finally {
-        // Release connection back to pool
-        transactionHelper.connection.release();
-    }
+  try {
+    // Rollback transaction (discards all changes)
+    await transactionHelper.connection.rollback();
+  } catch (error) {
+    // Ignore rollback errors (transaction might be already rolled back)
+  } finally {
+    // Release connection back to pool
+    transactionHelper.connection.release();
+  }
 }
 
 /**
@@ -96,13 +96,13 @@ async function cleanupTransactionIsolation(transactionHelper) {
  * });
  */
 async function withTransaction(testFn) {
-    const helper = await setupTransactionIsolation();
+  const helper = await setupTransactionIsolation();
 
-    try {
-        await testFn(helper);
-    } finally {
-        await cleanupTransactionIsolation(helper);
-    }
+  try {
+    await testFn(helper);
+  } finally {
+    await cleanupTransactionIsolation(helper);
+  }
 }
 
 /**
@@ -122,28 +122,28 @@ async function withTransaction(testFn) {
  * });
  */
 function describeWithTransactions(description, suiteFn) {
-    describe(description, () => {
-        let transactionHelper;
+  describe(description, () => {
+    let transactionHelper;
 
-        beforeEach(async () => {
-            transactionHelper = await setupTransactionIsolation();
+    beforeEach(async () => {
+      transactionHelper = await setupTransactionIsolation();
 
-            // Make connection available globally for the test
-            global.__testTransaction = transactionHelper;
-        });
-
-        afterEach(async () => {
-            await cleanupTransactionIsolation(transactionHelper);
-            delete global.__testTransaction;
-        });
-
-        suiteFn();
+      // Make connection available globally for the test
+      global.__testTransaction = transactionHelper;
     });
+
+    afterEach(async () => {
+      await cleanupTransactionIsolation(transactionHelper);
+      delete global.__testTransaction;
+    });
+
+    suiteFn();
+  });
 }
 
 module.exports = {
-    setupTransactionIsolation,
-    cleanupTransactionIsolation,
-    withTransaction,
-    describeWithTransactions
+  setupTransactionIsolation,
+  cleanupTransactionIsolation,
+  withTransaction,
+  describeWithTransactions,
 };

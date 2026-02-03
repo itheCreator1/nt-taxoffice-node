@@ -14,11 +14,11 @@ let dbInitialized = false;
  * @returns {Promise<mysql.Pool>}
  */
 async function getTestDatabase() {
-    if (!dbInitialized) {
-        await initializeDatabase();
-        dbInitialized = true;
-    }
-    return getDb();
+  if (!dbInitialized) {
+    await initializeDatabase();
+    dbInitialized = true;
+  }
+  return getDb();
 }
 
 /**
@@ -27,10 +27,10 @@ async function getTestDatabase() {
  * @returns {mysql.Pool}
  */
 function getTestDatabaseSync() {
-    if (!dbInitialized) {
-        throw new Error('Test database not initialized. Call getTestDatabase() first.');
-    }
-    return getDb();
+  if (!dbInitialized) {
+    throw new Error('Test database not initialized. Call getTestDatabase() first.');
+  }
+  return getDb();
 }
 
 /**
@@ -38,11 +38,11 @@ function getTestDatabaseSync() {
  * @private
  */
 function resetTestDatabase() {
-    dbInitialized = false;
+  dbInitialized = false;
 }
 
 module.exports = {
-    getTestDatabase,
-    getTestDatabaseSync,
-    resetTestDatabase
+  getTestDatabase,
+  getTestDatabaseSync,
+  resetTestDatabase,
 };

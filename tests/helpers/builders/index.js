@@ -7,6 +7,6 @@ const AppointmentBuilder = require('./AppointmentBuilder');
 const AdminBuilder = require('./AdminBuilder');
 
 module.exports = {
-    AppointmentBuilder,
-    AdminBuilder
+  AppointmentBuilder,
+  AdminBuilder,
 };
