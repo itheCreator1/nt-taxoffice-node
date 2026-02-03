@@ -1,59 +1,76 @@
 /* ===================================
-   ICONS
+   ICONS - MODERNIZED
    =================================== */
+
+/* Section Icon (Large, centered for section headers) */
 .section-icon {
-    background: var(--secondary-color);
-    width: 60px;
-    height: 60px;
-    border-radius: var(--radius-full);
+    background: var(--gradient-secondary);
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto var(--space-md);
+    margin: 0 auto var(--space-lg);
     color: white;
-    font-size: var(--font-size-xl);
-    transition: transform var(--transition-base);
+    font-size: var(--font-size-2xl);
+    transition: all var(--transition-base);
+    box-shadow: 0 8px 25px rgba(8, 145, 178, 0.3);
 }
 
 .section-icon:hover {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 35px rgba(8, 145, 178, 0.4);
 }
 
+/* Service Icon (Card icons - styled in cards.css for card context) */
 .service-icon {
     font-size: 2.5rem;
-    color: var(--secondary-color);
+    color: var(--primary-color);
     margin-bottom: var(--space-md);
-    transition: transform var(--transition-base);
+    transition: all var(--transition-base);
 }
 
+/* Feature Icon (List checkmarks) */
 .feature-icon {
-    color: var(--secondary-color);
-    font-size: var(--font-size-lg);
+    width: 28px;
+    height: 28px;
+    background: var(--success-light);
+    color: var(--success-color);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
     flex-shrink: 0;
 }
 
+/* Contact Icon */
 .contact-icon {
-    background: var(--secondary-color);
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-full);
+    background: var(--gradient-secondary);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     flex-shrink: 0;
-    transition: transform var(--transition-base);
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.25);
 }
 
+/* Media Icon */
 .media-icon {
-    background: var(--secondary-color);
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-full);
+    background: var(--gradient-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     flex-shrink: 0;
     font-size: var(--font-size-sm);
+    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
 }
