@@ -1,20 +1,22 @@
 /* ===================================
    TYPOGRAPHY
    =================================== */
-h1, h2, h3 {
-    font-family: 'Poppins', sans-serif;
-    margin-bottom: var(--space-md);
-    line-height: 1.2;
+h1,
+h2,
+h3 {
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: var(--space-md);
+  line-height: 1.2;
 }
 
 h1 {
-    font-size: var(--font-size-3xl);
+  font-size: var(--font-size-3xl);
 }
 
 h2 {
-    font-size: var(--font-size-2xl);
+  font-size: var(--font-size-2xl);
 }
 
 h3 {
-    font-size: var(--font-size-xl);
+  font-size: var(--font-size-xl);
 }

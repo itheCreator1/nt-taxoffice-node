@@ -6,163 +6,163 @@
 .btn,
 .cta-button,
 .submit-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    padding: var(--space-md) var(--space-xl);
-    border-radius: var(--radius-md);
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all var(--transition-fast);
-    position: relative;
-    overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
 }
 
 /* Ripple effect base */
 .btn::after,
 .cta-button::after,
 .submit-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
-    transform: scale(0);
-    opacity: 0;
-    transition: all 0.5s ease-out;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+  transform: scale(0);
+  opacity: 0;
+  transition: all 0.5s ease-out;
 }
 
 .btn:active::after,
 .cta-button:active::after,
 .submit-btn:active::after {
-    transform: scale(2);
-    opacity: 1;
-    transition: 0s;
+  transform: scale(2);
+  opacity: 1;
+  transition: 0s;
 }
 
 /* Primary Button (CTA) */
 .cta-button {
-    background: var(--gradient-primary);
-    color: white;
-    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
 }
 
 .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
 }
 
 .cta-button:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 .cta-button:focus-visible {
-    outline: 2px solid white;
-    outline-offset: 4px;
+  outline: 2px solid white;
+  outline-offset: 4px;
 }
 
 /* Submit Button */
 .submit-btn {
-    background: var(--gradient-secondary);
-    color: white;
-    width: 100%;
-    padding: var(--space-md) var(--space-2xl);
-    font-size: var(--font-size-base);
-    box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3);
+  background: var(--gradient-secondary);
+  color: white;
+  width: 100%;
+  padding: var(--space-md) var(--space-2xl);
+  font-size: var(--font-size-base);
+  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.3);
 }
 
 .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
 }
 
 .submit-btn:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 .submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .submit-btn:focus-visible {
-    outline: 2px solid var(--secondary-color);
-    outline-offset: 4px;
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 4px;
 }
 
 /* Secondary/Outline Button */
 .btn-secondary {
-    background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-color);
-    color: white;
+  background: var(--primary-color);
+  color: white;
 }
 
 /* Accent Button */
 .btn-accent {
-    background: var(--accent-color);
-    color: white;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  background: var(--accent-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
 }
 
 .btn-accent:hover {
-    background: var(--accent-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
 }
 
 /* Contact CTA - special styling for contact section */
 .contact-cta {
-    background: var(--gradient-secondary);
-    padding: var(--space-lg) var(--space-2xl);
-    font-size: var(--font-size-lg);
-    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+  background: var(--gradient-secondary);
+  padding: var(--space-lg) var(--space-2xl);
+  font-size: var(--font-size-lg);
+  box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
 }
 
 .contact-cta:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(8, 145, 178, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(8, 145, 178, 0.5);
 }
 
 /* Back Link */
 .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-xl);
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all var(--transition-fast);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
 }
 
 .back-link:hover {
-    color: var(--primary-dark);
-    background: var(--gray-50);
-    gap: var(--space-md);
+  color: var(--primary-dark);
+  background: var(--gray-50);
+  gap: var(--space-md);
 }
 
 .back-link:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .back-link i {
-    transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 
 .back-link:hover i {
-    transform: translateX(-4px);
+  transform: translateX(-4px);
 }

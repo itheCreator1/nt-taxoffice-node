@@ -41,12 +41,12 @@ Before deploying to production, ensure you have:
 
 ### Minimum Specifications
 
-| Resource | Minimum | Recommended | Why? |
-|----------|---------|-------------|------|
-| **CPU** | 1 core | 2 cores | Email queue and concurrent requests |
-| **RAM** | 1 GB | 2 GB | Node.js + MySQL + email queue |
-| **Disk** | 10 GB | 20 GB | Application + database + logs |
-| **Bandwidth** | 1 TB/month | Unlimited | Emails and web traffic |
+| Resource      | Minimum    | Recommended | Why?                                |
+| ------------- | ---------- | ----------- | ----------------------------------- |
+| **CPU**       | 1 core     | 2 cores     | Email queue and concurrent requests |
+| **RAM**       | 1 GB       | 2 GB        | Node.js + MySQL + email queue       |
+| **Disk**      | 10 GB      | 20 GB       | Application + database + logs       |
+| **Bandwidth** | 1 TB/month | Unlimited   | Emails and web traffic              |
 
 ### Software Requirements
 
@@ -165,6 +165,7 @@ nano .env
 ```
 
 **Critical `.env` values for production:**
+
 ```bash
 NODE_ENV=production
 PORT=3000
@@ -207,7 +208,7 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
     env_file:
@@ -215,9 +216,9 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped  # Auto-restart on failure
+    restart: unless-stopped # Auto-restart on failure
     volumes:
-      - ./logs:/app/logs  # Persist logs
+      - ./logs:/app/logs # Persist logs
     networks:
       - app-network
 
@@ -227,13 +228,13 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
-      - mysql-data:/var/lib/mysql  # Persist database
+      - mysql-data:/var/lib/mysql # Persist database
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -241,7 +242,7 @@ services:
       - app-network
 
 volumes:
-  mysql-data:  # Named volume for database persistence
+  mysql-data: # Named volume for database persistence
 
 networks:
   app-network:
@@ -303,6 +304,7 @@ sudo mysql -u root -p
 ```
 
 In MySQL console:
+
 ```sql
 CREATE DATABASE nt_taxoffice_appointments CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'nt_taxoffice'@'localhost' IDENTIFIED BY 'your_strong_password';
@@ -328,6 +330,7 @@ nano .env  # Edit with production values
 ```
 
 **Production `.env` for manual deployment:**
+
 ```bash
 DB_HOST=localhost  # Not 'mysql' - using local MySQL
 # ... (other values same as Docker deployment)
@@ -363,25 +366,29 @@ pm2 logs nt-taxoffice
 **PM2 Ecosystem File** (optional, for advanced configuration):
 
 Create `ecosystem.config.js`:
+
 ```javascript
 module.exports = {
-  apps: [{
-    name: 'nt-taxoffice',
-    script: './server.js',
-    instances: 2,  // Run 2 instances for load balancing
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production'
+  apps: [
+    {
+      name: 'nt-taxoffice',
+      script: './server.js',
+      instances: 2, // Run 2 instances for load balancing
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+      },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      merge_logs: true,
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    merge_logs: true,
-    log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
-  }]
+  ],
 };
 ```
 
 Start with ecosystem file:
+
 ```bash
 pm2 start ecosystem.config.js
 ```
@@ -420,6 +427,7 @@ RATE_LIMIT_MAX_REQUESTS=50
 ```
 
 **Why Rate Limiting Matters:**
+
 - Prevents brute-force attacks on admin login
 - Stops spam booking attempts
 - Protects server resources
@@ -551,6 +559,7 @@ server {
 ```
 
 Enable site:
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/nt-taxoffice /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -599,6 +608,7 @@ https://yourdomain.com/admin/setup.html
 ```
 
 Fill in:
+
 - Username
 - Email
 - Secure password (12+ characters)
@@ -660,6 +670,7 @@ free -h
 ### Setting Up Monitoring
 
 **Using PM2 (Manual Deployment):**
+
 ```bash
 # Monitor CPU/Memory
 pm2 monit
@@ -671,6 +682,7 @@ pm2 plus  # Premium service
 **Log Rotation:**
 
 Create `/etc/logrotate.d/nt-taxoffice`:
+
 ```
 /var/www/nt-taxoffice-node/logs/*.log {
     daily
@@ -694,6 +706,7 @@ Create `/etc/logrotate.d/nt-taxoffice`:
 ### Application Won't Start
 
 **Error: `ECONNREFUSED` (Database Connection)**
+
 ```bash
 # Check MySQL is running
 sudo systemctl status mysql
@@ -708,6 +721,7 @@ docker-compose logs mysql
 ```
 
 **Error: `SESSION_SECRET` Required**
+
 ```bash
 # Generate and add to .env
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
@@ -716,18 +730,21 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ### Emails Not Sending
 
 **Check Email Queue:**
+
 ```bash
 mysql -u root -p nt_taxoffice_appointments
 SELECT * FROM email_queue WHERE status='failed' ORDER BY created_at DESC LIMIT 10;
 ```
 
 **Common Causes:**
+
 - Using regular Gmail password instead of app password
 - 2FA not enabled on Gmail
 - Gmail account locked due to suspicious activity
 - Incorrect `GMAIL_USER` or `GMAIL_APP_PASSWORD`
 
 **Solution:**
+
 1. Verify 2FA is enabled
 2. Generate new app password
 3. Update `.env`
@@ -825,6 +842,7 @@ pm2 status
 ---
 
 **Successfully deployed? Don't forget to:**
+
 - ✅ Create admin account
 - ✅ Configure working hours
 - ✅ Test email sending

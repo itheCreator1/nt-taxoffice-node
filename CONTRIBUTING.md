@@ -35,33 +35,39 @@ By participating in this project, you agree to maintain a respectful and collabo
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/nt-taxoffice-node.git
    cd nt-taxoffice-node
    ```
 
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/itheCreator1/nt-taxoffice-node.git
    ```
 
 4. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 5. **Configure environment**:
+
    ```bash
    cp .env.example .env
    # Edit .env with your local configuration
    ```
 
 6. **Start MySQL** (Docker):
+
    ```bash
    docker-compose up -d mysql
    ```
 
 7. **Initialize database**:
+
    ```bash
    npm run test:db:init
    ```
@@ -80,11 +86,13 @@ If all tests pass, you're ready to start contributing!
 ### Running the Application
 
 **Development mode** (with auto-reload):
+
 ```bash
 npm run dev
 ```
 
 **Production mode**:
+
 ```bash
 npm start
 ```
@@ -227,6 +235,7 @@ Must be one of the following:
 ### Scope (optional)
 
 The scope specifies the area of the codebase:
+
 - `auth` - Authentication/authorization
 - `booking` - Appointment booking
 - `admin` - Admin panel
@@ -245,6 +254,7 @@ The scope specifies the area of the codebase:
 ### Examples
 
 **Good commits**:
+
 ```
 feat(booking): add SMS notification support
 fix(auth): resolve session timeout issue
@@ -253,6 +263,7 @@ test(admin): add tests for user management
 ```
 
 **Bad commits**:
+
 ```
 Fixed stuff
 WIP
@@ -381,6 +392,7 @@ tests/
 ### Writing Tests
 
 **Unit tests** - Test individual functions in isolation:
+
 ```javascript
 describe('sanitizeEmail', () => {
   it('should remove whitespace', () => {
@@ -394,6 +406,7 @@ describe('sanitizeEmail', () => {
 ```
 
 **Integration tests** - Test API endpoints:
+
 ```javascript
 describe('POST /api/appointments', () => {
   it('should create appointment with valid data', async () => {
@@ -429,22 +442,26 @@ npm run test:coverage
 ### Before Creating a PR
 
 1. **Update your branch** with latest `testing`:
+
    ```bash
    git fetch upstream
    git rebase upstream/testing
    ```
 
 2. **Run all tests**:
+
    ```bash
    npm test
    ```
 
 3. **Check code coverage**:
+
    ```bash
    npm run test:coverage
    ```
 
 4. **Lint your code** (once configured):
+
    ```bash
    npm run lint
    ```
@@ -454,6 +471,7 @@ npm run test:coverage
 ### Creating the PR
 
 1. **Push to your fork**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -471,6 +489,7 @@ npm run test:coverage
 ### PR Title Format
 
 Follow conventional commit format:
+
 ```
 feat(booking): add SMS notification support
 fix(auth): resolve session timeout issue
@@ -481,28 +500,34 @@ docs(api): update endpoint documentation
 
 ```markdown
 ## Description
+
 Brief description of what this PR does and why.
 
 ## Type of Change
+
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation update
 
 ## Related Issues
+
 Closes #123
 Relates to #456
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] All tests passing
 - [ ] Coverage threshold met (70%)
 
 ## Screenshots (if applicable)
+
 [Add screenshots for UI changes]
 
 ## Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Self-reviewed code
 - [ ] Commented complex logic
@@ -522,6 +547,7 @@ Relates to #456
 ### After Merge
 
 1. **Delete feature branch**:
+
    ```bash
    git branch -d feature/your-feature-name
    git push origin --delete feature/your-feature-name
@@ -540,11 +566,13 @@ Relates to #456
 When reviewing PRs (or self-reviewing), check:
 
 ### Functionality
+
 - [ ] Code solves the intended problem
 - [ ] No unintended side effects
 - [ ] Edge cases are handled
 
 ### Code Quality
+
 - [ ] Code follows existing style conventions
 - [ ] Functions are small and focused
 - [ ] Variable/function names are clear and descriptive
@@ -552,6 +580,7 @@ When reviewing PRs (or self-reviewing), check:
 - [ ] Comments explain "why" not "what"
 
 ### Security
+
 - [ ] All input is validated and sanitized
 - [ ] No hardcoded secrets or sensitive data
 - [ ] SQL queries are parameterized
@@ -559,24 +588,28 @@ When reviewing PRs (or self-reviewing), check:
 - [ ] No new security vulnerabilities (`npm audit` passes)
 
 ### Testing
+
 - [ ] Tests are added/updated
 - [ ] All tests pass
 - [ ] Coverage threshold is met (70%)
 - [ ] Tests are meaningful (not just for coverage)
 
 ### Documentation
+
 - [ ] README updated (if needed)
 - [ ] API docs updated (if endpoints changed)
 - [ ] Inline comments for complex logic
 - [ ] CHANGELOG updated (for releases)
 
 ### Performance
+
 - [ ] No unnecessary database queries
 - [ ] No memory leaks
 - [ ] Efficient algorithms
 - [ ] Rate limiting considered
 
 ### Error Handling
+
 - [ ] Error handling is comprehensive
 - [ ] Error messages are user-friendly
 - [ ] Errors are logged appropriately
@@ -604,6 +637,7 @@ When reviewing PRs (or self-reviewing), check:
 ## Recognition
 
 Contributors will be acknowledged in:
+
 - Git commit history
 - Release notes (for significant contributions)
 - Project documentation (for major features)

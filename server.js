@@ -12,8 +12,8 @@ require('dotenv').config();
 
 // Validate critical environment variables at startup
 if (!process.env.SESSION_SECRET) {
-    console.error('FATAL: SESSION_SECRET environment variable is required');
-    process.exit(1);
+  console.error('FATAL: SESSION_SECRET environment variable is required');
+  process.exit(1);
 }
 
 // Import utilities and middleware
@@ -21,7 +21,10 @@ const { initializeDatabase, getDb } = require('./services/database');
 const { requestLoggerMiddleware, info, error: logError } = require('./utils/logger');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const { apiLimiter } = require('./middleware/rateLimiter');
-const { startProcessor: startEmailQueue, stopProcessor: stopEmailQueue } = require('./services/emailQueue');
+const {
+  startProcessor: startEmailQueue,
+  stopProcessor: stopEmailQueue,
+} = require('./services/emailQueue');
 
 // Import routes
 const indexRoutes = require('./routes/index');
@@ -38,28 +41,23 @@ const PORT = process.env.PORT || 3000;
  * Security Middleware
  */
 // Helmet for security headers
-app.use(helmet({
+app.use(
+  helmet({
     contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: [
-                "'self'",
-                "'unsafe-inline'",
-                "https://fonts.googleapis.com"
-            ],
-            fontSrc: [
-                "'self'",
-                "https://fonts.gstatic.com"
-            ],
-            scriptSrc: [
-                "'self'",
-                "https://cdnjs.cloudflare.com"  // Allow Font Awesome only
-            ],
-            connectSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "https:"],
-        }
-    }
-}));
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        scriptSrc: [
+          "'self'",
+          'https://cdnjs.cloudflare.com', // Allow Font Awesome only
+        ],
+        connectSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+  })
+);
 
 // Trust proxy (for rate limiting and IP detection behind reverse proxy)
 app.set('trust proxy', 1);
@@ -74,38 +72,40 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
  * Session Configuration
  */
 const sessionStore = new MySQLStore({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    clearExpired: true,
-    checkExpirationInterval: 900000, // 15 minutes
-    expiration: 86400000, // 24 hours
-    createDatabaseTable: true,
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
-    }
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  clearExpired: true,
+  checkExpirationInterval: 900000, // 15 minutes
+  expiration: 86400000, // 24 hours
+  createDatabaseTable: true,
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data',
+    },
+  },
 });
 
-app.use(session({
+app.use(
+  session({
     key: 'nt_taxoffice_session',
     secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 86400000, // 24 hours
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-        sameSite: 'strict'
-    }
-}));
+      maxAge: 86400000, // 24 hours
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      sameSite: 'strict',
+    },
+  })
+);
 
 /**
  * Logging Middleware
@@ -142,49 +142,49 @@ app.use(errorHandler);
  * Initialize Database and Start Server
  */
 async function startServer() {
-    try {
-        // Initialize database connection
-        await initializeDatabase();
-        info('Database initialized successfully');
+  try {
+    // Initialize database connection
+    await initializeDatabase();
+    info('Database initialized successfully');
 
-        // Start email queue processor
-        startEmailQueue();
-        info('Email queue processor started');
+    // Start email queue processor
+    startEmailQueue();
+    info('Email queue processor started');
 
-        // Start Express server
-        app.listen(PORT, () => {
-            info(`NT - TAXOFFICE server running on http://localhost:${PORT}`);
-            info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-        });
-    } catch (error) {
-        logError('Failed to start server', error);
-        process.exit(1);
-    }
+    // Start Express server
+    app.listen(PORT, () => {
+      info(`NT - TAXOFFICE server running on http://localhost:${PORT}`);
+      info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  } catch (error) {
+    logError('Failed to start server', error);
+    process.exit(1);
+  }
 }
 
 // Handle graceful shutdown
 process.on('SIGTERM', () => {
-    info('SIGTERM signal received: closing HTTP server');
-    stopEmailQueue();
-    process.exit(0);
+  info('SIGTERM signal received: closing HTTP server');
+  stopEmailQueue();
+  process.exit(0);
 });
 
 process.on('SIGINT', () => {
-    info('SIGINT signal received: closing HTTP server');
-    stopEmailQueue();
-    process.exit(0);
+  info('SIGINT signal received: closing HTTP server');
+  stopEmailQueue();
+  process.exit(0);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
-    logError('Unhandled Rejection at:', { promise, reason });
+  logError('Unhandled Rejection at:', { promise, reason });
 });
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
-    logError('Uncaught Exception:', error);
-    stopEmailQueue();
-    process.exit(1);
+  logError('Uncaught Exception:', error);
+  stopEmailQueue();
+  process.exit(1);
 });
 
 // Start the server

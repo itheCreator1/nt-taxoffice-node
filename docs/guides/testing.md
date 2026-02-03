@@ -75,16 +75,19 @@ tests/
 ### Prerequisites
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up test environment**:
+
    ```bash
    cp .env.example .env.test
    ```
 
 3. **Edit `.env.test`** with test database credentials:
+
    ```env
    DB_HOST=localhost
    DB_USER=nt_taxoffice_test
@@ -104,41 +107,49 @@ tests/
 ### Test Commands
 
 **Run all tests (sequential, stable for CI)**:
+
 ```bash
 npm test
 ```
 
 **Fast parallel execution (development)**:
+
 ```bash
 npm run test:parallel
 ```
 
 **Run only unit tests (backend + frontend)**:
+
 ```bash
 npm run test:unit
 ```
 
 **Run only backend unit tests**:
+
 ```bash
 npm run test:backend
 ```
 
 **Run only frontend unit tests**:
+
 ```bash
 npm run test:frontend
 ```
 
 **Run integration tests**:
+
 ```bash
 npm run test:integration
 ```
 
 **Fast unit tests in parallel**:
+
 ```bash
 npm run test:fast
 ```
 
 **Run specific test suites**:
+
 ```bash
 # Admin API tests
 npm run test:admin
@@ -151,31 +162,37 @@ npm run test:services
 ```
 
 **Run admin integration tests only**:
+
 ```bash
 npm run test:integration -- tests/integration/admin/
 ```
 
 **Run specific admin test file**:
+
 ```bash
 npm run test:integration -- tests/integration/admin/appointments.test.js
 ```
 
 **Run E2E tests**:
+
 ```bash
 npm run test:e2e
 ```
 
 **Run all test types**:
+
 ```bash
 npm run test:all
 ```
 
 **Watch mode (auto-rerun on changes)**:
+
 ```bash
 npm run test:watch
 ```
 
 **Generate coverage report**:
+
 ```bash
 npm run test:coverage
 ```
@@ -209,7 +226,7 @@ Located in `/tests/helpers/testDatabase.js`:
 const { getTestDatabase } = require('./helpers/testDatabase');
 
 beforeAll(async () => {
-    await getTestDatabase(); // Initializes shared pool once
+  await getTestDatabase(); // Initializes shared pool once
 });
 
 // All tests share the same connection pool
@@ -223,39 +240,39 @@ beforeAll(async () => {
 Located in `/tests/helpers/builders/`:
 
 **AppointmentBuilder** - Create test appointments:
+
 ```javascript
 const { AppointmentBuilder } = require('./helpers/builders');
 
 // Simple appointment
 const appointment = new AppointmentBuilder()
-    .withName('Γιάννης Παπαδόπουλος')
-    .onDate('2025-12-15')
-    .atTime('14:00:00')
-    .forTaxReturn()
-    .build();
+  .withName('Γιάννης Παπαδόπουλος')
+  .onDate('2025-12-15')
+  .atTime('14:00:00')
+  .forTaxReturn()
+  .build();
 
 // Random appointment
 const randomAppointment = new AppointmentBuilder()
-    .onRandomFutureDate()
-    .atRandomTime()
-    .forConsultation()
-    .build();
+  .onRandomFutureDate()
+  .atRandomTime()
+  .forConsultation()
+  .build();
 
 // Bulk appointments
-const appointments = new AppointmentBuilder()
-    .forBookkeeping()
-    .buildMany(10);
+const appointments = new AppointmentBuilder().forBookkeeping().buildMany(10);
 ```
 
 **AdminBuilder** - Create admin users:
+
 ```javascript
 const { AdminBuilder } = require('./helpers/builders');
 
 const admin = new AdminBuilder()
-    .withUsername('admin')
-    .withPassword('SecurePass123!')
-    .withGreekEmail()
-    .build();
+  .withUsername('admin')
+  .withPassword('SecurePass123!')
+  .withGreekEmail()
+  .build();
 ```
 
 #### 3. Database Seeders
@@ -266,17 +283,17 @@ Located in `/tests/helpers/seeders.js`:
 
 ```javascript
 const {
-    seedAdminUser,
-    seedAppointments,
-    seedFullyBookedDay,
-    seedBlockedDates
+  seedAdminUser,
+  seedAppointments,
+  seedFullyBookedDay,
+  seedBlockedDates,
 } = require('./helpers/seeders');
 
 // Create admin user (bypasses HTTP, much faster)
 const admin = await seedAdminUser({
-    username: 'admin',
-    password: 'SecurePass123!',
-    email: 'admin@example.com'
+  username: 'admin',
+  password: 'SecurePass123!',
+  email: 'admin@example.com',
 });
 
 // Seed 10 appointments
@@ -287,8 +304,8 @@ await seedFullyBookedDay('2025-12-20', '09:00:00', '17:00:00');
 
 // Add blocked dates
 await seedBlockedDates([
-    { date: '2025-12-25', reason: 'Christmas', all_day: true },
-    { date: '2025-01-01', reason: 'New Year', all_day: true }
+  { date: '2025-12-25', reason: 'Christmas', all_day: true },
+  { date: '2025-01-01', reason: 'New Year', all_day: true },
 ]);
 ```
 
@@ -328,30 +345,31 @@ Located in `/tests/helpers/transactionHelper.js`:
 const { withTransaction } = require('./helpers/transactionHelper');
 
 test('should create appointment', async () => {
-    await withTransaction(async (tx) => {
-        // All queries within this block use the transaction
-        await tx.query('INSERT INTO appointments (...) VALUES (...)', []);
+  await withTransaction(async (tx) => {
+    // All queries within this block use the transaction
+    await tx.query('INSERT INTO appointments (...) VALUES (...)', []);
 
-        const [rows] = await tx.query('SELECT * FROM appointments WHERE id = ?', [1]);
-        expect(rows.length).toBe(1);
+    const [rows] = await tx.query('SELECT * FROM appointments WHERE id = ?', [1]);
+    expect(rows.length).toBe(1);
 
-        // Transaction automatically rolls back after test
-    });
+    // Transaction automatically rolls back after test
+  });
 });
 ```
 
 **For entire test suites:**
+
 ```javascript
 const { describeWithTransactions } = require('./helpers/transactionHelper');
 
 describeWithTransactions('Appointment Service', () => {
-    // All tests automatically use transactions
+  // All tests automatically use transactions
 
-    test('should create appointment', async () => {
-        const db = getDb();
-        await db.query('INSERT INTO appointments (...) VALUES (...)', []);
-        // Automatically rolled back
-    });
+  test('should create appointment', async () => {
+    const db = getDb();
+    await db.query('INSERT INTO appointments (...) VALUES (...)', []);
+    // Automatically rolled back
+  });
 });
 ```
 
@@ -370,6 +388,7 @@ Located in `/tests/helpers/performanceMonitor.js`:
 ```
 
 **Performance Report Example:**
+
 ```
 📊 TEST PERFORMANCE REPORT
 ================================================================================
@@ -392,12 +411,14 @@ Slowest: 63403ms
 These helpers are still available for backward compatibility:
 
 **Clear data between tests**:
+
 ```javascript
 const { clearTestDatabase } = require('./helpers/database');
 await clearTestDatabase();
 ```
 
 **Run raw queries**:
+
 ```javascript
 const { query } = require('./helpers/database');
 const results = await query('SELECT * FROM appointments WHERE id = ?', [1]);
@@ -408,12 +429,13 @@ const results = await query('SELECT * FROM appointments WHERE id = ?', [1]);
 Located in `/tests/helpers/mocks.js`:
 
 **Mock Express request/response**:
+
 ```javascript
 const { createMockRequest, createMockResponse, createMockNext } = require('./helpers/mocks');
 
 const req = createMockRequest({
-    body: { name: 'test' },
-    params: { id: 1 }
+  body: { name: 'test' },
+  params: { id: 1 },
 });
 const res = createMockResponse();
 const next = createMockNext();
@@ -424,6 +446,7 @@ expect(res.json).toHaveBeenCalledWith({ success: true });
 ```
 
 **Mock database connection**:
+
 ```javascript
 const { createMockDbPool } = require('./helpers/mocks');
 
@@ -432,6 +455,7 @@ mockPool.query.mockResolvedValueOnce([[{ id: 1 }]]);
 ```
 
 **Mock email transporter**:
+
 ```javascript
 const { createMockEmailTransporter } = require('./helpers/mocks');
 
@@ -443,13 +467,13 @@ expect(transporter.sendMail).toHaveBeenCalled();
 
 Recent optimizations have achieved **30-40% faster test execution**:
 
-| Optimization | Before | After | Savings |
-|--------------|--------|-------|---------|
-| Shared Connection Pool | 5+ pool creations | 1 shared pool | 1-2s |
-| Seeders vs HTTP | ~200ms per setup | ~20ms per setup | 10x faster |
-| Shared Admin Sessions | 70+ bcrypt ops | 5 bcrypt ops | 10-14s |
-| Transaction Isolation | 50-100ms per test | 5-10ms per test | 10-20x |
-| Parallel Execution | Sequential | 4 workers | 30-50% faster |
+| Optimization           | Before            | After           | Savings       |
+| ---------------------- | ----------------- | --------------- | ------------- |
+| Shared Connection Pool | 5+ pool creations | 1 shared pool   | 1-2s          |
+| Seeders vs HTTP        | ~200ms per setup  | ~20ms per setup | 10x faster    |
+| Shared Admin Sessions  | 70+ bcrypt ops    | 5 bcrypt ops    | 10-14s        |
+| Transaction Isolation  | 50-100ms per test | 5-10ms per test | 10-20x        |
+| Parallel Execution     | Sequential        | 4 workers       | 30-50% faster |
 
 ---
 
@@ -468,24 +492,21 @@ jest.mock('../../../services/database');
 const database = require('../../../services/database');
 
 describe('My Service', () => {
-    let mockPool;
+  let mockPool;
 
-    beforeEach(() => {
-        mockPool = createMockDbPool();
-        database.getDb.mockReturnValue(mockPool);
-    });
+  beforeEach(() => {
+    mockPool = createMockDbPool();
+    database.getDb.mockReturnValue(mockPool);
+  });
 
-    test('should process data correctly', async () => {
-        mockPool.query.mockResolvedValueOnce([[{ id: 1, name: 'Test' }]]);
+  test('should process data correctly', async () => {
+    mockPool.query.mockResolvedValueOnce([[{ id: 1, name: 'Test' }]]);
 
-        const result = await myService.getData(1);
+    const result = await myService.getData(1);
 
-        expect(result).toEqual({ id: 1, name: 'Test' });
-        expect(mockPool.query).toHaveBeenCalledWith(
-            expect.stringContaining('SELECT'),
-            [1]
-        );
-    });
+    expect(result).toEqual({ id: 1, name: 'Test' });
+    expect(mockPool.query).toHaveBeenCalledWith(expect.stringContaining('SELECT'), [1]);
+  });
 });
 ```
 
@@ -499,29 +520,26 @@ const express = require('express');
 const { clearTestDatabase } = require('../../helpers/database');
 
 describe('My Route API', () => {
-    let app;
+  let app;
 
-    beforeAll(async () => {
-        app = express();
-        app.use(express.json());
-        app.use('/api/my-route', require('../../../routes/api/myRoute'));
-    });
+  beforeAll(async () => {
+    app = express();
+    app.use(express.json());
+    app.use('/api/my-route', require('../../../routes/api/myRoute'));
+  });
 
-    beforeEach(async () => {
-        await clearTestDatabase();
-    });
+  beforeEach(async () => {
+    await clearTestDatabase();
+  });
 
-    test('POST /api/my-route should create resource', async () => {
-        const data = { name: 'Test Resource' };
+  test('POST /api/my-route should create resource', async () => {
+    const data = { name: 'Test Resource' };
 
-        const response = await request(app)
-            .post('/api/my-route')
-            .send(data)
-            .expect(201);
+    const response = await request(app).post('/api/my-route').send(data).expect(201);
 
-        expect(response.body.success).toBe(true);
-        expect(response.body.resource.name).toBe('Test Resource');
-    });
+    expect(response.body.success).toBe(true);
+    expect(response.body.resource.name).toBe('Test Resource');
+  });
 });
 ```
 
@@ -533,15 +551,15 @@ describe('My Route API', () => {
 const { test, expect } = require('@playwright/test');
 
 test.describe('My Feature', () => {
-    test('should complete user workflow', async ({ page }) => {
-        await page.goto('/my-feature');
+  test('should complete user workflow', async ({ page }) => {
+    await page.goto('/my-feature');
 
-        await page.fill('#input-field', 'Test Value');
-        await page.click('#submit-button');
+    await page.fill('#input-field', 'Test Value');
+    await page.click('#submit-button');
 
-        await expect(page.locator('#success-message')).toBeVisible();
-        await expect(page.locator('#success-message')).toContainText('Success');
-    });
+    await expect(page.locator('#success-message')).toBeVisible();
+    await expect(page.locator('#success-message')).toContainText('Success');
+  });
 });
 ```
 
@@ -583,6 +601,7 @@ The CI pipeline:
 **Local vs CI Environment:**
 
 The CI environment differs from local:
+
 - Uses `DB_HOST=127.0.0.1` (GitHub Actions MySQL service)
 - Tests run with `NODE_ENV=test`
 - All environment variables are explicitly set
@@ -607,6 +626,7 @@ npx husky add .husky/pre-commit "npm run test:unit"
 **Error**: `Access denied for user 'nt_taxoffice_test'`
 
 **Solution**:
+
 ```bash
 mysql -u root -p
 GRANT ALL PRIVILEGES ON nt_taxoffice_appointments_test.* TO 'nt_taxoffice_test'@'localhost';
@@ -618,11 +638,13 @@ FLUSH PRIVILEGES;
 **Issue**: Tests don't complete, process hangs
 
 **Causes**:
+
 - Open database connections
 - Timers not cleared
 - Async operations not awaited
 
 **Solution**:
+
 - Ensure `afterAll` hooks close connections
 - Use `jest.setTimeout()` to increase timeout
 - Check for unresolved promises
@@ -632,6 +654,7 @@ FLUSH PRIVILEGES;
 **Error**: `Port 3000 is already in use`
 
 **Solution**:
+
 ```bash
 # Kill process using port 3000
 lsof -ti:3000 | xargs kill -9
@@ -645,12 +668,14 @@ PORT=3001
 **Symptoms**: Tests pass sometimes, fail other times
 
 **Common Causes**:
+
 - Race conditions
 - Timing issues
 - Database state not cleared
 - Shared state between tests
 
 **Solutions**:
+
 - Use `clearTestDatabase()` in `beforeEach`
 - Avoid shared variables between tests
 - Use `waitFor` in async operations
@@ -661,6 +686,7 @@ PORT=3001
 **Issue**: Module changes don't reflect in tests
 
 **Solution**:
+
 ```javascript
 // Mock BEFORE importing the module
 jest.mock('../../../services/database');
@@ -668,7 +694,7 @@ const myModule = require('../../../services/myModule');
 
 // Clear mocks between tests
 beforeEach(() => {
-    jest.clearAllMocks();
+  jest.clearAllMocks();
 });
 ```
 
@@ -682,8 +708,8 @@ Each test should be independent and not rely on other tests:
 
 ```javascript
 beforeEach(async () => {
-    await clearTestDatabase();
-    // Reset any shared state
+  await clearTestDatabase();
+  // Reset any shared state
 });
 ```
 
@@ -705,15 +731,15 @@ Structure tests clearly:
 
 ```javascript
 test('should create appointment', async () => {
-    // Arrange
-    const data = createAppointmentData();
+  // Arrange
+  const data = createAppointmentData();
 
-    // Act
-    const result = await appointments.create(data);
+  // Act
+  const result = await appointments.create(data);
 
-    // Assert
-    expect(result.id).toBeDefined();
-    expect(result.status).toBe('pending');
+  // Assert
+  expect(result.id).toBeDefined();
+  expect(result.status).toBe('pending');
 });
 ```
 
@@ -723,10 +749,9 @@ Don't just test happy paths:
 
 ```javascript
 test('should throw error for invalid email', async () => {
-    const data = createAppointmentData({ client_email: 'invalid' });
+  const data = createAppointmentData({ client_email: 'invalid' });
 
-    await expect(appointments.create(data))
-        .rejects.toThrow('Invalid email');
+  await expect(appointments.create(data)).rejects.toThrow('Invalid email');
 });
 ```
 
@@ -808,22 +833,18 @@ Admin tests use session-based authentication:
 
 ```javascript
 // Create admin and login
-await request(app)
-    .post('/api/admin/setup')
-    .send({
-        username: 'admin',
-        email: 'admin@example.com',
-        password: 'SecurePass123!',
-        confirmPassword: 'SecurePass123!'
-    });
+await request(app).post('/api/admin/setup').send({
+  username: 'admin',
+  email: 'admin@example.com',
+  password: 'SecurePass123!',
+  confirmPassword: 'SecurePass123!',
+});
 
 agent = request.agent(app);
-await agent
-    .post('/api/admin/login')
-    .send({
-        username: 'admin',
-        password: 'SecurePass123!'
-    });
+await agent.post('/api/admin/login').send({
+  username: 'admin',
+  password: 'SecurePass123!',
+});
 
 // Now agent maintains session cookies
 await agent.get('/api/admin/appointments').expect(200);

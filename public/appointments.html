@@ -1,310 +1,335 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="el">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="NT - TAXOFFICE Κράτηση Ραντεβού - Κλείστε το ραντεβού σας online για λογιστικές και φορολογικές υπηρεσίες.">
-  <title>Κράτηση Ραντεβού | NT - TAXOFFICE</title>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/pages/appointments.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
-    rel="stylesheet"
-  >
-  <link rel="stylesheet" href="/css/vendor/flatpickr/flatpickr.min.css">
-  <!-- Flatpickr Date Picker (UMD Build) -->
-  <script src="/js/vendor/flatpickr/flatpickr.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
-    integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer">
-  </script>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="NT - TAXOFFICE Κράτηση Ραντεβού - Κλείστε το ραντεβού σας online για λογιστικές και φορολογικές υπηρεσίες."
+    />
+    <title>Κράτηση Ραντεβού | NT - TAXOFFICE</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/pages/appointments.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/vendor/flatpickr/flatpickr.min.css" />
+    <!-- Flatpickr Date Picker (UMD Build) -->
+    <script src="/js/vendor/flatpickr/flatpickr.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+      integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
 
-<body>
-  <a class="skip-link" href="#main-content">Πήγαινε στο κύριο περιεχόμενο</a>
+  <body>
+    <a class="skip-link" href="#main-content">Πήγαινε στο κύριο περιεχόμενο</a>
 
-  <!-- Header section -->
-  <header>
-    <div class="header-container">
-      <div class="logo-container">
-        <h1>NT <span class="highlight">TAXOFFICE</span></h1>
-      </div>
-      <p class="tagline">Επαγγελματικές Λογιστικές Υπηρεσίες</p>
-    </div>
-  </header>
-
-  <!-- Navigation section -->
-  <nav aria-label="Κύρια πλοήγηση">
-    <div class="nav-container">
-      <button class="mobile-menu-toggle" aria-label="Μενού">
-        <i class="fas fa-bars"></i>
-      </button>
-      <ul class="nav-menu">
-        <li><a href="/#main-services"><i class="fas fa-briefcase"></i> Κύριες Υπηρεσίες</a></li>
-        <li><a href="/#services-professionals"><i class="fas fa-building"></i> Επαγγελματίες</a></li>
-        <li><a href="/#services-payroll"><i class="fas fa-file-invoice-dollar"></i> Μισθοδοσία</a></li>
-        <li><a href="/#services-individuals"><i class="fas fa-user"></i> Ιδιώτες</a></li>
-        <li><a href="/#consultant-services"><i class="fas fa-handshake"></i> Σύμβουλοι</a></li>
-        <li><a href="/appointments.html" class="active"><i class="fas fa-calendar-check"></i> Ραντεβού</a></li>
-        <li><a href="/contact.html"><i class="fas fa-envelope"></i> Επικοινωνία</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- Main content -->
-  <main id="main-content">
-    <section class="appointments-section">
-      <div class="container">
-        <div class="appointments-header">
-          <h2><i class="fas fa-calendar-check"></i> Κλείστε Ραντεβού</h2>
-          <p class="subtitle">Επιλέξτε την ημερομηνία και ώρα που σας εξυπηρετεί για την συνάντησή μας</p>
+    <!-- Header section -->
+    <header>
+      <div class="header-container">
+        <div class="logo-container">
+          <h1>NT <span class="highlight">TAXOFFICE</span></h1>
         </div>
+        <p class="tagline">Επαγγελματικές Λογιστικές Υπηρεσίες</p>
+      </div>
+    </header>
 
-        <!-- Success Message (hidden by default) -->
-        <div id="success-message" class="message success-message" style="display: none;">
-          <i class="fas fa-check-circle"></i>
-          <div class="message-content">
-            <h3>Το ραντεβού σας δημιουργήθηκε επιτυχώς!</h3>
-            <p id="success-text"></p>
-            <div class="cancellation-info">
-              <p><strong>Σημαντικό:</strong> Σας έχουμε στείλει email επιβεβαίωσης με τα στοιχεία του ραντεβού και σύνδεσμο ακύρωσης.</p>
+    <!-- Navigation section -->
+    <nav aria-label="Κύρια πλοήγηση">
+      <div class="nav-container">
+        <button class="mobile-menu-toggle" aria-label="Μενού">
+          <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-menu">
+          <li>
+            <a href="/#main-services"><i class="fas fa-briefcase"></i> Κύριες Υπηρεσίες</a>
+          </li>
+          <li>
+            <a href="/#services-professionals"><i class="fas fa-building"></i> Επαγγελματίες</a>
+          </li>
+          <li>
+            <a href="/#services-payroll"><i class="fas fa-file-invoice-dollar"></i> Μισθοδοσία</a>
+          </li>
+          <li>
+            <a href="/#services-individuals"><i class="fas fa-user"></i> Ιδιώτες</a>
+          </li>
+          <li>
+            <a href="/#consultant-services"><i class="fas fa-handshake"></i> Σύμβουλοι</a>
+          </li>
+          <li>
+            <a href="/appointments.html" class="active"
+              ><i class="fas fa-calendar-check"></i> Ραντεβού</a
+            >
+          </li>
+          <li>
+            <a href="/contact.html"><i class="fas fa-envelope"></i> Επικοινωνία</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main id="main-content">
+      <section class="appointments-section">
+        <div class="container">
+          <div class="appointments-header">
+            <h2><i class="fas fa-calendar-check"></i> Κλείστε Ραντεβού</h2>
+            <p class="subtitle">
+              Επιλέξτε την ημερομηνία και ώρα που σας εξυπηρετεί για την συνάντησή μας
+            </p>
+          </div>
+
+          <!-- Success Message (hidden by default) -->
+          <div id="success-message" class="message success-message" style="display: none">
+            <i class="fas fa-check-circle"></i>
+            <div class="message-content">
+              <h3>Το ραντεβού σας δημιουργήθηκε επιτυχώς!</h3>
+              <p id="success-text"></p>
+              <div class="cancellation-info">
+                <p>
+                  <strong>Σημαντικό:</strong> Σας έχουμε στείλει email επιβεβαίωσης με τα στοιχεία
+                  του ραντεβού και σύνδεσμο ακύρωσης.
+                </p>
+              </div>
             </div>
+          </div>
+
+          <!-- Error Message (hidden by default) -->
+          <div id="error-message" class="message error-message" style="display: none">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="message-content">
+              <h3>Παρουσιάστηκε σφάλμα</h3>
+              <p id="error-text"></p>
+            </div>
+          </div>
+
+          <!-- Loading Indicator (hidden by default) -->
+          <div id="loading-indicator" class="loading-indicator" style="display: none">
+            <div class="spinner"></div>
+            <p>Φόρτωση διαθέσιμων ημερομηνιών...</p>
+          </div>
+
+          <!-- Booking Form -->
+          <div id="booking-form-container" class="booking-form-container">
+            <form id="booking-form" class="booking-form">
+              <!-- Step 1: Service Selection -->
+              <div class="form-step active" id="step-1">
+                <h3 class="step-title"><i class="fas fa-1"></i> Επιλέξτε Υπηρεσία</h3>
+
+                <div class="form-group">
+                  <label for="service_type">
+                    Τύπος Υπηρεσίας <span class="required">*</span>
+                  </label>
+                  <select id="service_type" name="service_type" required>
+                    <option value="">-- Επιλέξτε Υπηρεσία --</option>
+                    <option value="Φορολογική Δήλωση">Φορολογική Δήλωση</option>
+                    <option value="Λογιστική Υποστήριξη">Λογιστική Υποστήριξη</option>
+                    <option value="Έναρξη Επιχείρησης">Έναρξη Επιχείρησης</option>
+                    <option value="Μισθοδοσία">Μισθοδοσία</option>
+                    <option value="Γενική Συμβουλευτική">Γενική Συμβουλευτική</option>
+                  </select>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" id="next-to-step-2">
+                    Επόμενο <i class="fas fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 2: Date and Time Selection -->
+              <div class="form-step" id="step-2">
+                <h3 class="step-title"><i class="fas fa-2"></i> Επιλέξτε Ημερομηνία & Ώρα</h3>
+
+                <div class="form-group">
+                  <label for="appointment_date">
+                    Ημερομηνία Ραντεβού <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="appointment_date"
+                    name="appointment_date"
+                    required
+                    placeholder="ΗΗ/ΜΜ/ΕΕΕΕ"
+                  />
+                  <small class="help-text"
+                    >Μορφή: ΗΗ/ΜΜ/ΕΕΕΕ - Διαθέσιμες ημερομηνίες: Δευτέρα - Παρασκευή (έως 60 ημέρες
+                    μπροστά)</small
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="appointment_time">
+                    Ώρα Ραντεβού <span class="required">*</span>
+                  </label>
+                  <select id="appointment_time" name="appointment_time" required disabled>
+                    <option value="">-- Επιλέξτε πρώτα ημερομηνία --</option>
+                  </select>
+                  <small class="help-text" id="time-help-text"
+                    >Επιλέξτε ημερομηνία για να δείτε τις διαθέσιμες ώρες</small
+                  >
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" id="back-to-step-1">
+                    <i class="fas fa-arrow-left"></i> Πίσω
+                  </button>
+                  <button type="button" class="btn btn-primary" id="next-to-step-3">
+                    Επόμενο <i class="fas fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 3: Personal Information -->
+              <div class="form-step" id="step-3">
+                <h3 class="step-title"><i class="fas fa-3"></i> Τα Στοιχεία Σας</h3>
+
+                <div class="form-group">
+                  <label for="client_name"> Ονοματεπώνυμο <span class="required">*</span> </label>
+                  <input
+                    type="text"
+                    id="client_name"
+                    name="client_name"
+                    placeholder="π.χ. Ιωάννης Παπαδόπουλος"
+                    required
+                    minlength="2"
+                    maxlength="255"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="client_email"> Email <span class="required">*</span> </label>
+                  <input
+                    type="email"
+                    id="client_email"
+                    name="client_email"
+                    placeholder="π.χ. email@example.com"
+                    required
+                  />
+                  <small class="help-text">Θα λάβετε επιβεβαίωση στο email σας</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="client_phone"> Τηλέφωνο <span class="required">*</span> </label>
+                  <input
+                    type="tel"
+                    id="client_phone"
+                    name="client_phone"
+                    placeholder="π.χ. 6912345678 ή 2101234567"
+                    required
+                  />
+                  <small class="help-text">Ελληνικό τηλέφωνο (με ή χωρίς +30)</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="notes"> Σημειώσεις (προαιρετικό) </label>
+                  <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                    placeholder="Προσθέστε οποιαδήποτε πρόσθετη πληροφορία ή ειδικό αίτημα..."
+                    maxlength="1000"
+                  ></textarea>
+                  <small class="help-text">Έως 1000 χαρακτήρες</small>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" id="back-to-step-2">
+                    <i class="fas fa-arrow-left"></i> Πίσω
+                  </button>
+                  <button type="submit" class="btn btn-success" id="submit-booking">
+                    <i class="fas fa-check"></i> Κλείσε Ραντεβού
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Booking Summary (shown during confirmation) -->
+            <div id="booking-summary" class="booking-summary" style="display: none">
+              <h3><i class="fas fa-info-circle"></i> Σύνοψη Ραντεβού</h3>
+              <dl class="summary-details">
+                <dt>Υπηρεσία:</dt>
+                <dd id="summary-service">-</dd>
+
+                <dt>Ημερομηνία:</dt>
+                <dd id="summary-date">-</dd>
+
+                <dt>Ώρα:</dt>
+                <dd id="summary-time">-</dd>
+
+                <dt>Όνομα:</dt>
+                <dd id="summary-name">-</dd>
+
+                <dt>Email:</dt>
+                <dd id="summary-email">-</dd>
+
+                <dt>Τηλέφωνο:</dt>
+                <dd id="summary-phone">-</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Information Box -->
+          <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> Σημαντικές Πληροφορίες</h3>
+            <ul>
+              <li>
+                <i class="fas fa-check"></i> Τα ραντεβού μπορούν να κλειστούν έως 60 ημέρες μπροστά
+              </li>
+              <li><i class="fas fa-check"></i> Απαιτείται τουλάχιστον 24 ώρες προειδοποίηση</li>
+              <li><i class="fas fa-check"></i> Θα λάβετε email επιβεβαίωσης μετά την κράτηση</li>
+              <li>
+                <i class="fas fa-check"></i> Μπορείτε να ακυρώσετε το ραντεβού μέσω του συνδέσμου
+                στο email
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Ωράριο λειτουργίας: Δευτέρα - Παρασκευή, 09:00 - 17:00
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>NT TAXOFFICE</h3>
+            <p>Επαγγελματικές λογιστικές και φορολογικές υπηρεσίες</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Επικοινωνία</h3>
+            <p><i class="fas fa-envelope"></i> ntallas@ntallas.com</p>
+            <p><i class="fas fa-phone"></i> 210 1234567</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Γρήγορες Συνδέσεις</h3>
+            <ul>
+              <li><a href="/">Αρχική</a></li>
+              <li><a href="/appointments.html">Ραντεβού</a></li>
+              <li><a href="/contact.html">Επικοινωνία</a></li>
+            </ul>
           </div>
         </div>
 
-        <!-- Error Message (hidden by default) -->
-        <div id="error-message" class="message error-message" style="display: none;">
-          <i class="fas fa-exclamation-circle"></i>
-          <div class="message-content">
-            <h3>Παρουσιάστηκε σφάλμα</h3>
-            <p id="error-text"></p>
-          </div>
-        </div>
-
-        <!-- Loading Indicator (hidden by default) -->
-        <div id="loading-indicator" class="loading-indicator" style="display: none;">
-          <div class="spinner"></div>
-          <p>Φόρτωση διαθέσιμων ημερομηνιών...</p>
-        </div>
-
-        <!-- Booking Form -->
-        <div id="booking-form-container" class="booking-form-container">
-          <form id="booking-form" class="booking-form">
-
-            <!-- Step 1: Service Selection -->
-            <div class="form-step active" id="step-1">
-              <h3 class="step-title"><i class="fas fa-1"></i> Επιλέξτε Υπηρεσία</h3>
-
-              <div class="form-group">
-                <label for="service_type">
-                  Τύπος Υπηρεσίας <span class="required">*</span>
-                </label>
-                <select id="service_type" name="service_type" required>
-                  <option value="">-- Επιλέξτε Υπηρεσία --</option>
-                  <option value="Φορολογική Δήλωση">Φορολογική Δήλωση</option>
-                  <option value="Λογιστική Υποστήριξη">Λογιστική Υποστήριξη</option>
-                  <option value="Έναρξη Επιχείρησης">Έναρξη Επιχείρησης</option>
-                  <option value="Μισθοδοσία">Μισθοδοσία</option>
-                  <option value="Γενική Συμβουλευτική">Γενική Συμβουλευτική</option>
-                </select>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-primary" id="next-to-step-2">
-                  Επόμενο <i class="fas fa-arrow-right"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Step 2: Date and Time Selection -->
-            <div class="form-step" id="step-2">
-              <h3 class="step-title"><i class="fas fa-2"></i> Επιλέξτε Ημερομηνία & Ώρα</h3>
-
-              <div class="form-group">
-                <label for="appointment_date">
-                  Ημερομηνία Ραντεβού <span class="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="appointment_date"
-                  name="appointment_date"
-                  required
-                  placeholder="ΗΗ/ΜΜ/ΕΕΕΕ"
-                >
-                <small class="help-text">Μορφή: ΗΗ/ΜΜ/ΕΕΕΕ - Διαθέσιμες ημερομηνίες: Δευτέρα - Παρασκευή (έως 60 ημέρες μπροστά)</small>
-              </div>
-
-              <div class="form-group">
-                <label for="appointment_time">
-                  Ώρα Ραντεβού <span class="required">*</span>
-                </label>
-                <select id="appointment_time" name="appointment_time" required disabled>
-                  <option value="">-- Επιλέξτε πρώτα ημερομηνία --</option>
-                </select>
-                <small class="help-text" id="time-help-text">Επιλέξτε ημερομηνία για να δείτε τις διαθέσιμες ώρες</small>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="back-to-step-1">
-                  <i class="fas fa-arrow-left"></i> Πίσω
-                </button>
-                <button type="button" class="btn btn-primary" id="next-to-step-3">
-                  Επόμενο <i class="fas fa-arrow-right"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Step 3: Personal Information -->
-            <div class="form-step" id="step-3">
-              <h3 class="step-title"><i class="fas fa-3"></i> Τα Στοιχεία Σας</h3>
-
-              <div class="form-group">
-                <label for="client_name">
-                  Ονοματεπώνυμο <span class="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="client_name"
-                  name="client_name"
-                  placeholder="π.χ. Ιωάννης Παπαδόπουλος"
-                  required
-                  minlength="2"
-                  maxlength="255"
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="client_email">
-                  Email <span class="required">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="client_email"
-                  name="client_email"
-                  placeholder="π.χ. email@example.com"
-                  required
-                >
-                <small class="help-text">Θα λάβετε επιβεβαίωση στο email σας</small>
-              </div>
-
-              <div class="form-group">
-                <label for="client_phone">
-                  Τηλέφωνο <span class="required">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="client_phone"
-                  name="client_phone"
-                  placeholder="π.χ. 6912345678 ή 2101234567"
-                  required
-                >
-                <small class="help-text">Ελληνικό τηλέφωνο (με ή χωρίς +30)</small>
-              </div>
-
-              <div class="form-group">
-                <label for="notes">
-                  Σημειώσεις (προαιρετικό)
-                </label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows="4"
-                  placeholder="Προσθέστε οποιαδήποτε πρόσθετη πληροφορία ή ειδικό αίτημα..."
-                  maxlength="1000"
-                ></textarea>
-                <small class="help-text">Έως 1000 χαρακτήρες</small>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" id="back-to-step-2">
-                  <i class="fas fa-arrow-left"></i> Πίσω
-                </button>
-                <button type="submit" class="btn btn-success" id="submit-booking">
-                  <i class="fas fa-check"></i> Κλείσε Ραντεβού
-                </button>
-              </div>
-            </div>
-
-          </form>
-
-          <!-- Booking Summary (shown during confirmation) -->
-          <div id="booking-summary" class="booking-summary" style="display: none;">
-            <h3><i class="fas fa-info-circle"></i> Σύνοψη Ραντεβού</h3>
-            <dl class="summary-details">
-              <dt>Υπηρεσία:</dt>
-              <dd id="summary-service">-</dd>
-
-              <dt>Ημερομηνία:</dt>
-              <dd id="summary-date">-</dd>
-
-              <dt>Ώρα:</dt>
-              <dd id="summary-time">-</dd>
-
-              <dt>Όνομα:</dt>
-              <dd id="summary-name">-</dd>
-
-              <dt>Email:</dt>
-              <dd id="summary-email">-</dd>
-
-              <dt>Τηλέφωνο:</dt>
-              <dd id="summary-phone">-</dd>
-            </dl>
-          </div>
-        </div>
-
-        <!-- Information Box -->
-        <div class="info-box">
-          <h3><i class="fas fa-info-circle"></i> Σημαντικές Πληροφορίες</h3>
-          <ul>
-            <li><i class="fas fa-check"></i> Τα ραντεβού μπορούν να κλειστούν έως 60 ημέρες μπροστά</li>
-            <li><i class="fas fa-check"></i> Απαιτείται τουλάχιστον 24 ώρες προειδοποίηση</li>
-            <li><i class="fas fa-check"></i> Θα λάβετε email επιβεβαίωσης μετά την κράτηση</li>
-            <li><i class="fas fa-check"></i> Μπορείτε να ακυρώσετε το ραντεβού μέσω του συνδέσμου στο email</li>
-            <li><i class="fas fa-check"></i> Ωράριο λειτουργίας: Δευτέρα - Παρασκευή, 09:00 - 17:00</li>
-          </ul>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>NT TAXOFFICE</h3>
-          <p>Επαγγελματικές λογιστικές και φορολογικές υπηρεσίες</p>
-        </div>
-
-        <div class="footer-section">
-          <h3>Επικοινωνία</h3>
-          <p><i class="fas fa-envelope"></i> ntallas@ntallas.com</p>
-          <p><i class="fas fa-phone"></i> 210 1234567</p>
-        </div>
-
-        <div class="footer-section">
-          <h3>Γρήγορες Συνδέσεις</h3>
-          <ul>
-            <li><a href="/">Αρχική</a></li>
-            <li><a href="/appointments.html">Ραντεβού</a></li>
-            <li><a href="/contact.html">Επικοινωνία</a></li>
-          </ul>
+        <div class="footer-bottom">
+          <p>&copy; 2024 NT - TAXOFFICE. Με επιφύλαξη παντός δικαιώματος.</p>
         </div>
       </div>
+    </footer>
 
-      <div class="footer-bottom">
-        <p>&copy; 2024 NT - TAXOFFICE. Με επιφύλαξη παντός δικαιώματος.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-  <script type="module" src="/js/main.js"></script>
-  <script type="module" src="/js/appointments.js"></script>
-</body>
+    <!-- Scripts -->
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/appointments.js"></script>
+  </body>
 </html>

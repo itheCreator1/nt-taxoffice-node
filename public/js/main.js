@@ -10,9 +10,9 @@ import { initAnimations } from './animations.js';
 /**
  * Initialize application when DOM is ready
  */
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all modules
-    initNavigation();
-    initFormValidation();
-    initAnimations();
+document.addEventListener('DOMContentLoaded', function () {
+  // Initialize all modules
+  initNavigation();
+  initFormValidation();
+  initAnimations();
 });

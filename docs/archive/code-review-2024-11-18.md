@@ -37,6 +37,7 @@ The contact form collects user input but only validates format, not content. The
 **Severity:** MEDIUM
 
 Loading Font Awesome from CDN without Subresource Integrity (SRI) hashes:
+
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 ```
@@ -64,9 +65,10 @@ This breaks navigation when served through Express routes.
 **Severity:** MEDIUM
 
 The error handling is too basic:
+
 ```javascript
 app.use((req, res) => {
-    res.status(404).send('Page not found');
+  res.status(404).send('Page not found');
 });
 ```
 
@@ -119,6 +121,7 @@ Only basic `console.log` for server startup. No request logging or error trackin
 **Location:** `public/js/script.js:66`
 
 Contact form just logs to console - there's no backend endpoint to receive it:
+
 ```javascript
 console.log('Form submitted:', formValues);
 ```

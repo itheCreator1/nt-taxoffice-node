@@ -5,9 +5,11 @@ Welcome to the NT-TAXOFFICE appointment booking system documentation.
 ## 📚 Documentation Structure
 
 ### Quick Start
+
 - [Testing Quickstart](testing/TESTING_QUICKSTART.md) - Get started with testing in 5 minutes
 
 ### Guides
+
 - [Admin Panel Guide](guides/admin-panel.md) - Complete admin panel user guide
 - [Admin Testing Guide](guides/admin-testing.md) - Testing admin functionality (58 tests)
 - [Testing Guide](guides/testing.md) - Comprehensive testing documentation
@@ -15,9 +17,11 @@ Welcome to the NT-TAXOFFICE appointment booking system documentation.
 - [Deployment Guide](guides/deployment.md) - Production deployment instructions
 
 ### API Documentation
+
 - [API Endpoints](api/endpoints.md) - Complete API reference
 
 ### Testing Documentation
+
 - [Testing Overview](testing/README.md) - Testing documentation index
 - [Integration Tests Setup](testing/INTEGRATION_TESTS_SETUP.md) - How to set up integration tests
 - [Test Findings](testing/TEST_FINDINGS.md) - Issues discovered during testing
@@ -28,9 +32,11 @@ Welcome to the NT-TAXOFFICE appointment booking system documentation.
 - [Test Status Summary](testing/TEST_STATUS_SUMMARY.md) - Current test coverage status
 
 ### Planning & Architecture
+
 - [Appointment System Implementation Plan](planning/appointment-system-implementation-plan.md) - Original implementation plan
 
 ### Archive
+
 - [Project Overview (Legacy)](archive/project-overview-legacy.md) - Historical project overview
 - [Code Review (2024-11-18)](archive/code-review-2024-11-18.md) - Initial code review
 
@@ -39,16 +45,19 @@ Welcome to the NT-TAXOFFICE appointment booking system documentation.
 ## 🚀 Quick Links
 
 ### For Developers
+
 1. **Getting Started**: See main [README.md](../README.md)
 2. **Running Tests**: [Testing Quickstart](testing/TESTING_QUICKSTART.md)
 3. **API Reference**: [API Endpoints](api/endpoints.md)
 4. **Writing Tests**: [Testing Guide](guides/testing.md)
 
 ### For Admins
+
 1. **Using Admin Panel**: [Admin Panel Guide](guides/admin-panel.md)
 2. **Deployment**: [Deployment Guide](guides/deployment.md)
 
 ### For Testing
+
 1. **Quick Start**: [Testing Quickstart](testing/TESTING_QUICKSTART.md)
 2. **Admin Tests**: [Admin Testing Guide](guides/admin-testing.md)
 3. **Integration Tests**: [Integration Tests Setup](testing/INTEGRATION_TESTS_SETUP.md)
@@ -65,6 +74,7 @@ Welcome to the NT-TAXOFFICE appointment booking system documentation.
 - **Public API**: 47+ tests
 
 **Performance**: Tests now run **30-40% faster** thanks to:
+
 - Shared connection pool (eliminates 100+ redundant connections)
 - Database seeders (10x faster than HTTP setup)
 - Transaction-based isolation (10-20x faster than truncate)
@@ -77,6 +87,7 @@ See [Test Status Summary](testing/TEST_STATUS_SUMMARY.md) for detailed coverage 
 ## 🔧 Common Tasks
 
 ### Running Tests
+
 ```bash
 # All tests (sequential, stable for CI)
 npm test
@@ -102,6 +113,7 @@ npm run test:coverage
 ```
 
 ### Viewing Documentation
+
 All documentation is in Markdown format and can be viewed in any text editor or on GitHub.
 
 ---

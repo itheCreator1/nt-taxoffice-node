@@ -2,24 +2,24 @@
    PRINT STYLES
    =================================== */
 @media print {
-    nav,
-    .mobile-menu-toggle,
-    .contact-btn,
-    footer {
-        display: none;
-    }
+  nav,
+  .mobile-menu-toggle,
+  .contact-btn,
+  footer {
+    display: none;
+  }
 
-    body {
-        background: white;
-        color: black;
-    }
+  body {
+    background: white;
+    color: black;
+  }
 
-    a {
-        text-decoration: underline;
-    }
+  a {
+    text-decoration: underline;
+  }
 
-    .service-card,
-    .media-card {
-        break-inside: avoid;
-    }
+  .service-card,
+  .media-card {
+    break-inside: avoid;
+  }
 }

@@ -44,11 +44,13 @@ NT TaxOffice Node is a full-stack web application built to modernize appointment
 ### Why This Project?
 
 Traditional appointment systems often rely on phone calls or manual email exchanges, leading to:
+
 - Double bookings and scheduling conflicts
 - Time wasted on coordination
 - Poor user experience for clients
 
 This application solves these problems by providing:
+
 - **Real-time availability** based on configurable business hours
 - **Automated email workflows** that keep all parties informed
 - **Admin dashboard** for centralized appointment management
@@ -59,18 +61,21 @@ This application solves these problems by providing:
 ## Key Features
 
 ### For Clients
+
 - **📅 Intuitive Booking Interface** - Select services, dates, and times through a clean, responsive UI
 - **📧 Email Notifications** - Automatic confirmations, status updates, and reminders
 - **🔗 Cancellation Links** - One-click appointment cancellation via secure tokens
 - **📱 Mobile-Friendly** - Fully responsive design works on all devices
 
 ### For Administrators
+
 - **🎛️ Dashboard** - View, filter, and manage all appointments from a centralized interface
 - **⚙️ Availability Management** - Configure per-day working hours and block specific dates
 - **✅ Appointment Approval** - Review and approve/decline booking requests
 - **📊 Status Tracking** - Monitor appointments across pending, confirmed, declined, and completed states
 
 ### Technical Highlights
+
 - **🔒 Security First** - CSP-compliant code, rate limiting, input sanitization, bcrypt password hashing
 - **⚡ Performance** - Connection pooling, database indexes, optimistic locking
 - **🐳 Docker Ready** - Full containerization with docker-compose for easy deployment
@@ -89,6 +94,7 @@ Client Request → Routes (HTTP) → Services (Business Logic) → Database
 ```
 
 **Benefits:**
+
 - **Testability** - Each layer can be tested independently
 - **Maintainability** - Changes in one layer don't cascade to others
 - **Scalability** - Services can be extracted into microservices if needed
@@ -96,25 +102,33 @@ Client Request → Routes (HTTP) → Services (Business Logic) → Database
 ### Key Architectural Decisions
 
 #### 1. Database-First Availability
+
 Instead of calculating availability on-the-fly, we store availability settings in MySQL. This allows:
+
 - **Consistent logic** across admin panel and booking interface
 - **Fast queries** for available time slots
 - **Historical tracking** of availability changes
 
 #### 2. Session-Based Authentication
+
 We use Express sessions (not JWT) for admin authentication because:
+
 - **Simplicity** - No token refresh logic needed
 - **Server control** - Sessions can be invalidated server-side instantly
 - **Security** - Session cookies are HTTP-only and secure
 
 #### 3. Email Queue System
+
 Instead of sending emails synchronously, we use a queue (`email_queue` table):
+
 - **Reliability** - Failed emails are automatically retried
 - **Performance** - Email sending doesn't block HTTP responses
 - **Monitoring** - Failed emails are easily identified
 
 #### 4. Content Security Policy (CSP) Compliance
+
 All JavaScript uses **event delegation** instead of inline handlers:
+
 - **Security** - Prevents XSS attacks
 - **Performance** - Fewer event listeners in memory
 - **Best Practice** - Follows modern web standards
@@ -123,17 +137,18 @@ All JavaScript uses **event delegation** instead of inline handlers:
 
 ## Technology Stack
 
-| Layer | Technology | Why We Chose It |
-|-------|-----------|-----------------|
-| **Runtime** | Node.js 18+ | Modern JavaScript features, excellent async support |
-| **Web Framework** | Express 4.x | Battle-tested, extensive middleware ecosystem |
-| **Database** | MySQL 8.0 | ACID compliance, mature tooling, proven reliability |
-| **Templating** | EJS | Server-side email templates with logic |
-| **Email** | Nodemailer + Gmail | Free, reliable, easy setup for small deployments |
-| **Date Picker** | Flatpickr | Lightweight, accessible, locale support |
-| **Containerization** | Docker + Docker Compose | Reproducible environments, easy deployment |
+| Layer                | Technology              | Why We Chose It                                     |
+| -------------------- | ----------------------- | --------------------------------------------------- |
+| **Runtime**          | Node.js 18+             | Modern JavaScript features, excellent async support |
+| **Web Framework**    | Express 4.x             | Battle-tested, extensive middleware ecosystem       |
+| **Database**         | MySQL 8.0               | ACID compliance, mature tooling, proven reliability |
+| **Templating**       | EJS                     | Server-side email templates with logic              |
+| **Email**            | Nodemailer + Gmail      | Free, reliable, easy setup for small deployments    |
+| **Date Picker**      | Flatpickr               | Lightweight, accessible, locale support             |
+| **Containerization** | Docker + Docker Compose | Reproducible environments, easy deployment          |
 
 **Key Dependencies:**
+
 ```json
 {
   "express": "^4.21.2",
@@ -170,6 +185,7 @@ docker-compose up -d
 ```
 
 This starts:
+
 - **MySQL 8.0** on port 3306
 - **Node.js app** on port 3000 (http://localhost:3000)
 
@@ -190,6 +206,7 @@ docker-compose exec mysql mysql -uroot -p -e "SHOW DATABASES;"
 - **Admin panel:** http://localhost:3000/admin/setup.html (first-time setup)
 
 **Stopping the stack:**
+
 ```bash
 docker-compose down
 ```
@@ -203,6 +220,7 @@ docker-compose down
 If you prefer running without Docker:
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - MySQL 8.0 server running
 
@@ -305,6 +323,7 @@ nt-taxoffice-node/
 ### Key Files Explained
 
 **`server.js`** - Application entry point that:
+
 - Configures Express middleware (Helmet, sessions, rate limiting)
 - Registers all routes
 - Initializes database connection
@@ -312,17 +331,20 @@ nt-taxoffice-node/
 - Handles graceful shutdown
 
 **`services/availability.js`** - Core business logic for:
+
 - Calculating available time slots based on working hours
 - Excluding booked slots
 - Handling blocked dates
 - Timezone conversions
 
 **`services/emailQueue.js`** - Processes the email queue:
+
 - Runs every 30 seconds
 - Retries failed emails (max 3 attempts)
 - Logs errors for manual review
 
 **`middleware/auth.js`** - Protects admin routes:
+
 - Checks for valid session
 - Redirects to login if not authenticated
 - Provides `requireAuth` middleware
@@ -336,19 +358,20 @@ All configuration is done through environment variables (`.env` file).
 ### Essential Variables
 
 **Copy from template:**
+
 ```bash
 cp .env.example .env
 ```
 
 **Required before starting:**
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SESSION_SECRET` | Secret for signing session cookies | Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
-| `DB_PASSWORD` | MySQL root password | `mySecurePassword123` |
-| `GMAIL_USER` | Gmail address for sending emails | `youremail@gmail.com` |
-| `GMAIL_APP_PASSWORD` | Gmail app-specific password | [Get from Google](https://myaccount.google.com/apppasswords) |
-| `ADMIN_EMAIL` | Email for admin notifications | `admin@example.com` |
+| Variable             | Description                        | Example                                                                                   |
+| -------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------- |
+| `SESSION_SECRET`     | Secret for signing session cookies | Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `DB_PASSWORD`        | MySQL root password                | `mySecurePassword123`                                                                     |
+| `GMAIL_USER`         | Gmail address for sending emails   | `youremail@gmail.com`                                                                     |
+| `GMAIL_APP_PASSWORD` | Gmail app-specific password        | [Get from Google](https://myaccount.google.com/apppasswords)                              |
+| `ADMIN_EMAIL`        | Email for admin notifications      | `admin@example.com`                                                                       |
 
 ### Gmail Setup Instructions
 
@@ -362,11 +385,13 @@ cp .env.example .env
 ### Docker-Specific Configuration
 
 When using Docker Compose, set:
+
 ```bash
 DB_HOST=mysql  # Must match service name in docker-compose.yml
 ```
 
 When running locally without Docker:
+
 ```bash
 DB_HOST=localhost
 ```
@@ -418,6 +443,7 @@ Protected by session authentication:
 ### Admin Features
 
 **Dashboard (`/admin/dashboard.html`):**
+
 - View all appointments in a filterable table
 - Filter by status (pending, confirmed, declined, completed)
 - Filter by date range
@@ -427,6 +453,7 @@ Protected by session authentication:
 - Real-time status updates
 
 **Availability Management (`/admin/availability.html`):**
+
 - Configure working hours for each day of the week
 - Mark days as working/non-working
 - Set different hours for different days (e.g., shorter hours on Friday)
@@ -435,13 +462,13 @@ Protected by session authentication:
 
 ### Understanding Appointment Statuses
 
-| Status | Meaning | Transitions |
-|--------|---------|-------------|
-| **Pending** | Client submitted, awaiting admin review | → Confirmed or Declined |
-| **Confirmed** | Admin approved, client notified | → Completed |
-| **Declined** | Admin rejected, client notified | (Final state) |
-| **Completed** | Appointment occurred (manual update) | (Final state) |
-| **Cancelled** | Client cancelled before appointment | (Final state) |
+| Status        | Meaning                                 | Transitions             |
+| ------------- | --------------------------------------- | ----------------------- |
+| **Pending**   | Client submitted, awaiting admin review | → Confirmed or Declined |
+| **Confirmed** | Admin approved, client notified         | → Completed             |
+| **Declined**  | Admin rejected, client notified         | (Final state)           |
+| **Completed** | Appointment occurred (manual update)    | (Final state)           |
+| **Cancelled** | Client cancelled before appointment     | (Final state)           |
 
 **Learn More:** See [docs/guides/admin-panel.md](docs/guides/admin-panel.md) for detailed admin documentation.
 
@@ -458,6 +485,7 @@ npm run dev  # Uses nodemon for auto-restart on file changes
 ### Development Tools
 
 **Check logs:**
+
 - Server logs are color-coded (see `utils/logger.js`)
 - Email queue logs show sent/failed messages
 - Database query errors are logged with full SQL
@@ -480,6 +508,7 @@ Set `GMAIL_USER` and `GMAIL_APP_PASSWORD` in `.env` to see real emails.
 ### Database Schema Overview
 
 **6 Core Tables:**
+
 1. **`admin_users`** - Admin authentication (bcrypt hashed passwords)
 2. **`appointments`** - Appointment records with versioning (`version` column for optimistic locking)
 3. **`availability_settings`** - Per-day working hours (7 rows, one per day)
@@ -496,6 +525,7 @@ Set `GMAIL_USER` and `GMAIL_APP_PASSWORD` in `.env` to see real emails.
 > **Note:** A comprehensive test suite with 100+ tests is under active development on the **`testing`** branch.
 
 The testing branch includes:
+
 - **Unit Tests** - Service layer and utility functions
 - **Integration Tests** - API endpoints with real database
 - **Admin Tests** - Complete admin panel functionality
@@ -504,6 +534,7 @@ The testing branch includes:
 - **Coverage Reports** - Detailed test coverage analysis
 
 To access the full test suite:
+
 ```bash
 git checkout testing
 npm test
@@ -532,11 +563,13 @@ Before deploying to production:
 ### Deployment Options
 
 **Docker (Recommended):**
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
 **Manual (VPS/Dedicated Server):**
+
 1. Clone repository
 2. Install Node.js 18+ and MySQL 8.0
 3. Configure `.env` with production values
@@ -555,6 +588,7 @@ docker-compose -f docker-compose.prod.yml up -d
 **Problem:** Emails stuck in queue with "Authentication failed" errors
 
 **Solutions:**
+
 - Verify you're using an **app-specific password**, not your regular Gmail password
 - Check that 2FA is enabled on your Google account
 - Ensure `GMAIL_USER` matches the account where you generated the app password
@@ -565,6 +599,7 @@ docker-compose -f docker-compose.prod.yml up -d
 **Problem:** `ECONNREFUSED` or `Access denied for user`
 
 **Solutions:**
+
 - **Docker:** Set `DB_HOST=mysql` (service name from `docker-compose.yml`)
 - **Local:** Set `DB_HOST=localhost` or `127.0.0.1`
 - Verify MySQL is running: `docker-compose ps` or `systemctl status mysql`
@@ -575,6 +610,7 @@ docker-compose -f docker-compose.prod.yml up -d
 **Problem:** "Refused to execute inline event handler" errors
 
 **This shouldn't happen** - The codebase uses event delegation to be CSP-compliant. If you see this:
+
 - Check if you added inline `onclick` handlers (don't do this)
 - Use event delegation pattern instead (see `public/js/admin/dashboard.js` for examples)
 
@@ -583,6 +619,7 @@ docker-compose -f docker-compose.prod.yml up -d
 **Problem:** Booking calendar shows "No available slots"
 
 **Solutions:**
+
 1. Check availability settings in admin panel (`/admin/availability.html`)
 2. Ensure at least one day is marked as "working day"
 3. Verify working hours are set (e.g., 09:00 - 17:00)
@@ -605,6 +642,7 @@ Contributions are welcome! Please:
 6. Push and open a pull request
 
 **Code Review Checklist:**
+
 - [ ] Code follows existing style conventions
 - [ ] All input is validated and sanitized
 - [ ] Error handling is comprehensive
@@ -622,4 +660,3 @@ Contributions are welcome! Please:
 - **Email:** For deployment support, contact the development team
 
 ---
-

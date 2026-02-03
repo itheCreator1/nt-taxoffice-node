@@ -27,6 +27,7 @@ Complete guide to managing the NT TaxOffice appointment system through the admin
 The admin panel is accessible at: `http://yourdomain.com/admin/`
 
 **Security Note:** The admin panel is session-based, meaning:
+
 - Your login session expires after 24 hours of inactivity
 - Sessions are stored server-side for better security
 - Cookies are HTTP-only (not accessible via JavaScript)
@@ -56,6 +57,7 @@ When you first deploy the application, you need to create an admin account:
 **Why This Process?**
 
 The setup page is only accessible when NO admin accounts exist in the database. This prevents:
+
 - Unauthorized account creation after deployment
 - Multiple admin accounts (single admin design)
 - Security vulnerabilities from always-accessible registration
@@ -157,6 +159,7 @@ The dashboard (`/admin/dashboard.html`) is your central hub for managing appoint
 ### Understanding the Interface
 
 **Color Coding:**
+
 - 🟡 **Yellow (Pending)**: New appointments awaiting your approval
 - 🟢 **Green (Confirmed)**: Appointments you've approved
 - 🔴 **Red (Declined)**: Appointments you've rejected
@@ -220,6 +223,7 @@ Client can cancel at any time ──→ ┌───────────┐
    - Partial matches work (e.g., "John" finds "John Doe")
 
 **Pro Tip:** Combine filters for powerful queries:
+
 - "Status: Pending + This Week" = Appointments needing approval soon
 - "Status: Confirmed + Today" = Today's confirmed appointments
 - "Search: 'tax consultation' + This Month" = All tax consultations this month
@@ -232,6 +236,7 @@ Client can cancel at any time ──→ ┌───────────┐
 4. Click **"Yes, approve"**
 
 **What Happens:**
+
 - Appointment status changes to "confirmed"
 - Client receives confirmation email with appointment details
 - You receive admin notification email
@@ -240,12 +245,14 @@ Client can cancel at any time ──→ ┌───────────┐
 **When to Approve:**
 
 ✅ **Approve When:**
+
 - Client information looks legitimate
 - You have availability at that time
 - Service type is appropriate
 - No conflicts with other commitments
 
 ❌ **Don't Approve When:**
+
 - Client information is incomplete or suspicious
 - You won't actually be available
 - Service type doesn't match your offerings
@@ -258,6 +265,7 @@ Client can cancel at any time ──→ ┌───────────┐
 4. Click **"Yes, decline"**
 
 **What Happens:**
+
 - Appointment status changes to "declined"
 - Client receives decline email (professional, non-specific)
 - Time slot becomes available again for other clients
@@ -266,6 +274,7 @@ Client can cancel at any time ──→ ┌───────────┐
 **When to Decline:**
 
 Common reasons:
+
 - Double-booking (client booked during blocked time)
 - Service type mismatch
 - Suspicious booking patterns
@@ -301,12 +310,14 @@ Common reasons:
 Deleted appointments are **removed from the database** and **cannot be recovered**.
 
 **When to Delete:**
+
 - Test appointments during initial setup
 - Duplicate entries
 - Spam bookings
 - Data entry errors
 
 **When NOT to Delete:**
+
 - Real appointments you want to decline (use "Decline" instead)
 - Past appointments for record-keeping (use "Complete" instead)
 - Client cancellations (system already marks as "Cancelled")
@@ -314,6 +325,7 @@ Deleted appointments are **removed from the database** and **cannot be recovered
 **Why So Strict?**
 
 Business records should generally be preserved for:
+
 - Legal compliance (tax records, business documentation)
 - Dispute resolution
 - Analytics and reporting
@@ -322,6 +334,7 @@ Business records should generally be preserved for:
 ### Handling Cancellations
 
 When a client cancels via the cancellation link:
+
 - Status automatically becomes "cancelled"
 - You receive notification email
 - Time slot becomes available
@@ -330,6 +343,7 @@ When a client cancels via the cancellation link:
 **You don't need to do anything** - the system handles it automatically.
 
 **However, you should:**
+
 1. Review cancelled appointments regularly
 2. Identify patterns (e.g., specific times with high cancellations)
 3. Consider reaching out to frequent cancellers
@@ -345,19 +359,20 @@ Navigate to `/admin/availability.html` to configure when clients can book appoin
 
 The system uses a **7-day schedule** where each day of the week has individual settings:
 
-| Day | Available | Start Time | End Time | Slot Duration |
-|-----|-----------|------------|----------|---------------|
-| Monday | ✓ | 09:00 | 17:00 | 30 min |
-| Tuesday | ✓ | 09:00 | 17:00 | 30 min |
-| Wednesday | ✓ | 09:00 | 17:00 | 30 min |
-| Thursday | ✓ | 09:00 | 17:00 | 30 min |
-| Friday | ✓ | 09:00 | 14:00 | 30 min |
-| Saturday | ✗ | - | - | - |
-| Sunday | ✗ | - | - | - |
+| Day       | Available | Start Time | End Time | Slot Duration |
+| --------- | --------- | ---------- | -------- | ------------- |
+| Monday    | ✓         | 09:00      | 17:00    | 30 min        |
+| Tuesday   | ✓         | 09:00      | 17:00    | 30 min        |
+| Wednesday | ✓         | 09:00      | 17:00    | 30 min        |
+| Thursday  | ✓         | 09:00      | 17:00    | 30 min        |
+| Friday    | ✓         | 09:00      | 14:00    | 30 min        |
+| Saturday  | ✗         | -          | -        | -             |
+| Sunday    | ✗         | -          | -        | -             |
 
 **Why Per-Day Configuration?**
 
 This provides flexibility for:
+
 - Different schedules each day (e.g., shorter Fridays)
 - Days off (weekends, specific weekdays)
 - Seasonal schedule changes
@@ -385,6 +400,7 @@ Monday - Friday: 09:00 - 17:00 (30 min slots)
 **What is a Slot Duration?**
 
 The time allocated for each appointment. This determines:
+
 - Available booking times (9:00, 9:30, 10:00 for 30-min slots)
 - How many appointments you can take per day
 - Buffer time between appointments
@@ -399,6 +415,7 @@ The time allocated for each appointment. This determines:
 **Choosing the Right Duration:**
 
 Consider:
+
 - Average appointment length in your experience
 - Time for notes/paperwork between clients
 - Buffer for appointments running over
@@ -411,6 +428,7 @@ Consider:
 **Current Implementation:** No automatic lunch break.
 
 **Workaround:** Use **Blocked Dates** to block your lunch hour:
+
 1. Go to Blocked Dates section
 2. Add date: (today or recurring pattern)
 3. Specify times: 12:00 - 13:00
@@ -419,6 +437,7 @@ Consider:
 **Why No Built-in Breaks?**
 
 Keeping the availability system simple makes it:
+
 - Easier to understand
 - Less prone to configuration errors
 - More flexible (use blocked dates for any exception)
@@ -444,6 +463,7 @@ Keeping the availability system simple makes it:
 **Atomic Updates Explained:**
 
 When you save, either:
+
 - ✅ All 7 days update successfully, OR
 - ❌ None update (if validation fails)
 
@@ -465,6 +485,7 @@ After saving:
 Blocked dates are specific dates/times when you're unavailable despite regular working hours.
 
 **Common Use Cases:**
+
 - Public holidays
 - Vacation days
 - Special events
@@ -487,26 +508,31 @@ Blocked dates are specific dates/times when you're unavailable despite regular w
 **Examples:**
 
 **Full Day Block:**
+
 ```
 Date: 2025-12-25
 Start Time: (leave empty)
 End Time: (leave empty)
 Reason: "Christmas Holiday"
 ```
+
 Result: No appointments available on December 25
 
 **Partial Day Block:**
+
 ```
 Date: 2025-12-10
 Start Time: 13:00
 End Time: 15:00
 Reason: "Conference Attendance"
 ```
+
 Result: 9:00-13:00 available, 13:00-15:00 blocked, 15:00-17:00 available
 
 ### Viewing Blocked Dates
 
 The blocked dates table shows:
+
 - **Date**: When the block applies
 - **Time Range**: Specific hours (or "All Day")
 - **Reason**: Your explanation
@@ -522,6 +548,7 @@ The blocked dates table shows:
 4. Click **"Yes, delete"**
 
 **What Happens:**
+
 - Block is removed from database
 - Time slots become available again
 - Clients can now book during that time
@@ -533,14 +560,15 @@ The blocked dates table shows:
 
 **What's the Difference?**
 
-| Aspect | Availability Settings | Blocked Dates |
-|--------|----------------------|---------------|
-| **Purpose** | Regular weekly schedule | Exceptions to regular schedule |
-| **Scope** | Every week, ongoing | Specific dates only |
-| **Example** | "Closed every Sunday" | "Closed December 25, 2025" |
-| **Granularity** | Day-level | Date + time-level |
+| Aspect          | Availability Settings   | Blocked Dates                  |
+| --------------- | ----------------------- | ------------------------------ |
+| **Purpose**     | Regular weekly schedule | Exceptions to regular schedule |
+| **Scope**       | Every week, ongoing     | Specific dates only            |
+| **Example**     | "Closed every Sunday"   | "Closed December 25, 2025"     |
+| **Granularity** | Day-level               | Date + time-level              |
 
 **Rule of Thumb:**
+
 - Use **Availability** for your normal schedule
 - Use **Blocked Dates** for exceptions and special circumstances
 
@@ -549,12 +577,14 @@ The blocked dates table shows:
 **Best Practice:** Add blocked dates as soon as you know about them.
 
 **Why?**
+
 - Prevents client bookings you'll have to decline
 - Shows professionalism (clients see "unavailable" not "declined")
 - Reduces administrative overhead
 - Better client experience
 
 **Recommended Timeline:**
+
 - Add public holidays at start of each year
 - Add vacation dates as soon as planned
 - Add conference dates when registered
@@ -565,13 +595,13 @@ The blocked dates table shows:
 
 ### Status Definitions
 
-| Status | Meaning | Triggered By | Can Change To |
-|--------|---------|--------------|---------------|
-| **Pending** | New booking, awaiting admin approval | Client books | Confirmed, Declined |
-| **Confirmed** | Admin approved, appointment scheduled | Admin approves | Completed, Cancelled |
-| **Declined** | Admin rejected the booking | Admin declines | (terminal state) |
-| **Completed** | Appointment occurred and finished | Admin marks complete | (terminal state) |
-| **Cancelled** | Client cancelled via email link | Client cancels | (terminal state) |
+| Status        | Meaning                               | Triggered By         | Can Change To        |
+| ------------- | ------------------------------------- | -------------------- | -------------------- |
+| **Pending**   | New booking, awaiting admin approval  | Client books         | Confirmed, Declined  |
+| **Confirmed** | Admin approved, appointment scheduled | Admin approves       | Completed, Cancelled |
+| **Declined**  | Admin rejected the booking            | Admin declines       | (terminal state)     |
+| **Completed** | Appointment occurred and finished     | Admin marks complete | (terminal state)     |
+| **Cancelled** | Client cancelled via email link       | Client cancels       | (terminal state)     |
 
 ### Status Workflow Diagram
 
@@ -606,23 +636,27 @@ Terminal States
 ### When to Use Each Status
 
 **Pending → Confirmed:**
+
 - ✅ Client information is complete and accurate
 - ✅ You have availability at requested time
 - ✅ Service type matches your offerings
 - ✅ Ready to commit to the appointment
 
 **Pending → Declined:**
+
 - ❌ Client information is suspicious or incomplete
 - ❌ Time slot is no longer available
 - ❌ Service type doesn't match
 - ❌ Can't accommodate the request
 
 **Confirmed → Completed:**
+
 - ✅ Appointment occurred in real life
 - ✅ Service was provided
 - ✅ Client attended (or note if no-show)
 
 **Confirmed → Cancelled:**
+
 - ❌ Client used cancellation link (automatic)
 - ❌ Client contacted you to cancel (manual status change not available in current version)
 
@@ -631,6 +665,7 @@ Terminal States
 **Using Status Filters Effectively:**
 
 **For Daily Operations:**
+
 ```
 Status: Pending
 Date Range: Today + Next 7 days
@@ -638,6 +673,7 @@ Result: Upcoming appointments needing approval
 ```
 
 **For Weekly Review:**
+
 ```
 Status: Confirmed
 Date Range: This week
@@ -645,6 +681,7 @@ Result: This week's confirmed appointments
 ```
 
 **For Record Keeping:**
+
 ```
 Status: Completed
 Date Range: Last month
@@ -652,6 +689,7 @@ Result: Monthly appointment history
 ```
 
 **For Quality Analysis:**
+
 ```
 Status: Cancelled
 Date Range: Last 3 months
@@ -697,17 +735,20 @@ Event Occurs → Email Added to Queue → Background Worker Sends → Retry if F
 **Why a Queue?**
 
 Without a queue:
+
 - Client waits for email to send before seeing success message
 - Email failures block the HTTP response
 - Server becomes unresponsive during email issues
 
 With a queue:
+
 - Client gets immediate response ("Appointment booked!")
 - Emails send in background
 - Failed emails automatically retry
 - Server stays responsive
 
 **Technical Details:**
+
 - Queue checks every 60 seconds
 - Up to 3 retry attempts per email
 - Exponential backoff between retries (1 min, 5 min, 15 min)
@@ -716,14 +757,14 @@ With a queue:
 
 The system includes 10 email templates (HTML + text versions):
 
-| Template | Recipient | Trigger | Purpose |
-|----------|-----------|---------|---------|
-| **booking_confirmation** | Client | Appointment booked | Confirm booking received |
-| **appointment_confirmed** | Client | Admin approves | Notify of approval |
-| **appointment_declined** | Client | Admin declines | Notify of decline |
-| **appointment_reminder** | Client | 24h before | Reduce no-shows |
-| **cancellation_confirmation** | Client | Client cancels | Confirm cancellation |
-| **admin_new_appointment** | Admin | Appointment booked | Alert of new booking |
+| Template                      | Recipient | Trigger            | Purpose                  |
+| ----------------------------- | --------- | ------------------ | ------------------------ |
+| **booking_confirmation**      | Client    | Appointment booked | Confirm booking received |
+| **appointment_confirmed**     | Client    | Admin approves     | Notify of approval       |
+| **appointment_declined**      | Client    | Admin declines     | Notify of decline        |
+| **appointment_reminder**      | Client    | 24h before         | Reduce no-shows          |
+| **cancellation_confirmation** | Client    | Client cancels     | Confirm cancellation     |
+| **admin_new_appointment**     | Admin     | Appointment booked | Alert of new booking     |
 
 **Why Both HTML and Text?**
 
@@ -757,6 +798,7 @@ Regular Gmail passwords don't work for SMTP due to security policies. App passwo
 **Alternative Email Providers:**
 
 The system uses Nodemailer, which supports:
+
 - Gmail SMTP (current)
 - SendGrid API
 - Mailgun API
@@ -772,6 +814,7 @@ To switch providers, modify `services/email.js` transporter configuration.
 **Checking Email Status:**
 
 Via database query:
+
 ```sql
 SELECT * FROM email_queue
 WHERE status = 'failed'
@@ -779,6 +822,7 @@ ORDER BY created_at DESC;
 ```
 
 **Email Queue Statuses:**
+
 - `pending`: Waiting to be sent
 - `sending`: Currently being sent
 - `sent`: Successfully delivered
@@ -787,6 +831,7 @@ ORDER BY created_at DESC;
 **Troubleshooting Failed Emails:**
 
 Common reasons for failures:
+
 1. **Invalid Gmail credentials**: Check `.env` configuration
 2. **Gmail security block**: Verify App Password is correct
 3. **Network issues**: Check server internet connection
@@ -796,6 +841,7 @@ Common reasons for failures:
 **Monitoring Recommendation:**
 
 Set up a daily cron job to check for failed emails:
+
 ```bash
 # Add to crontab
 0 9 * * * mysql -u nt_taxoffice -p'password' nt_taxoffice_appointments -e "SELECT COUNT(*) FROM email_queue WHERE status='failed'" | mail -s "Failed Emails Report" admin@example.com
@@ -825,6 +871,7 @@ views/emails/
 **Available Variables:**
 
 Each template has access to different variables. Common ones:
+
 - `client_name`: Client's full name
 - `appointment_date`: Formatted date (DD/MM/YYYY)
 - `appointment_time`: Time (HH:MM)
@@ -834,6 +881,7 @@ Each template has access to different variables. Common ones:
 - `cancellation_url`: Cancellation link (client emails only)
 
 **Branding Tips:**
+
 - Add your logo to HTML templates
 - Use your brand colors in email styles
 - Include social media links in email footers
@@ -846,56 +894,48 @@ Each template has access to different variables. Common ones:
 ### Daily Routine
 
 **Morning (Start of Day):**
+
 1. Log into admin dashboard
 2. Review pending appointments (approve/decline)
 3. Check today's confirmed appointments
 4. Verify email queue has no failures
 
-**During Day:**
-5. Check dashboard periodically for new bookings
-6. Respond to client inquiries
-7. Mark appointments as complete after they occur
+**During Day:** 5. Check dashboard periodically for new bookings 6. Respond to client inquiries 7. Mark appointments as complete after they occur
 
-**End of Day:**
-8. Mark any remaining completed appointments
-9. Review tomorrow's schedule
-10. Add any newly known blocked dates
+**End of Day:** 8. Mark any remaining completed appointments 9. Review tomorrow's schedule 10. Add any newly known blocked dates
 
 ### Weekly Routine
 
 **Start of Week:**
+
 1. Review this week's confirmed appointments
 2. Identify any conflicts or issues
 3. Check blocked dates for upcoming weeks
 4. Review cancellation patterns
 
-**End of Week:**
-5. Mark all week's appointments as complete
-6. Review appointment statistics
-7. Plan next week's schedule adjustments
+**End of Week:** 5. Mark all week's appointments as complete 6. Review appointment statistics 7. Plan next week's schedule adjustments
 
 ### Monthly Routine
 
 **Start of Month:**
+
 1. Add known blocked dates for the month
 2. Review last month's appointment trends
 3. Adjust availability if needed
 4. Check email queue for any persistent failures
 
-**End of Month:**
-5. Generate appointment reports (via database)
-6. Calculate metrics (completion rate, cancellation rate)
-7. Archive/backup old appointments
-8. Update availability for next month if needed
+**End of Month:** 5. Generate appointment reports (via database) 6. Calculate metrics (completion rate, cancellation rate) 7. Archive/backup old appointments 8. Update availability for next month if needed
 
 ### Response Time Goals
 
 **Target Response Times:**
+
 - **Pending Approvals**: Within 24 hours
 - **Client Inquiries**: Within 4 business hours
 - **Same-Day Bookings**: Within 2 hours
 
 **Why Fast Response Matters:**
+
 - Better client experience
 - Reduces client anxiety
 - Prevents double-booking attempts
@@ -904,16 +944,19 @@ Each template has access to different variables. Common ones:
 ### Communication Tips
 
 **When Approving:**
+
 - Clients receive automatic confirmation email
 - No need to call unless special circumstances
 - Email includes all appointment details
 
 **When Declining:**
+
 - Consider calling to explain (decline email is generic)
 - Offer alternative times
 - Maintain professional, friendly tone
 
 **When Clients Cancel:**
+
 - Don't take it personally (life happens)
 - No need to follow up unless pattern emerges
 - Track cancellation reasons if they volunteer them
@@ -931,16 +974,19 @@ Each template has access to different variables. Common ones:
 ### Performance Optimization
 
 **Keep Dashboard Fast:**
+
 - Use date range filters to limit results
 - Avoid loading all appointments at once
 - Use pagination (50 per page is default)
 
 **Database Maintenance:**
+
 - Archive old completed appointments (> 1 year old)
 - Optimize database tables periodically
 - Monitor database size
 
 **Email Queue:**
+
 - Monitor for growing queue (indicates sending issues)
 - Clear old sent emails periodically (> 90 days)
 
@@ -955,9 +1001,11 @@ Each template has access to different variables. Common ones:
 **Solutions:**
 
 1. **Check if admin account exists:**
+
    ```sql
    SELECT * FROM admins;
    ```
+
    If empty, visit `/admin/setup.html` to create admin
 
 2. **Check if logged in:**
@@ -977,9 +1025,11 @@ Each template has access to different variables. Common ones:
 **Solutions:**
 
 1. **Check database:**
+
    ```sql
    SELECT * FROM appointments ORDER BY created_at DESC LIMIT 10;
    ```
+
    Verify appointments exist
 
 2. **Check filters:**
@@ -1022,9 +1072,11 @@ Each template has access to different variables. Common ones:
    - Ensure slot duration is reasonable (5-240 min)
 
 2. **Check database connection:**
+
    ```bash
    docker-compose logs app
    ```
+
    Look for MySQL errors
 
 3. **Check transaction failures:**
@@ -1056,6 +1108,7 @@ Each template has access to different variables. Common ones:
 **Solutions:**
 
 1. **Check email queue:**
+
    ```sql
    SELECT * FROM email_queue
    WHERE status = 'failed'
@@ -1112,12 +1165,15 @@ Each template has access to different variables. Common ones:
    - Filter to recent dates
 
 2. **Check database indexes:**
+
    ```sql
    SHOW INDEX FROM appointments;
    ```
+
    Ensure indexes exist on `appointment_date`, `status`
 
 3. **Check database size:**
+
    ```sql
    SELECT
      table_name,
@@ -1141,6 +1197,7 @@ Each template has access to different variables. Common ones:
    - DEPLOYMENT.md: Production deployment guide
 
 2. **Database:**
+
    ```bash
    # View all tables
    mysql -u nt_taxoffice -p nt_taxoffice_appointments -e "SHOW TABLES"
@@ -1150,6 +1207,7 @@ Each template has access to different variables. Common ones:
    ```
 
 3. **Server Logs:**
+
    ```bash
    # Docker logs
    docker-compose logs app
@@ -1169,13 +1227,13 @@ Each template has access to different variables. Common ones:
 
 ### Keyboard Shortcuts
 
-| Action | Shortcut |
-|--------|----------|
-| Open Dashboard | (no shortcut, bookmark /admin/dashboard.html) |
+| Action            | Shortcut                                         |
+| ----------------- | ------------------------------------------------ |
+| Open Dashboard    | (no shortcut, bookmark /admin/dashboard.html)    |
 | Open Availability | (no shortcut, bookmark /admin/availability.html) |
-| Logout | (no shortcut, use logout button) |
-| Refresh Dashboard | F5 or Ctrl+R |
-| Focus Search Box | Click search field |
+| Logout            | (no shortcut, use logout button)                 |
+| Refresh Dashboard | F5 or Ctrl+R                                     |
+| Focus Search Box  | Click search field                               |
 
 **Future Enhancement:** Keyboard shortcuts may be added in version 1.1.0.
 
@@ -1199,6 +1257,7 @@ See [API.md](./API.md) for complete endpoint documentation.
 ### Database Schema Reference
 
 **Core Tables:**
+
 - `admins`: Admin user accounts
 - `appointments`: All appointment records
 - `availability_settings`: Per-day working hours

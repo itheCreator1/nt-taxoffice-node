@@ -16,16 +16,19 @@ Comprehensive guide for writing fast, maintainable tests in this project.
 ## Quick Start
 
 ### Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### Setup Test Database
+
 ```bash
 npm run test:setup
 ```
 
 ### Run Tests
+
 ```bash
 # All tests (sequential, for CI)
 npm test
@@ -69,6 +72,7 @@ tests/
 ## Running Tests
 
 ### Development Workflow
+
 ```bash
 # Fast feedback loop - unit tests only
 npm run test:fast
@@ -84,6 +88,7 @@ npm test -- --testNamePattern="should create appointment"
 ```
 
 ### CI/CD Workflow
+
 ```bash
 # Sequential execution (stable for CI)
 npm test
@@ -96,6 +101,7 @@ npm run test:all
 ```
 
 ### Test Categories
+
 ```bash
 npm run test:unit          # All unit tests
 npm run test:integration   # All integration tests
@@ -114,39 +120,39 @@ npm run test:e2e           # E2E tests with Playwright
 Build test data with a readable, chainable API.
 
 #### AppointmentBuilder
+
 ```javascript
 const { AppointmentBuilder } = require('../helpers/builders');
 
 // Simple appointment
 const appointment = new AppointmentBuilder()
-    .withName('Γιάννης Παπαδόπουλος')
-    .onDate('2025-12-15')
-    .atTime('14:00:00')
-    .forTaxReturn()
-    .build();
+  .withName('Γιάννης Παπαδόπουλος')
+  .onDate('2025-12-15')
+  .atTime('14:00:00')
+  .forTaxReturn()
+  .build();
 
 // Random appointment
 const randomAppointment = new AppointmentBuilder()
-    .onRandomFutureDate()
-    .atRandomTime()
-    .forConsultation()
-    .build();
+  .onRandomFutureDate()
+  .atRandomTime()
+  .forConsultation()
+  .build();
 
 // Bulk appointments
-const appointments = new AppointmentBuilder()
-    .forBookkeeping()
-    .buildMany(10);
+const appointments = new AppointmentBuilder().forBookkeeping().buildMany(10);
 ```
 
 #### AdminBuilder
+
 ```javascript
 const { AdminBuilder } = require('../helpers/builders');
 
 const admin = new AdminBuilder()
-    .withUsername('admin')
-    .withPassword('SecurePass123!')
-    .withGreekEmail()
-    .build();
+  .withUsername('admin')
+  .withPassword('SecurePass123!')
+  .withGreekEmail()
+  .build();
 ```
 
 ### 2. Database Seeders
@@ -155,17 +161,17 @@ Fast database population for tests.
 
 ```javascript
 const {
-    seedAdminUser,
-    seedAppointments,
-    seedFullyBookedDay,
-    seedBlockedDates
+  seedAdminUser,
+  seedAppointments,
+  seedFullyBookedDay,
+  seedBlockedDates,
 } = require('../helpers/seeders');
 
 // Create admin user (bypasses HTTP, much faster)
 const admin = await seedAdminUser({
-    username: 'admin',
-    password: 'SecurePass123!',
-    email: 'admin@example.com'
+  username: 'admin',
+  password: 'SecurePass123!',
+  email: 'admin@example.com',
 });
 
 // Seed 10 appointments
@@ -176,8 +182,8 @@ await seedFullyBookedDay('2025-12-20', '09:00:00', '17:00:00');
 
 // Add blocked dates
 await seedBlockedDates([
-    { date: '2025-12-25', reason: 'Christmas', all_day: true },
-    { date: '2025-01-01', reason: 'New Year', all_day: true }
+  { date: '2025-12-25', reason: 'Christmas', all_day: true },
+  { date: '2025-01-01', reason: 'New Year', all_day: true },
 ]);
 ```
 
@@ -211,30 +217,31 @@ Fast test isolation using database transactions (10-20x faster than truncate).
 const { withTransaction } = require('../helpers/transactionHelper');
 
 test('should create appointment', async () => {
-    await withTransaction(async (tx) => {
-        // All queries within this block use the transaction
-        await tx.query('INSERT INTO appointments (...) VALUES (...)', []);
+  await withTransaction(async (tx) => {
+    // All queries within this block use the transaction
+    await tx.query('INSERT INTO appointments (...) VALUES (...)', []);
 
-        const [rows] = await tx.query('SELECT * FROM appointments WHERE id = ?', [1]);
-        expect(rows.length).toBe(1);
+    const [rows] = await tx.query('SELECT * FROM appointments WHERE id = ?', [1]);
+    expect(rows.length).toBe(1);
 
-        // Transaction automatically rolls back after test
-    });
+    // Transaction automatically rolls back after test
+  });
 });
 ```
 
 **For entire test suites:**
+
 ```javascript
 const { describeWithTransactions } = require('../helpers/transactionHelper');
 
 describeWithTransactions('Appointment Service', () => {
-    // All tests automatically use transactions
+  // All tests automatically use transactions
 
-    test('should create appointment', async () => {
-        const db = getDb();
-        await db.query('INSERT INTO appointments (...) VALUES (...)', []);
-        // Automatically rolled back
-    });
+  test('should create appointment', async () => {
+    const db = getDb();
+    await db.query('INSERT INTO appointments (...) VALUES (...)', []);
+    // Automatically rolled back
+  });
 });
 ```
 
@@ -252,6 +259,7 @@ exportPerformanceData('./test-performance.json');
 ```
 
 **Performance Report Example:**
+
 ```
 📊 TEST PERFORMANCE REPORT
 ================================================================================
@@ -277,8 +285,8 @@ Efficient database connection management.
 const { getTestDatabase } = require('../helpers/testDatabase');
 
 beforeAll(async () => {
-    // Initialize shared pool once
-    await getTestDatabase();
+  // Initialize shared pool once
+  await getTestDatabase();
 });
 
 // All tests share the same connection pool
@@ -292,22 +300,21 @@ beforeAll(async () => {
 ### ✅ DO
 
 1. **Use Builders for Test Data**
+
    ```javascript
    // Good
-   const appointment = new AppointmentBuilder()
-       .onDate('2025-12-15')
-       .forTaxReturn()
-       .build();
+   const appointment = new AppointmentBuilder().onDate('2025-12-15').forTaxReturn().build();
 
    // Avoid
    const appointment = {
-       client_name: 'John Doe',
-       client_email: 'john@example.com',
-       // ... hardcoded fields
+     client_name: 'John Doe',
+     client_email: 'john@example.com',
+     // ... hardcoded fields
    };
    ```
 
 2. **Use Seeders for Database Setup**
+
    ```javascript
    // Good - Direct DB insert (fast)
    const admin = await seedAdminUser();
@@ -317,6 +324,7 @@ beforeAll(async () => {
    ```
 
 3. **Use Custom Matchers**
+
    ```javascript
    // Good - Expressive
    expect(response).toIndicateSuccess();
@@ -329,34 +337,36 @@ beforeAll(async () => {
    ```
 
 4. **Use Transactions for Unit Tests**
+
    ```javascript
    // Good - Fast rollback
    await withTransaction(async (tx) => {
-       await tx.query('INSERT ...');
-       // Automatically rolled back
+     await tx.query('INSERT ...');
+     // Automatically rolled back
    });
 
    // Avoid - Slow truncate
    beforeEach(async () => {
-       await clearTestDatabase();
+     await clearTestDatabase();
    });
    ```
 
 5. **Keep Tests Independent**
+
    ```javascript
    // Good
    test('test 1', async () => {
-       const appointment = await seedAppointments(1);
-       // ... test logic
+     const appointment = await seedAppointments(1);
+     // ... test logic
    });
 
    // Avoid - Tests depend on execution order
    let sharedAppointmentId;
    test('test 1', async () => {
-       sharedAppointmentId = await createAppointment();
+     sharedAppointmentId = await createAppointment();
    });
    test('test 2', async () => {
-       await updateAppointment(sharedAppointmentId); // Depends on test 1!
+     await updateAppointment(sharedAppointmentId); // Depends on test 1!
    });
    ```
 
@@ -375,22 +385,27 @@ beforeAll(async () => {
 ### 🚀 Speed Optimization Strategies
 
 #### 1. Use Shared Connection Pool
+
 - **Benefit**: Eliminates connection overhead (1-2s saved)
 - **Already implemented** via `getTestDatabase()`
 
 #### 2. Use Seeders Instead of HTTP
+
 - **Benefit**: 10-20x faster than full HTTP requests
 - **Example**: `seedAdminUser()` vs HTTP `/api/admin/setup`
 
 #### 3. Share Admin Sessions
+
 - **Benefit**: Reduces bcrypt operations from 70+ to ~5
 - **Already implemented** in admin test files
 
 #### 4. Use Transaction Isolation for Unit Tests
+
 - **Benefit**: 10-20x faster than truncating tables
 - **Usage**: `withTransaction()` or `describeWithTransactions()`
 
 #### 5. Run Tests in Parallel
+
 ```bash
 # Development: Fast parallel execution
 npm run test:parallel
@@ -400,6 +415,7 @@ npm test
 ```
 
 #### 6. Use Test Splitting
+
 ```bash
 # Run only fast tests during development
 npm run test:fast
@@ -411,19 +427,20 @@ npm run test:api
 
 ### Performance Benchmarks
 
-| Optimization | Before | After | Savings |
-|--------------|--------|-------|---------|
-| Shared Connection Pool | 5+ pool creations | 1 shared pool | 1-2s |
-| Seeders vs HTTP | ~200ms per setup | ~20ms per setup | 10x faster |
-| Shared Admin Sessions | 70+ bcrypt ops | 5 bcrypt ops | 10-14s |
-| Transaction Isolation | 50-100ms per test | 5-10ms per test | 10-20x |
-| Parallel Execution | Sequential | 4 workers | 30-50% faster |
+| Optimization           | Before            | After           | Savings       |
+| ---------------------- | ----------------- | --------------- | ------------- |
+| Shared Connection Pool | 5+ pool creations | 1 shared pool   | 1-2s          |
+| Seeders vs HTTP        | ~200ms per setup  | ~20ms per setup | 10x faster    |
+| Shared Admin Sessions  | 70+ bcrypt ops    | 5 bcrypt ops    | 10-14s        |
+| Transaction Isolation  | 50-100ms per test | 5-10ms per test | 10-20x        |
+| Parallel Execution     | Sequential        | 4 workers       | 30-50% faster |
 
 ---
 
 ## Troubleshooting
 
 ### Tests are slow
+
 1. Enable performance monitoring (already enabled by default)
 2. Check the performance report for slow tests
 3. Use transaction isolation for unit tests
@@ -431,18 +448,21 @@ npm run test:api
 5. Run tests in parallel: `npm run test:parallel`
 
 ### Database connection errors
+
 1. Ensure MySQL is running: `docker-compose up -d`
 2. Initialize test database: `npm run test:db:init`
 3. Check `.env.test` configuration
 4. Run setup script: `npm run test:setup`
 
 ### Tests fail randomly
+
 1. Check for shared state between tests
 2. Ensure each test is independent
 3. Use `beforeEach` for test setup, not `beforeAll`
 4. Check for race conditions in parallel execution
 
 ### Performance monitor not showing
+
 1. Check if disabled: `DISABLE_PERF_MONITOR=true`
 2. Ensure tests are actually slow (>1s)
 3. Check console output at end of test suite
@@ -452,22 +472,26 @@ npm run test:api
 ## Advanced Usage
 
 ### Export Performance Data
+
 ```javascript
 const { exportPerformanceData } = require('./helpers/performanceMonitor');
 
 afterAll(() => {
-    exportPerformanceData('./reports/test-performance.json');
+  exportPerformanceData('./reports/test-performance.json');
 });
 ```
 
 ### Custom Test Database per Worker
+
 For true parallel integration tests (advanced):
+
 ```javascript
 // Use JEST_WORKER_ID to create separate databases
 const workerDB = `taxoffice_test_w${process.env.JEST_WORKER_ID}`;
 ```
 
 ### CI/CD Integration
+
 ```yaml
 # .github/workflows/test.yml
 - name: Run tests with coverage
@@ -494,6 +518,7 @@ const workerDB = `taxoffice_test_w${process.env.JEST_WORKER_ID}`;
 ## Contributing
 
 When adding new tests:
+
 1. Use test builders for data generation
 2. Use seeders for database setup
 3. Add custom matchers for domain logic

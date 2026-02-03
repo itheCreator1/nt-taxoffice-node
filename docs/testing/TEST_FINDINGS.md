@@ -28,6 +28,7 @@ The NT TaxOffice project has **excellent unit test coverage** (234/234 tests pas
 Integration tests expect `response.body.appointment` but the actual API returns `response.body.data`.
 
 **Evidence**:
+
 ```javascript
 // Test Expectation (tests/integration/api/appointments.test.js:44-50)
 expect(response.body.appointment).toMatchObject({...});
@@ -47,6 +48,7 @@ res.status(201).json({
 ```
 
 **Affected Files**:
+
 - `tests/integration/api/appointments.test.js` (Lines: 44, 49, 50, 57, 144, 145, 213)
 
 **Root Cause**:
@@ -69,19 +71,22 @@ Replace all occurrences of `response.body.appointment` with `response.body.data`
 Tests use `DELETE /api/appointments/cancel/:token` but API implements `POST /api/appointments/:token/cancel`.
 
 **Evidence**:
+
 ```javascript
 // Test Implementation (Line 183, 203, 215)
-await request(app)
-    .delete(`/api/appointments/cancel/${token}`)
-    .expect(200);
+await request(app).delete(`/api/appointments/cancel/${token}`).expect(200);
 
 // Actual API Route (routes/api/appointments.js:112)
-router.post('/:token/cancel', asyncHandler(async (req, res) => {
+router.post(
+  '/:token/cancel',
+  asyncHandler(async (req, res) => {
     // Cancel implementation
-}));
+  })
+);
 ```
 
 **Affected Tests**:
+
 - "should cancel appointment successfully"
 - "should return 404 for non-existent token"
 - "should not allow cancelling already cancelled appointment"
@@ -90,6 +95,7 @@ router.post('/:token/cancel', asyncHandler(async (req, res) => {
 RESTful convention assumption (DELETE for cancellation) vs actual implementation (POST with subresource).
 
 **Fix Required**:
+
 1. Change `.delete()` to `.post()`
 2. Change path from `/api/appointments/cancel/${token}` to `/api/appointments/${token}/cancel`
 
@@ -124,6 +130,7 @@ Email service (`services/email.js`) and email queue (`services/emailQueue.js`) h
    - Error handling - Untested
 
 **Impact**:
+
 - Cannot verify emails are sent correctly
 - Cannot verify retry logic works
 - Cannot verify error handling
@@ -172,6 +179,7 @@ All admin routes have **zero integration test coverage**. Admin features cannot 
    - GET `/api/availability/dates` - Get next 60 days with availability
 
 **Impact**:
+
 - Cannot verify admin can login
 - Cannot verify appointment management works
 - Cannot verify availability configuration works
@@ -194,6 +202,7 @@ All admin routes have **zero integration test coverage**. Admin features cannot 
 Test database requires manual multi-step setup. No automated setup script exists.
 
 **Current Process**:
+
 1. Manually start Docker Compose: `docker-compose up -d mysql`
 2. Wait for MySQL to be ready (manual timing)
 3. Run init script: `npm run test:db:init`
@@ -201,6 +210,7 @@ Test database requires manual multi-step setup. No automated setup script exists
 5. Troubleshoot if it fails
 
 **Problems**:
+
 - New developers don't know the exact steps
 - No validation that MySQL is healthy before init
 - No clear error messages
@@ -209,6 +219,7 @@ Test database requires manual multi-step setup. No automated setup script exists
 
 **Required Solution**:
 Automated setup script (`scripts/test-setup.sh`) that:
+
 - Checks Docker is running
 - Starts MySQL container
 - Waits for healthy status
@@ -249,6 +260,7 @@ Automated setup script (`scripts/test-setup.sh`) that:
    - Error handling
 
 **Impact**:
+
 - Cannot verify logging works
 - Cannot verify database connection management
 - Cannot verify setup flow works
@@ -269,12 +281,14 @@ Automated setup script (`scripts/test-setup.sh`) that:
 Test Express app (`tests/helpers/testApp.js`) only mounts public appointment routes. Admin routes not mounted.
 
 **Current State**:
+
 ```javascript
 // Only this is mounted:
 app.use('/api/appointments', require('../../routes/api/appointments'));
 ```
 
 **Missing Mounts**:
+
 ```javascript
 app.use('/api/admin/auth', require('../../routes/admin/auth'));
 app.use('/api/admin/appointments', require('../../routes/admin/appointments'));
@@ -291,16 +305,16 @@ Admin integration tests will fail with 404 even after they're written.
 
 ## Findings Summary Table
 
-| # | Finding | Severity | Impact | Fix Time | Tests Needed |
-|---|---------|----------|--------|----------|--------------|
-| 1 | Response format mismatch | 🔴 CRITICAL | 12 tests fail | 30 min | 0 (fix only) |
-| 2 | HTTP method mismatch | 🔴 CRITICAL | 3 tests fail | 15 min | 0 (fix only) |
-| 3 | Email coverage | 🔴 CRITICAL | Email untested | 2-3 hours | 73 tests |
-| 4 | Admin routes coverage | 🔴 CRITICAL | Admin untested | 3-4 hours | 88 tests |
-| 5 | Manual DB setup | 🟡 HIGH | Dev friction | 1 hour | 0 (automation) |
-| 6 | Utility coverage | 🟡 MEDIUM | Utils untested | 2-3 hours | 43 tests |
-| 7 | Test app routes | 🟢 LOW | Admin tests blocked | 15 min | 0 (config) |
-| **TOTAL** | **7 findings** | **4 critical** | **High** | **8-12 hours** | **204 tests** |
+| #         | Finding                  | Severity       | Impact              | Fix Time       | Tests Needed   |
+| --------- | ------------------------ | -------------- | ------------------- | -------------- | -------------- |
+| 1         | Response format mismatch | 🔴 CRITICAL    | 12 tests fail       | 30 min         | 0 (fix only)   |
+| 2         | HTTP method mismatch     | 🔴 CRITICAL    | 3 tests fail        | 15 min         | 0 (fix only)   |
+| 3         | Email coverage           | 🔴 CRITICAL    | Email untested      | 2-3 hours      | 73 tests       |
+| 4         | Admin routes coverage    | 🔴 CRITICAL    | Admin untested      | 3-4 hours      | 88 tests       |
+| 5         | Manual DB setup          | 🟡 HIGH        | Dev friction        | 1 hour         | 0 (automation) |
+| 6         | Utility coverage         | 🟡 MEDIUM      | Utils untested      | 2-3 hours      | 43 tests       |
+| 7         | Test app routes          | 🟢 LOW         | Admin tests blocked | 15 min         | 0 (config)     |
+| **TOTAL** | **7 findings**           | **4 critical** | **High**            | **8-12 hours** | **204 tests**  |
 
 ---
 
@@ -342,16 +356,19 @@ Admin integration tests will fail with 404 even after they're written.
 ## Recommended Actions
 
 ### Immediate (Today)
+
 1. ✅ Review findings document (this file)
 2. ✅ Review testing completion plan
 3. 🔧 Execute Phase 1: Fix integration tests (1-2 hours)
 4. 🔧 Execute Phase 2: Automate setup (1 hour)
 
 ### Short Term (This Week)
+
 5. 🔧 Execute Phase 3: Email testing (2-3 hours)
 6. 🔧 Execute Phase 4: Admin testing (3-4 hours)
 
 ### Before Next Release
+
 7. 🔧 Execute Phase 5: Utility testing (2-3 hours)
 8. 🔧 Execute Phase 6: Documentation (1-2 hours)
 9. ✅ Verify 100% test pass rate
@@ -362,6 +379,7 @@ Admin integration tests will fail with 404 even after they're written.
 ## Success Metrics
 
 ### Current State
+
 - ✅ 234 unit tests passing (100%)
 - ❌ 12 integration tests (will fail)
 - ❌ 0 email tests
@@ -370,6 +388,7 @@ Admin integration tests will fail with 404 even after they're written.
 - ⚠️ Manual setup required
 
 ### Target State
+
 - ✅ 438+ unit tests passing (100%)
 - ✅ 124+ integration tests passing (100%)
 - ✅ 73 email tests passing

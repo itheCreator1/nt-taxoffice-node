@@ -10,7 +10,7 @@ const { createAppointmentData } = require('../../helpers/fixtures');
 jest.mock('../../../services/database');
 jest.mock('../../../services/availability');
 jest.mock('../../../services/emailQueue', () => ({
-    queueEmail: jest.fn().mockResolvedValue({ id: 1 })
+  queueEmail: jest.fn().mockResolvedValue({ id: 1 }),
 }));
 jest.mock('../../../utils/logger');
 
@@ -20,315 +20,317 @@ const emailQueue = require('../../../services/emailQueue');
 const appointments = require('../../../services/appointments');
 
 describe('Appointments Service', () => {
-    let mockPool;
-    let mockConnection;
+  let mockPool;
+  let mockConnection;
 
-    beforeEach(() => {
-        resetAllMocks();
-        mockPool = createMockDbPool();
-        mockConnection = mockPool._mockConnection;
-        database.getDb.mockReturnValue(mockPool);
+  beforeEach(() => {
+    resetAllMocks();
+    mockPool = createMockDbPool();
+    mockConnection = mockPool._mockConnection;
+    database.getDb.mockReturnValue(mockPool);
+  });
+
+  describe('createAppointment', () => {
+    test('should create appointment successfully', async () => {
+      const appointmentData = createAppointmentData();
+
+      // Mock SELECT FOR UPDATE - no existing appointment
+      mockConnection.query.mockResolvedValueOnce([[]]); // No conflict
+
+      // Mock INSERT - return insertId
+      mockConnection.query.mockResolvedValueOnce([{ insertId: 1 }]);
+
+      // Mock history INSERT
+      mockConnection.query.mockResolvedValueOnce([{}]);
+
+      const result = await appointments.createAppointment(appointmentData);
+
+      expect(result).toMatchObject({
+        id: 1,
+        ...appointmentData,
+        status: 'pending',
+      });
+      expect(result.cancellation_token).toBeDefined();
+      expect(mockConnection.beginTransaction).toHaveBeenCalled();
+      expect(mockConnection.commit).toHaveBeenCalled();
+      expect(mockConnection.release).toHaveBeenCalled();
     });
 
-    describe('createAppointment', () => {
-        test('should create appointment successfully', async () => {
-            const appointmentData = createAppointmentData();
+    test('should rollback and throw error if slot already booked', async () => {
+      const appointmentData = createAppointmentData();
 
-            // Mock SELECT FOR UPDATE - no existing appointment
-            mockConnection.query.mockResolvedValueOnce([[]]); // No conflict
+      // Mock SELECT FOR UPDATE - existing appointment found
+      mockConnection.query.mockResolvedValueOnce([[{ id: 999 }]]);
 
-            // Mock INSERT - return insertId
-            mockConnection.query.mockResolvedValueOnce([{ insertId: 1 }]);
+      await expect(appointments.createAppointment(appointmentData)).rejects.toThrow(
+        'SLOT_ALREADY_BOOKED'
+      );
 
-            // Mock history INSERT
-            mockConnection.query.mockResolvedValueOnce([{}]);
-
-            const result = await appointments.createAppointment(appointmentData);
-
-            expect(result).toMatchObject({
-                id: 1,
-                ...appointmentData,
-                status: 'pending'
-            });
-            expect(result.cancellation_token).toBeDefined();
-            expect(mockConnection.beginTransaction).toHaveBeenCalled();
-            expect(mockConnection.commit).toHaveBeenCalled();
-            expect(mockConnection.release).toHaveBeenCalled();
-        });
-
-        test('should rollback and throw error if slot already booked', async () => {
-            const appointmentData = createAppointmentData();
-
-            // Mock SELECT FOR UPDATE - existing appointment found
-            mockConnection.query.mockResolvedValueOnce([[{ id: 999 }]]);
-
-            await expect(appointments.createAppointment(appointmentData))
-                .rejects.toThrow('SLOT_ALREADY_BOOKED');
-
-            expect(mockConnection.beginTransaction).toHaveBeenCalled();
-            expect(mockConnection.rollback).toHaveBeenCalled();
-            expect(mockConnection.commit).not.toHaveBeenCalled();
-            expect(mockConnection.release).toHaveBeenCalled();
-        });
-
-        test('should rollback on database error', async () => {
-            const appointmentData = createAppointmentData();
-
-            mockConnection.query.mockRejectedValueOnce(new Error('Database error'));
-
-            await expect(appointments.createAppointment(appointmentData))
-                .rejects.toThrow('Database error');
-
-            expect(mockConnection.beginTransaction).toHaveBeenCalled();
-            expect(mockConnection.rollback).toHaveBeenCalled();
-            expect(mockConnection.release).toHaveBeenCalled();
-        });
+      expect(mockConnection.beginTransaction).toHaveBeenCalled();
+      expect(mockConnection.rollback).toHaveBeenCalled();
+      expect(mockConnection.commit).not.toHaveBeenCalled();
+      expect(mockConnection.release).toHaveBeenCalled();
     });
 
-    describe('getAppointmentById', () => {
-        test('should return appointment if found', async () => {
-            const mockAppointment = {
-                id: 1,
-                client_name: 'Test Client',
-                client_email: 'test@example.com',
-                status: 'pending'
-            };
+    test('should rollback on database error', async () => {
+      const appointmentData = createAppointmentData();
 
-            mockPool.query.mockResolvedValueOnce([[mockAppointment]]);
+      mockConnection.query.mockRejectedValueOnce(new Error('Database error'));
 
-            const result = await appointments.getAppointmentById(1);
+      await expect(appointments.createAppointment(appointmentData)).rejects.toThrow(
+        'Database error'
+      );
 
-            expect(result).toEqual(mockAppointment);
-            expect(mockPool.query).toHaveBeenCalledWith(
-                expect.stringContaining('SELECT * FROM appointments'),
-                [1]
-            );
-        });
+      expect(mockConnection.beginTransaction).toHaveBeenCalled();
+      expect(mockConnection.rollback).toHaveBeenCalled();
+      expect(mockConnection.release).toHaveBeenCalled();
+    });
+  });
 
-        test('should return null if appointment not found', async () => {
-            mockPool.query.mockResolvedValueOnce([[]]);
+  describe('getAppointmentById', () => {
+    test('should return appointment if found', async () => {
+      const mockAppointment = {
+        id: 1,
+        client_name: 'Test Client',
+        client_email: 'test@example.com',
+        status: 'pending',
+      };
 
-            const result = await appointments.getAppointmentById(999);
+      mockPool.query.mockResolvedValueOnce([[mockAppointment]]);
 
-            expect(result).toBeNull();
-        });
+      const result = await appointments.getAppointmentById(1);
+
+      expect(result).toEqual(mockAppointment);
+      expect(mockPool.query).toHaveBeenCalledWith(
+        expect.stringContaining('SELECT * FROM appointments'),
+        [1]
+      );
     });
 
-    describe('getAppointmentByToken', () => {
-        test('should return appointment if token valid', async () => {
-            const mockAppointment = {
-                id: 1,
-                cancellation_token: 'test-token-123',
-                status: 'pending'
-            };
+    test('should return null if appointment not found', async () => {
+      mockPool.query.mockResolvedValueOnce([[]]);
 
-            mockPool.query.mockResolvedValueOnce([[mockAppointment]]);
+      const result = await appointments.getAppointmentById(999);
 
-            const result = await appointments.getAppointmentByToken('test-token-123');
+      expect(result).toBeNull();
+    });
+  });
 
-            expect(result).toEqual(mockAppointment);
-            expect(mockPool.query).toHaveBeenCalledWith(
-                expect.stringContaining('cancellation_token = ?'),
-                ['test-token-123']
-            );
-        });
+  describe('getAppointmentByToken', () => {
+    test('should return appointment if token valid', async () => {
+      const mockAppointment = {
+        id: 1,
+        cancellation_token: 'test-token-123',
+        status: 'pending',
+      };
 
-        test('should return null for invalid token', async () => {
-            mockPool.query.mockResolvedValueOnce([[]]);
+      mockPool.query.mockResolvedValueOnce([[mockAppointment]]);
 
-            const result = await appointments.getAppointmentByToken('invalid-token');
+      const result = await appointments.getAppointmentByToken('test-token-123');
 
-            expect(result).toBeNull();
-        });
+      expect(result).toEqual(mockAppointment);
+      expect(mockPool.query).toHaveBeenCalledWith(
+        expect.stringContaining('cancellation_token = ?'),
+        ['test-token-123']
+      );
     });
 
-    describe('cancelAppointment', () => {
-        test('should cancel appointment successfully', async () => {
-            const mockAppointment = {
-                id: 1,
-                cancellation_token: 'test-token-123',
-                status: 'pending',
-                version: 1
-            };
+    test('should return null for invalid token', async () => {
+      mockPool.query.mockResolvedValueOnce([[]]);
 
-            // Mock SELECT FOR UPDATE
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+      const result = await appointments.getAppointmentByToken('invalid-token');
 
-            // Mock UPDATE
-            mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
+      expect(result).toBeNull();
+    });
+  });
 
-            // Mock history INSERT
-            mockConnection.query.mockResolvedValueOnce([{}]);
+  describe('cancelAppointment', () => {
+    test('should cancel appointment successfully', async () => {
+      const mockAppointment = {
+        id: 1,
+        cancellation_token: 'test-token-123',
+        status: 'pending',
+        version: 1,
+      };
 
-            // Mock SELECT to get updated appointment
-            mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'cancelled' }]]);
+      // Mock SELECT FOR UPDATE
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
 
-            const result = await appointments.cancelAppointment('test-token-123');
+      // Mock UPDATE
+      mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
 
-            expect(result.status).toBe('cancelled');
-            expect(mockConnection.beginTransaction).toHaveBeenCalled();
-            expect(mockConnection.commit).toHaveBeenCalled();
-            expect(mockConnection.release).toHaveBeenCalled();
-        });
+      // Mock history INSERT
+      mockConnection.query.mockResolvedValueOnce([{}]);
 
-        test('should throw error if appointment not found', async () => {
-            mockConnection.query.mockResolvedValueOnce([[]]); // No appointment
+      // Mock SELECT to get updated appointment
+      mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'cancelled' }]]);
 
-            await expect(appointments.cancelAppointment('invalid-token'))
-                .rejects.toThrow('APPOINTMENT_NOT_FOUND');
+      const result = await appointments.cancelAppointment('test-token-123');
 
-            expect(mockConnection.rollback).toHaveBeenCalled();
-        });
-
-        test('should throw error if appointment already cancelled', async () => {
-            const mockAppointment = {
-                id: 1,
-                status: 'cancelled',
-                version: 1
-            };
-
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
-
-            await expect(appointments.cancelAppointment('test-token-123'))
-                .rejects.toThrow('ALREADY_CANCELLED');
-
-            expect(mockConnection.rollback).toHaveBeenCalled();
-        });
+      expect(result.status).toBe('cancelled');
+      expect(mockConnection.beginTransaction).toHaveBeenCalled();
+      expect(mockConnection.commit).toHaveBeenCalled();
+      expect(mockConnection.release).toHaveBeenCalled();
     });
 
-    describe('updateAppointmentStatus', () => {
-        test('should update status successfully', async () => {
-            const mockAppointment = {
-                id: 1,
-                status: 'pending',
-                version: 1
-            };
+    test('should throw error if appointment not found', async () => {
+      mockConnection.query.mockResolvedValueOnce([[]]); // No appointment
 
-            // Mock SELECT FOR UPDATE
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+      await expect(appointments.cancelAppointment('invalid-token')).rejects.toThrow(
+        'APPOINTMENT_NOT_FOUND'
+      );
 
-            // Mock UPDATE
-            mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
-
-            // Mock history INSERT
-            mockConnection.query.mockResolvedValueOnce([{}]);
-
-            // Mock SELECT to get updated appointment
-            mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'confirmed' }]]);
-
-            const result = await appointments.updateAppointmentStatus(1, 'confirmed');
-
-            expect(result.status).toBe('confirmed');
-            expect(mockConnection.commit).toHaveBeenCalled();
-        });
-
-        test('should throw error for invalid status', async () => {
-            await expect(appointments.updateAppointmentStatus(1, 'invalid_status'))
-                .rejects.toThrow();
-        });
-
-        test('should handle concurrent update (optimistic locking)', async () => {
-            const mockAppointment = {
-                id: 1,
-                status: 'pending',
-                version: 1
-            };
-
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
-            mockConnection.query.mockResolvedValueOnce([{ affectedRows: 0 }]); // Update affected 0 rows
-
-            await expect(appointments.updateAppointmentStatus(1, 'confirmed'))
-                .rejects.toThrow('CONCURRENT_MODIFICATION');
-
-            expect(mockConnection.rollback).toHaveBeenCalled();
-        });
+      expect(mockConnection.rollback).toHaveBeenCalled();
     });
 
-    describe('getAllAppointments', () => {
-        test('should get all appointments', async () => {
-            const mockAppointments = [
-                { id: 1, client_name: 'Client 1', status: 'pending' },
-                { id: 2, client_name: 'Client 2', status: 'confirmed' }
-            ];
+    test('should throw error if appointment already cancelled', async () => {
+      const mockAppointment = {
+        id: 1,
+        status: 'cancelled',
+        version: 1,
+      };
 
-            mockPool.query.mockResolvedValueOnce([mockAppointments]);
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
 
-            const result = await appointments.getAllAppointments();
+      await expect(appointments.cancelAppointment('test-token-123')).rejects.toThrow(
+        'ALREADY_CANCELLED'
+      );
 
-            expect(result).toEqual(mockAppointments);
-            expect(mockPool.query).toHaveBeenCalledWith(
-                expect.stringContaining('SELECT * FROM appointments'),
-                []
-            );
-        });
+      expect(mockConnection.rollback).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAppointmentStatus', () => {
+    test('should update status successfully', async () => {
+      const mockAppointment = {
+        id: 1,
+        status: 'pending',
+        version: 1,
+      };
+
+      // Mock SELECT FOR UPDATE
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+
+      // Mock UPDATE
+      mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
+
+      // Mock history INSERT
+      mockConnection.query.mockResolvedValueOnce([{}]);
+
+      // Mock SELECT to get updated appointment
+      mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'confirmed' }]]);
+
+      const result = await appointments.updateAppointmentStatus(1, 'confirmed');
+
+      expect(result.status).toBe('confirmed');
+      expect(mockConnection.commit).toHaveBeenCalled();
     });
 
-    describe('countAppointments', () => {
-        test('should count appointments', async () => {
-            mockPool.query.mockResolvedValueOnce([[{ count: 42 }]]);
-
-            const result = await appointments.countAppointments();
-
-            expect(result).toBe(42);
-            expect(mockPool.query).toHaveBeenCalledWith(
-                expect.stringContaining('COUNT(*)'),
-                []
-            );
-        });
+    test('should throw error for invalid status', async () => {
+      await expect(appointments.updateAppointmentStatus(1, 'invalid_status')).rejects.toThrow();
     });
 
-    describe('getAppointmentHistory', () => {
-        test('should return appointment history', async () => {
-            const mockHistory = [
-                { id: 1, old_status: null, new_status: 'pending', changed_by: 'client' },
-                { id: 2, old_status: 'pending', new_status: 'confirmed', changed_by: 'admin' }
-            ];
+    test('should handle concurrent update (optimistic locking)', async () => {
+      const mockAppointment = {
+        id: 1,
+        status: 'pending',
+        version: 1,
+      };
 
-            mockPool.query.mockResolvedValueOnce([mockHistory]);
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+      mockConnection.query.mockResolvedValueOnce([{ affectedRows: 0 }]); // Update affected 0 rows
 
-            const result = await appointments.getAppointmentHistory(1);
+      await expect(appointments.updateAppointmentStatus(1, 'confirmed')).rejects.toThrow(
+        'CONCURRENT_MODIFICATION'
+      );
 
-            expect(result).toEqual(mockHistory);
-            expect(mockPool.query).toHaveBeenCalledWith(
-                expect.stringContaining('FROM appointment_history'),
-                [1]
-            );
-        });
+      expect(mockConnection.rollback).toHaveBeenCalled();
+    });
+  });
+
+  describe('getAllAppointments', () => {
+    test('should get all appointments', async () => {
+      const mockAppointments = [
+        { id: 1, client_name: 'Client 1', status: 'pending' },
+        { id: 2, client_name: 'Client 2', status: 'confirmed' },
+      ];
+
+      mockPool.query.mockResolvedValueOnce([mockAppointments]);
+
+      const result = await appointments.getAllAppointments();
+
+      expect(result).toEqual(mockAppointments);
+      expect(mockPool.query).toHaveBeenCalledWith(
+        expect.stringContaining('SELECT * FROM appointments'),
+        []
+      );
+    });
+  });
+
+  describe('countAppointments', () => {
+    test('should count appointments', async () => {
+      mockPool.query.mockResolvedValueOnce([[{ count: 42 }]]);
+
+      const result = await appointments.countAppointments();
+
+      expect(result).toBe(42);
+      expect(mockPool.query).toHaveBeenCalledWith(expect.stringContaining('COUNT(*)'), []);
+    });
+  });
+
+  describe('getAppointmentHistory', () => {
+    test('should return appointment history', async () => {
+      const mockHistory = [
+        { id: 1, old_status: null, new_status: 'pending', changed_by: 'client' },
+        { id: 2, old_status: 'pending', new_status: 'confirmed', changed_by: 'admin' },
+      ];
+
+      mockPool.query.mockResolvedValueOnce([mockHistory]);
+
+      const result = await appointments.getAppointmentHistory(1);
+
+      expect(result).toEqual(mockHistory);
+      expect(mockPool.query).toHaveBeenCalledWith(
+        expect.stringContaining('FROM appointment_history'),
+        [1]
+      );
+    });
+  });
+
+  describe('declineAppointment', () => {
+    test('should decline appointment with reason', async () => {
+      const mockAppointment = {
+        id: 1,
+        status: 'pending',
+        version: 1,
+      };
+
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+      mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
+      mockConnection.query.mockResolvedValueOnce([{}]);
+      mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'declined' }]]);
+
+      const result = await appointments.declineAppointment(1, 'Fully booked');
+
+      expect(result.status).toBe('declined');
+      expect(mockConnection.commit).toHaveBeenCalled();
     });
 
-    describe('declineAppointment', () => {
-        test('should decline appointment with reason', async () => {
-            const mockAppointment = {
-                id: 1,
-                status: 'pending',
-                version: 1
-            };
+    test('should handle concurrent modification', async () => {
+      const mockAppointment = {
+        id: 1,
+        status: 'pending',
+        version: 1,
+      };
 
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
-            mockConnection.query.mockResolvedValueOnce([{ affectedRows: 1 }]);
-            mockConnection.query.mockResolvedValueOnce([{}]);
-            mockConnection.query.mockResolvedValueOnce([[{ ...mockAppointment, status: 'declined' }]]);
+      mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
+      mockConnection.query.mockResolvedValueOnce([{ affectedRows: 0 }]); // Concurrent modification
 
-            const result = await appointments.declineAppointment(1, 'Fully booked');
+      await expect(appointments.declineAppointment(1, 'Reason')).rejects.toThrow(
+        'CONCURRENT_MODIFICATION'
+      );
 
-            expect(result.status).toBe('declined');
-            expect(mockConnection.commit).toHaveBeenCalled();
-        });
-
-        test('should handle concurrent modification', async () => {
-            const mockAppointment = {
-                id: 1,
-                status: 'pending',
-                version: 1
-            };
-
-            mockConnection.query.mockResolvedValueOnce([[mockAppointment]]);
-            mockConnection.query.mockResolvedValueOnce([{ affectedRows: 0 }]); // Concurrent modification
-
-            await expect(appointments.declineAppointment(1, 'Reason'))
-                .rejects.toThrow('CONCURRENT_MODIFICATION');
-
-            expect(mockConnection.rollback).toHaveBeenCalled();
-        });
+      expect(mockConnection.rollback).toHaveBeenCalled();
     });
+  });
 });

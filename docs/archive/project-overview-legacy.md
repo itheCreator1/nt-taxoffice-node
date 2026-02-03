@@ -1,18 +1,10 @@
 # NT - TAXOFFICE Project
 
- 
-
 ## Project Overview
-
- 
 
 NT - TAXOFFICE is a professional web platform for an accounting firm in Greece, providing comprehensive accounting, tax, and consulting services. Built with Node.js and Express, it features a clean, modern design with modular architecture.
 
- 
-
 ## Technology Stack
-
- 
 
 - **Backend**: Node.js with Express 4.18.2
 
@@ -24,15 +16,9 @@ NT - TAXOFFICE is a professional web platform for an accounting firm in Greece, 
 
 - **Fonts**: Google Fonts (Poppins, Roboto)
 
- 
-
 ## Architecture
 
- 
-
 ### Directory Structure
-
- 
 
 ```
 
@@ -78,15 +64,9 @@ nt-taxoffice-node/
 
 ```
 
- 
-
 ### CSS Architecture
 
- 
-
 The project follows a modular CSS pattern with clear separation:
-
- 
 
 - **base/**: Foundation styles (variables, typography, normalization)
 
@@ -96,15 +76,9 @@ The project follows a modular CSS pattern with clear separation:
 
 - **utilities/**: Helper classes (animations, responsive utilities, accessibility, print)
 
- 
-
 ### JavaScript Modules
 
- 
-
 Client-side code is organized as ES6 modules:
-
- 
 
 - `main.js` - Initializes and coordinates all modules
 
@@ -114,11 +88,7 @@ Client-side code is organized as ES6 modules:
 
 - `form-validation.js` - Validates contact forms before submission
 
- 
-
 ## Key Features
-
- 
 
 - **Responsive Design**: Mobile-first approach with breakpoints
 
@@ -130,15 +100,9 @@ Client-side code is organized as ES6 modules:
 
 - **Modern UI**: Clean design with smooth animations
 
- 
-
 ## Development Guidelines
 
- 
-
 ### Starting the Server
-
- 
 
 ```bash
 
@@ -150,31 +114,19 @@ PORT=8080 npm run dev  # Custom port
 
 ```
 
- 
-
 ### Adding New Pages
-
- 
 
 1. Create HTML file in `public/`
 
 2. Add route in `routes/index.js`:
 
    ```javascript
-
    router.get('/new-page', (req, res) => {
-
      res.sendFile(path.join(__dirname, '../public/new-page.html'));
-
    });
-
    ```
 
- 
-
 ### Styling Guidelines
-
- 
 
 - Use CSS variables from `base/variables.css`
 
@@ -184,11 +136,7 @@ PORT=8080 npm run dev  # Custom port
 
 - Use utility classes for common patterns
 
- 
-
 ### JavaScript Guidelines
-
- 
 
 - Use ES6+ features
 
@@ -200,15 +148,9 @@ PORT=8080 npm run dev  # Custom port
 
 - Import modules in `main.js` if needed
 
- 
-
 ## Common Tasks
 
- 
-
 ### Modifying Styles
-
- 
 
 1. Identify the correct module (base/layout/components/utilities)
 
@@ -216,11 +158,7 @@ PORT=8080 npm run dev  # Custom port
 
 3. Test responsive behavior across breakpoints
 
- 
-
 ### Adding Form Validation
-
- 
 
 1. Add validation logic to `public/js/form-validation.js`
 
@@ -228,11 +166,7 @@ PORT=8080 npm run dev  # Custom port
 
 3. Follow existing patterns for error messaging
 
- 
-
 ### Updating Navigation
-
- 
 
 1. Edit HTML navigation structure in HTML files
 
@@ -240,43 +174,23 @@ PORT=8080 npm run dev  # Custom port
 
 3. Adjust styles in `public/css/layout/navigation.css`
 
- 
-
 ## Important Patterns
-
- 
 
 ### Route Handling
 
- 
-
 All routes are defined in `routes/index.js` and serve static HTML files from the `public/` directory.
-
- 
 
 ### Static Assets
 
- 
-
 Express serves everything in `public/` as static files. CSS and JS are imported directly in HTML files.
-
- 
 
 ### Form Handling
 
- 
-
 Forms use client-side validation via `form-validation.js` module. Contact forms submit to server (backend handling may need implementation).
-
- 
 
 ## Services Offered
 
- 
-
 The site showcases these service categories:
-
- 
 
 - **Business & Professional**: Bookkeeping, tax compliance, financial reporting
 
@@ -286,11 +200,7 @@ The site showcases these service categories:
 
 - **Consulting**: Financial strategy, compliance, business optimization
 
- 
-
 ## Contact Information
-
- 
 
 - **Address**: 3ης Σεπτεμβρίου 103
 
@@ -298,11 +208,7 @@ The site showcases these service categories:
 
 - **Email**: ntallas@ntallas.com
 
- 
-
 ## Browser Support
-
- 
 
 - Chrome (latest)
 
@@ -314,8 +220,6 @@ The site showcases these service categories:
 
 - Mobile browsers (iOS Safari, Chrome Mobile)
 
- 
-
 ## Appointment Booking System
 
 **Status**: ✅ IMPLEMENTED AND MERGED (December 2025)
@@ -325,6 +229,7 @@ The site showcases these service categories:
 ### System Overview
 
 A comprehensive online appointment booking system with:
+
 - Public calendar with real-time availability checking
 - Client booking interface with email notifications
 - Admin panel for appointment management
@@ -417,6 +322,7 @@ A comprehensive online appointment booking system with:
 ### Post-Implementation Fixes
 
 **CSP Compliance** (November 2025):
+
 - Removed all inline onclick handlers
 - Implemented event delegation pattern throughout
 - Dashboard action buttons now use data-action attributes
@@ -424,18 +330,21 @@ A comprehensive online appointment booking system with:
 - Result: Zero CSP violations, modern JavaScript practices
 
 **Schema Alignment** (November 2025):
+
 - Fixed availability settings to use per-day structure (7 rows)
 - Updated admin panel to handle array of days
 - Added transaction support for availability updates
 - Result: Consistent data model across frontend/backend
 
 **Flatpickr Integration** (November 2025):
+
 - Switched from ESM to UMD build
 - Hosted flatpickr locally for reliability
 - Corrected Font Awesome SRI hashes
 - Result: Stable date picker in production
 
 **Email & Timezone** (November 2025):
+
 - Added formatGreekTime function to timezone utils
 - Fixed MySQL JSON column parsing
 - Result: Accurate timestamps in all email templates
@@ -443,6 +352,7 @@ A comprehensive online appointment booking system with:
 ### Database Schema
 
 **6 Main Tables**:
+
 - `admin_users` - Admin authentication
 - `appointments` - Booking data with versioning
 - `availability_settings` - Weekly schedule
@@ -455,6 +365,7 @@ A comprehensive online appointment booking system with:
 **Critical Rule**: One commit per file creation or significant change
 
 **Commit Format**:
+
 ```
 <type>(<scope>): <description>
 
@@ -599,6 +510,7 @@ nt-taxoffice-node/
 ### MySQL-Specific Implementation Notes
 
 **Key Differences from SQLite**:
+
 - Auto Increment: `INT AUTO_INCREMENT PRIMARY KEY`
 - Booleans: `BOOLEAN` or `TINYINT(1)`
 - Timestamps: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
@@ -607,22 +519,24 @@ nt-taxoffice-node/
 - Transactions: `START TRANSACTION`, `COMMIT`, `ROLLBACK`
 
 **Connection Pooling**:
+
 - 10 concurrent connections
 - Automatic reconnection
 - UTC timezone for storage
 
 **Concurrent Booking Protection**:
+
 ```javascript
 const connection = await pool.getConnection();
 await connection.beginTransaction();
 try {
-    // SELECT ... FOR UPDATE for row-level locking
-    await connection.commit();
+  // SELECT ... FOR UPDATE for row-level locking
+  await connection.commit();
 } catch (error) {
-    await connection.rollback();
-    throw error;
+  await connection.rollback();
+  throw error;
 } finally {
-    connection.release();
+  connection.release();
 }
 ```
 
@@ -642,8 +556,6 @@ try {
 - **Deployment Guide**: To be created in Phase 9
 
 ## Notes for AI Assistant
-
-
 
 - The project uses Express with static file serving for main site
 - **NEW**: Appointment system adds MySQL database and backend API

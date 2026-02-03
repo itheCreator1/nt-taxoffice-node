@@ -86,7 +86,7 @@ This project includes several built-in security features:
 
 We'd like to thank the following individuals for responsibly disclosing security vulnerabilities:
 
-*No reports yet*
+_No reports yet_
 
 ---
 

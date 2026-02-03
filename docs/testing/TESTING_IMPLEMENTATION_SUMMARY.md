@@ -11,11 +11,13 @@ A comprehensive testing infrastructure has been implemented for the NT TaxOffice
 ### 1. Test Infrastructure
 
 #### Test Configuration
+
 - ✅ Updated [jest.config.js](jest.config.js) to support both backend (Node) and frontend (jsdom) testing
 - ✅ Created [tests/setup-backend.js](tests/setup-backend.js) for backend test setup
 - ✅ Created [.env.test](.env.test) for isolated test environment configuration
 
 #### Test Helpers
+
 - ✅ **Database helpers** ([tests/helpers/database.js](tests/helpers/database.js))
   - Test database creation and initialization
   - Data clearing between tests
@@ -37,6 +39,7 @@ A comprehensive testing infrastructure has been implemented for the NT TaxOffice
 ### 2. Unit Tests
 
 #### Utilities Tests (100% Coverage)
+
 - ✅ **Validation tests** ([tests/unit/utils/validation.test.js](tests/unit/utils/validation.test.js))
   - Email validation (15 test cases)
   - Phone number validation (Greek formats)
@@ -61,6 +64,7 @@ A comprehensive testing infrastructure has been implemented for the NT TaxOffice
   - Past date checking
 
 #### Services Tests
+
 - ✅ **Appointments service tests** ([tests/unit/services/appointments.test.js](tests/unit/services/appointments.test.js))
   - Create appointment with transaction protection
   - Slot conflict detection
@@ -138,14 +142,14 @@ Updated [package.json](package.json) with comprehensive test commands:
 
 ### Coverage Overview
 
-| Category | Files Created | Test Cases |
-|----------|--------------|------------|
-| **Utilities** | 3 | 150+ |
-| **Services** | 1 | 40+ |
-| **Integration** | 1 | 15+ |
-| **E2E** | 1 (existing) | 10 |
-| **Helpers** | 3 | N/A |
-| **Total** | **9** | **215+** |
+| Category        | Files Created | Test Cases |
+| --------------- | ------------- | ---------- |
+| **Utilities**   | 3             | 150+       |
+| **Services**    | 1             | 40+        |
+| **Integration** | 1             | 15+        |
+| **E2E**         | 1 (existing)  | 10         |
+| **Helpers**     | 3             | N/A        |
+| **Total**       | **9**         | **215+**   |
 
 ### Test Structure
 
@@ -206,6 +210,7 @@ FLUSH PRIVILEGES;
 ```
 
 Update `.env.test` with test database credentials:
+
 ```env
 DB_HOST=localhost
 DB_USER=nt_taxoffice_test
@@ -323,6 +328,7 @@ While the core testing infrastructure is complete, you may want to add:
 ### Coverage Thresholds
 
 Configured in `jest.config.js`:
+
 ```javascript
 coverageThreshold: {
     global: {
@@ -355,6 +361,7 @@ The following dev dependencies were added to [package.json](package.json):
 ```
 
 **Install with**:
+
 ```bash
 npm install
 ```

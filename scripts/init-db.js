@@ -9,11 +9,11 @@
 const { initializeSchema } = require('../database/init');
 
 initializeSchema()
-    .then(() => {
-        console.log('\nDatabase initialization completed successfully');
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error('\nDatabase initialization failed:', error.message);
-        process.exit(1);
-    });
+  .then(() => {
+    console.log('\nDatabase initialization completed successfully');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('\nDatabase initialization failed:', error.message);
+    process.exit(1);
+  });

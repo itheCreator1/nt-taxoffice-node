@@ -66,132 +66,134 @@ const confirmDelete = document.getElementById('confirmDelete');
  * Show alert message
  */
 function showAlert(message, type = 'info') {
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type}`;
-    alert.textContent = message;
-    alertContainer.appendChild(alert);
+  const alert = document.createElement('div');
+  alert.className = `alert alert-${type}`;
+  alert.textContent = message;
+  alertContainer.appendChild(alert);
 
-    setTimeout(() => {
-        alert.remove();
-    }, 5000);
+  setTimeout(() => {
+    alert.remove();
+  }, 5000);
 }
 
 /**
  * Show loading overlay
  */
 function showLoading() {
-    loadingOverlay.classList.add('show');
+  loadingOverlay.classList.add('show');
 }
 
 /**
  * Hide loading overlay
  */
 function hideLoading() {
-    loadingOverlay.classList.remove('show');
+  loadingOverlay.classList.remove('show');
 }
 
 /**
  * Check authentication
  */
 async function checkAuth() {
-    try {
-        const response = await fetch('/api/admin/me');
-        const data = await response.json();
+  try {
+    const response = await fetch('/api/admin/me');
+    const data = await response.json();
 
-        if (!data.success || !data.authenticated) {
-            window.location.href = '/admin/login.html';
-            return false;
-        }
-
-        // Update user info
-        userName.textContent = data.data.username;
-        userEmail.textContent = data.data.email;
-
-        // Generate initials
-        const initials = data.data.username
-            .split(' ')
-            .map(word => word[0])
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
-        userInitials.textContent = initials;
-
-        return true;
-    } catch (error) {
-        console.error('Auth check error:', error);
-        window.location.href = '/admin/login.html';
-        return false;
+    if (!data.success || !data.authenticated) {
+      window.location.href = '/admin/login.html';
+      return false;
     }
+
+    // Update user info
+    userName.textContent = data.data.username;
+    userEmail.textContent = data.data.email;
+
+    // Generate initials
+    const initials = data.data.username
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+    userInitials.textContent = initials;
+
+    return true;
+  } catch (error) {
+    console.error('Auth check error:', error);
+    window.location.href = '/admin/login.html';
+    return false;
+  }
 }
 
 /**
  * Load statistics
  */
 async function loadStats() {
-    try {
-        const response = await fetch('/api/admin/appointments/stats');
-        const data = await response.json();
+  try {
+    const response = await fetch('/api/admin/appointments/stats');
+    const data = await response.json();
 
-        if (data.success) {
-            stats = data.data;
+    if (data.success) {
+      stats = data.data;
 
-            // Update stat cards
-            statPending.textContent = stats.statusCounts.pending || 0;
-            statConfirmed.textContent = stats.statusCounts.confirmed || 0;
-            statToday.textContent = stats.todayCount || 0;
-            statMonth.textContent = stats.monthCount || 0;
-        }
-    } catch (error) {
-        console.error('Error loading stats:', error);
+      // Update stat cards
+      statPending.textContent = stats.statusCounts.pending || 0;
+      statConfirmed.textContent = stats.statusCounts.confirmed || 0;
+      statToday.textContent = stats.todayCount || 0;
+      statMonth.textContent = stats.monthCount || 0;
     }
+  } catch (error) {
+    console.error('Error loading stats:', error);
+  }
 }
 
 /**
  * Load appointments
  */
 async function loadAppointments() {
-    showLoading();
+  showLoading();
 
-    try {
-        // Build query string
-        const params = new URLSearchParams({
-            page: currentPage,
-            limit: 50,
-            ...currentFilters
-        });
+  try {
+    // Build query string
+    const params = new URLSearchParams({
+      page: currentPage,
+      limit: 50,
+      ...currentFilters,
+    });
 
-        const response = await fetch(`/api/admin/appointments?${params}`);
-        const data = await response.json();
+    const response = await fetch(`/api/admin/appointments?${params}`);
+    const data = await response.json();
 
-        if (data.success) {
-            appointments = data.data.appointments;
-            renderAppointmentsTable();
-            updatePagination(data.data.pagination);
-        } else {
-            showAlert(data.message || 'Σφάλμα φόρτωσης ραντεβού.', 'error');
-        }
-    } catch (error) {
-        console.error('Error loading appointments:', error);
-        showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
-    } finally {
-        hideLoading();
+    if (data.success) {
+      appointments = data.data.appointments;
+      renderAppointmentsTable();
+      updatePagination(data.data.pagination);
+    } else {
+      showAlert(data.message || 'Σφάλμα φόρτωσης ραντεβού.', 'error');
     }
+  } catch (error) {
+    console.error('Error loading appointments:', error);
+    showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+  } finally {
+    hideLoading();
+  }
 }
 
 /**
  * Render appointments table
  */
 function renderAppointmentsTable() {
-    if (appointments.length === 0) {
-        appointmentsTableBody.innerHTML = `
+  if (appointments.length === 0) {
+    appointmentsTableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="text-center">Δεν βρέθηκαν ραντεβού.</td>
             </tr>
         `;
-        return;
-    }
+    return;
+  }
 
-    appointmentsTableBody.innerHTML = appointments.map(apt => `
+  appointmentsTableBody.innerHTML = appointments
+    .map(
+      (apt) => `
         <tr>
             <td>${formatDate(apt.appointment_date)}</td>
             <td>${formatTime(apt.appointment_time)}</td>
@@ -210,13 +212,17 @@ function renderAppointmentsTable() {
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                     </button>
-                    ${apt.status !== 'cancelled' ? `
+                    ${
+                      apt.status !== 'cancelled'
+                        ? `
                     <button class="action-btn status-btn" data-action="status" data-id="${apt.id}" title="Αλλαγή κατάστασης">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </button>
-                    ` : ''}
+                    `
+                        : ''
+                    }
                     <button class="action-btn delete-btn" data-action="delete" data-id="${apt.id}" title="Διαγραφή">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"></polyline>
@@ -226,32 +232,34 @@ function renderAppointmentsTable() {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `
+    )
+    .join('');
 }
 
 /**
  * Update pagination
  */
 function updatePagination(pagination) {
-    paginationInfo.textContent = `Σελίδα ${pagination.page} από ${pagination.totalPages}`;
+  paginationInfo.textContent = `Σελίδα ${pagination.page} από ${pagination.totalPages}`;
 
-    prevPageBtn.disabled = pagination.page === 1;
-    nextPageBtn.disabled = pagination.page === pagination.totalPages;
+  prevPageBtn.disabled = pagination.page === 1;
+  nextPageBtn.disabled = pagination.page === pagination.totalPages;
 }
 
 /**
  * View appointment details
  */
 async function viewAppointment(id) {
-    try {
-        const response = await fetch(`/api/admin/appointments/${id}`);
-        const data = await response.json();
+  try {
+    const response = await fetch(`/api/admin/appointments/${id}`);
+    const data = await response.json();
 
-        if (data.success) {
-            const apt = data.data.appointment;
-            const history = data.data.history;
+    if (data.success) {
+      const apt = data.data.appointment;
+      const { history } = data.data;
 
-            detailsModalBody.innerHTML = `
+      detailsModalBody.innerHTML = `
                 <div class="detail-grid">
                     <div class="detail-item">
                         <div class="detail-label">Πελάτης</div>
@@ -289,25 +297,37 @@ async function viewAppointment(id) {
                     </div>
                 </div>
 
-                ${apt.notes ? `
+                ${
+                  apt.notes
+                    ? `
                 <div class="detail-section">
                     <h3>Σημειώσεις</h3>
                     <p style="white-space: pre-wrap;">${escapeHtml(apt.notes)}</p>
                 </div>
-                ` : ''}
+                `
+                    : ''
+                }
 
-                ${apt.decline_reason ? `
+                ${
+                  apt.decline_reason
+                    ? `
                 <div class="detail-section">
                     <h3>Λόγος Απόρριψης</h3>
                     <p style="white-space: pre-wrap;">${escapeHtml(apt.decline_reason)}</p>
                 </div>
-                ` : ''}
+                `
+                    : ''
+                }
 
-                ${history.length > 0 ? `
+                ${
+                  history.length > 0
+                    ? `
                 <div class="detail-section">
                     <h3>Ιστορικό Αλλαγών</h3>
                     <div class="history-timeline">
-                        ${history.map(h => `
+                        ${history
+                          .map(
+                            (h) => `
                             <div class="history-item">
                                 <div class="history-icon" style="background: var(--${getStatusColor(h.new_status)}-light); color: var(--${getStatusColor(h.new_status)}-color);">
                                     ${h.new_status[0].toUpperCase()}
@@ -322,204 +342,208 @@ async function viewAppointment(id) {
                                     </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `
+                          )
+                          .join('')}
                     </div>
                 </div>
-                ` : ''}
+                `
+                    : ''
+                }
             `;
 
-            detailsModal.classList.add('show');
-        } else {
-            showAlert(data.message || 'Σφάλμα φόρτωσης λεπτομερειών.', 'error');
-        }
-    } catch (error) {
-        console.error('Error loading appointment details:', error);
-        showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+      detailsModal.classList.add('show');
+    } else {
+      showAlert(data.message || 'Σφάλμα φόρτωσης λεπτομερειών.', 'error');
     }
-};
+  } catch (error) {
+    console.error('Error loading appointment details:', error);
+    showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+  }
+}
 
 /**
  * Open status change modal
  */
 function openStatusModal(id) {
-    statusAppointmentId.value = id;
-    newStatus.value = '';
-    declineReason.value = '';
-    declineReasonGroup.style.display = 'none';
-    statusModal.classList.add('show');
-};
+  statusAppointmentId.value = id;
+  newStatus.value = '';
+  declineReason.value = '';
+  declineReasonGroup.style.display = 'none';
+  statusModal.classList.add('show');
+}
 
 /**
  * Handle status form submission
  */
 statusForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const id = statusAppointmentId.value;
-    const status = newStatus.value;
-    const reason = declineReason.value;
+  const id = statusAppointmentId.value;
+  const status = newStatus.value;
+  const reason = declineReason.value;
 
-    if (!status) {
-        showAlert('Παρακαλώ επιλέξτε κατάσταση.', 'error');
-        return;
+  if (!status) {
+    showAlert('Παρακαλώ επιλέξτε κατάσταση.', 'error');
+    return;
+  }
+
+  if (status === 'declined' && !reason.trim()) {
+    showAlert('Παρακαλώ εισάγετε λόγο απόρριψης.', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/admin/appointments/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status,
+        decline_reason: status === 'declined' ? reason : null,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      showAlert('Η κατάσταση ενημερώθηκε επιτυχώς!', 'success');
+      statusModal.classList.remove('show');
+      await loadStats();
+      await loadAppointments();
+    } else {
+      showAlert(data.message || 'Σφάλμα ενημέρωσης κατάστασης.', 'error');
     }
-
-    if (status === 'declined' && !reason.trim()) {
-        showAlert('Παρακαλώ εισάγετε λόγο απόρριψης.', 'error');
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/admin/appointments/${id}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                status,
-                decline_reason: status === 'declined' ? reason : null
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showAlert('Η κατάσταση ενημερώθηκε επιτυχώς!', 'success');
-            statusModal.classList.remove('show');
-            await loadStats();
-            await loadAppointments();
-        } else {
-            showAlert(data.message || 'Σφάλμα ενημέρωσης κατάστασης.', 'error');
-        }
-    } catch (error) {
-        console.error('Error updating status:', error);
-        showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
-    }
+  } catch (error) {
+    console.error('Error updating status:', error);
+    showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+  }
 });
 
 /**
  * Open delete modal
  */
 function openDeleteModal(id) {
-    deleteAppointmentId.value = id;
-    deleteModal.classList.add('show');
-};
+  deleteAppointmentId.value = id;
+  deleteModal.classList.add('show');
+}
 
 /**
  * Handle delete confirmation
  */
 confirmDelete.addEventListener('click', async () => {
-    const id = deleteAppointmentId.value;
+  const id = deleteAppointmentId.value;
 
-    try {
-        const response = await fetch(`/api/admin/appointments/${id}`, {
-            method: 'DELETE'
-        });
+  try {
+    const response = await fetch(`/api/admin/appointments/${id}`, {
+      method: 'DELETE',
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.success) {
-            showAlert('Το ραντεβού διαγράφηκε επιτυχώς!', 'success');
-            deleteModal.classList.remove('show');
-            await loadStats();
-            await loadAppointments();
-        } else {
-            showAlert(data.message || 'Σφάλμα διαγραφής ραντεβού.', 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting appointment:', error);
-        showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+    if (data.success) {
+      showAlert('Το ραντεβού διαγράφηκε επιτυχώς!', 'success');
+      deleteModal.classList.remove('show');
+      await loadStats();
+      await loadAppointments();
+    } else {
+      showAlert(data.message || 'Σφάλμα διαγραφής ραντεβού.', 'error');
     }
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    showAlert('Σφάλμα σύνδεσης με τον διακομιστή.', 'error');
+  }
 });
 
 /**
  * Apply filters
  */
 function applyFilters() {
-    currentFilters = {};
+  currentFilters = {};
 
-    if (filterStatus.value) {
-        currentFilters.status = filterStatus.value;
-    }
-    if (filterStartDate.value) {
-        currentFilters.startDate = filterStartDate.value;
-    }
-    if (filterEndDate.value) {
-        currentFilters.endDate = filterEndDate.value;
-    }
-    if (searchInput.value.trim()) {
-        currentFilters.search = searchInput.value.trim();
-    }
+  if (filterStatus.value) {
+    currentFilters.status = filterStatus.value;
+  }
+  if (filterStartDate.value) {
+    currentFilters.startDate = filterStartDate.value;
+  }
+  if (filterEndDate.value) {
+    currentFilters.endDate = filterEndDate.value;
+  }
+  if (searchInput.value.trim()) {
+    currentFilters.search = searchInput.value.trim();
+  }
 
-    currentPage = 1;
-    loadAppointments();
+  currentPage = 1;
+  loadAppointments();
 }
 
 /**
  * Clear filters
  */
 function clearFilters() {
-    filterStatus.value = '';
-    filterStartDate.value = '';
-    filterEndDate.value = '';
-    searchInput.value = '';
-    currentFilters = {};
-    currentPage = 1;
-    loadAppointments();
+  filterStatus.value = '';
+  filterStartDate.value = '';
+  filterEndDate.value = '';
+  searchInput.value = '';
+  currentFilters = {};
+  currentPage = 1;
+  loadAppointments();
 }
 
 /**
  * Utility functions
  */
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('el-GR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+  const date = new Date(dateString);
+  return date.toLocaleDateString('el-GR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
 function formatTime(timeString) {
-    return timeString.substring(0, 5);
+  return timeString.substring(0, 5);
 }
 
 function formatDateTime(dateTimeString) {
-    const date = new Date(dateTimeString);
-    return date.toLocaleString('el-GR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+  const date = new Date(dateTimeString);
+  return date.toLocaleString('el-GR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 function getStatusLabel(status) {
-    const labels = {
-        pending: 'Εκκρεμής',
-        confirmed: 'Επιβεβαιωμένο',
-        declined: 'Απορριφθέν',
-        completed: 'Ολοκληρωμένο',
-        cancelled: 'Ακυρωμένο'
-    };
-    return labels[status] || status;
+  const labels = {
+    pending: 'Εκκρεμής',
+    confirmed: 'Επιβεβαιωμένο',
+    declined: 'Απορριφθέν',
+    completed: 'Ολοκληρωμένο',
+    cancelled: 'Ακυρωμένο',
+  };
+  return labels[status] || status;
 }
 
 function getStatusColor(status) {
-    const colors = {
-        pending: 'warning',
-        confirmed: 'success',
-        declined: 'danger',
-        completed: 'info',
-        cancelled: 'secondary'
-    };
-    return colors[status] || 'secondary';
+  const colors = {
+    pending: 'warning',
+    confirmed: 'success',
+    declined: 'danger',
+    completed: 'info',
+    cancelled: 'secondary',
+  };
+  return colors[status] || 'secondary';
 }
 
 function escapeHtml(str) {
-    if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 /**
@@ -527,87 +551,87 @@ function escapeHtml(str) {
  */
 // Sidebar toggle
 sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
+  sidebar.classList.toggle('collapsed');
 });
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
-    try {
-        await fetch('/api/admin/logout', { method: 'POST' });
-        window.location.href = '/admin/login.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        window.location.href = '/admin/login.html';
-    }
+  try {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    window.location.href = '/admin/login.html';
+  } catch (error) {
+    console.error('Logout error:', error);
+    window.location.href = '/admin/login.html';
+  }
 });
 
 // Refresh
 refreshBtn.addEventListener('click', async () => {
-    await loadStats();
-    await loadAppointments();
+  await loadStats();
+  await loadAppointments();
 });
 
 // Filters
 applyFiltersBtn.addEventListener('click', applyFilters);
 clearFiltersBtn.addEventListener('click', clearFilters);
 searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        applyFilters();
-    }
+  if (e.key === 'Enter') {
+    applyFilters();
+  }
 });
 
 // Pagination
 prevPageBtn.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        loadAppointments();
-    }
+  if (currentPage > 1) {
+    currentPage--;
+    loadAppointments();
+  }
 });
 
 nextPageBtn.addEventListener('click', () => {
-    currentPage++;
-    loadAppointments();
+  currentPage++;
+  loadAppointments();
 });
 
 // Modal close handlers
 closeDetailsModal.addEventListener('click', () => {
-    detailsModal.classList.remove('show');
+  detailsModal.classList.remove('show');
 });
 
 closeStatusModal.addEventListener('click', () => {
-    statusModal.classList.remove('show');
+  statusModal.classList.remove('show');
 });
 
 cancelStatusChange.addEventListener('click', () => {
-    statusModal.classList.remove('show');
+  statusModal.classList.remove('show');
 });
 
 closeDeleteModal.addEventListener('click', () => {
-    deleteModal.classList.remove('show');
+  deleteModal.classList.remove('show');
 });
 
 cancelDelete.addEventListener('click', () => {
-    deleteModal.classList.remove('show');
+  deleteModal.classList.remove('show');
 });
 
 // Show/hide decline reason based on status selection
 newStatus.addEventListener('change', (e) => {
-    if (e.target.value === 'declined') {
-        declineReasonGroup.style.display = 'block';
-        declineReason.required = true;
-    } else {
-        declineReasonGroup.style.display = 'none';
-        declineReason.required = false;
-    }
+  if (e.target.value === 'declined') {
+    declineReasonGroup.style.display = 'block';
+    declineReason.required = true;
+  } else {
+    declineReasonGroup.style.display = 'none';
+    declineReason.required = false;
+  }
 });
 
 // Close modals on backdrop click
-[detailsModal, statusModal, deleteModal].forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('show');
-        }
-    });
+[detailsModal, statusModal, deleteModal].forEach((modal) => {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('show');
+    }
+  });
 });
 
 /**
@@ -615,41 +639,41 @@ newStatus.addEventListener('change', (e) => {
  * Handles view, status, and delete actions for appointments
  */
 appointmentsTableBody.addEventListener('click', (e) => {
-    const button = e.target.closest('.action-btn');
-    if (!button) return;
+  const button = e.target.closest('.action-btn');
+  if (!button) return;
 
-    const action = button.dataset.action;
-    const id = parseInt(button.dataset.id);
+  const { action } = button.dataset;
+  const id = parseInt(button.dataset.id);
 
-    if (!action || !id) return;
+  if (!action || !id) return;
 
-    switch (action) {
-        case 'view':
-            viewAppointment(id);
-            break;
-        case 'status':
-            openStatusModal(id);
-            break;
-        case 'delete':
-            openDeleteModal(id);
-            break;
-    }
+  switch (action) {
+    case 'view':
+      viewAppointment(id);
+      break;
+    case 'status':
+      openStatusModal(id);
+      break;
+    case 'delete':
+      openDeleteModal(id);
+      break;
+  }
 });
 
 /**
  * Initialize dashboard
  */
 async function init() {
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) return;
+  const isAuthenticated = await checkAuth();
+  if (!isAuthenticated) return;
 
-    await loadStats();
-    await loadAppointments();
+  await loadStats();
+  await loadAppointments();
 }
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-    init();
+  init();
 }

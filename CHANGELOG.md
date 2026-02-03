@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Appointment System
 
 **Core Features:**
+
 - Complete appointment booking system with 3-step client interface
 - Admin dashboard for comprehensive appointment management
 - Per-day availability configuration (7-day week schedule)
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time availability calculation with slot management
 
 **Admin Panel:**
+
 - First-time setup wizard for admin account creation
 - Session-based authentication with bcrypt password hashing
 - Dashboard with appointment filtering, sorting, and pagination
@@ -29,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blocked dates management interface
 
 **Email System:**
+
 - Nodemailer integration with Gmail SMTP
 - Email queue with automatic retry (up to 3 attempts)
 - 10 email templates (HTML + text versions):
@@ -42,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Timezone-aware timestamp formatting
 
 **APIs:**
+
 - Client API: 7 public endpoints for booking and availability
 - Admin Auth API: 4 endpoints for authentication and setup
 - Admin Appointments API: 4 endpoints for CRUD operations
@@ -49,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting on all endpoints (prevents abuse)
 
 **Database:**
+
 - MySQL 8.0 schema with 6 core tables
 - Transaction support for atomic operations
 - Optimistic locking (version column) prevents race conditions
@@ -56,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Indexes on frequently queried columns
 
 **Security:**
+
 - Content Security Policy (CSP) compliant code
 - Event delegation pattern (no inline event handlers)
 - Input validation with comprehensive validation utility
@@ -67,6 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Security audit logging
 
 **Infrastructure:**
+
 - Docker containerization with multi-stage builds
 - docker-compose.yml for local development
 - Automated database initialization
@@ -75,12 +82,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Health checks in Docker setup
 
 **Testing:**
+
 - Playwright E2E test infrastructure
 - Complete booking flow test
 - Jest configuration for unit tests
 - Test setup and utilities
 
 **Development Tools:**
+
 - Colored console logging utility
 - Timezone conversion utilities (Europe/Athens)
 - Validation utility with Greek error messages
@@ -89,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Async error wrapper for Express routes
 
 **Documentation:**
+
 - Comprehensive README.md (651 lines) with educational approach
 - Complete API documentation (1223 lines)
 - .env.example with detailed configuration comments
@@ -98,29 +108,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 **CSP Compliance:**
+
 - Removed all inline onclick handlers from dashboard
 - Implemented event delegation for appointment action buttons
 - Removed inline onclick handler from blocked dates removal
 - All JavaScript now CSP-compliant (script-src-attr: 'none')
 
 **Availability Settings:**
+
 - Fixed schema mismatch between database and admin panel
 - Backend now correctly handles per-day availability structure (7 rows)
 - Frontend renders dynamic 7-day form with Greek day names
 - Added MySQL transaction support for atomic availability updates
 
 **Flatpickr Integration:**
+
 - Switched from ESM to UMD build to resolve module loading issues
 - Corrected Font Awesome SRI hash for integrity verification
 - Added flatpickr ESM dependencies for future-proofing
 - Hosted flatpickr locally for production reliability
 
 **Email System:**
+
 - Added missing formatGreekTime function to timezone utils
 - Fixed JSON parsing for MySQL JSON column types
 - Resolved duplicate JSON parsing in email queue
 
 **Date Handling:**
+
 - Implemented DD/MM/YYYY date format for Greek locale
 - Fixed date picker initialization and formatting
 - Corrected timezone conversions for Europe/Athens
@@ -128,6 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 **Implemented:**
+
 - Rate limiting on all API endpoints:
   - Booking: 5 requests/hour
   - Cancellation: 10 requests/hour
@@ -147,6 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 **Architecture:**
+
 - Adopted service-oriented architecture:
   - Routes handle HTTP concerns
   - Services contain business logic
@@ -157,6 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Database-first availability calculation
 
 **Code Organization:**
+
 - Modular route structure (routes/api/, routes/admin/)
 - Dedicated services layer (services/)
 - Utility functions organized by concern (utils/)
@@ -164,6 +182,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Email templates in views/emails/
 
 **Development Workflow:**
+
 - Added nodemon for development auto-restart
 - Configured Jest for unit testing
 - Set up Playwright for E2E testing
@@ -172,6 +191,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Performance
 
 **Optimizations:**
+
 - MySQL connection pooling (10 connections)
 - Database indexes on appointment_date, appointment_time, status
 - Optimistic locking prevents double-booking race conditions
@@ -194,6 +214,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **From Static Site:**
 If upgrading from the previous static-only version:
+
 1. Run `database/schema.sql` to create new tables
 2. Configure `.env` with database and email credentials
 3. Access `/admin/setup.html` to create admin account
@@ -202,6 +223,7 @@ If upgrading from the previous static-only version:
 
 **Environment Variables:**
 New variables required in `.env`:
+
 - `SESSION_SECRET` - Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 - `DB_*` - MySQL connection credentials
 - `GMAIL_*` - Email sending configuration
@@ -222,6 +244,7 @@ None - This is the initial release of the appointment system.
 ## [0.1.0] - 2025-11-15 (Pre-release)
 
 ### Added
+
 - Initial project structure
 - Static website pages (index, contact, media)
 - Basic Express server setup
@@ -229,6 +252,7 @@ None - This is the initial release of the appointment system.
 - Static file serving
 
 ### Notes
+
 This version included only the static website without appointment functionality.
 
 ---
@@ -248,6 +272,7 @@ This version included only the static website without appointment functionality.
 ## Roadmap
 
 ### Planned for 1.1.0
+
 - Multi-language support (English/Greek toggle)
 - SMS notifications via Twilio integration
 - Google Calendar sync for appointments
@@ -255,6 +280,7 @@ This version included only the static website without appointment functionality.
 - Client portal for viewing appointment history
 
 ### Planned for 1.2.0
+
 - Multi-staff scheduling (multiple service providers)
 - Recurring appointment support
 - Payment integration (deposits/prepayment)
@@ -262,6 +288,7 @@ This version included only the static website without appointment functionality.
 - Mobile app (React Native)
 
 ### Planned for 2.0.0
+
 - Microservices architecture
 - Real-time updates via WebSockets
 - Multi-tenant support (multiple offices)
@@ -273,6 +300,7 @@ This version included only the static website without appointment functionality.
 ## Support
 
 For questions or issues:
+
 - **GitHub Issues:** https://github.com/itheCreator1/nt-taxoffice-node/issues
 - **Documentation:** See docs/ directory
 - **Email:** Contact development team

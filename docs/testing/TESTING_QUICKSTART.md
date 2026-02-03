@@ -13,6 +13,7 @@ npm run test:setup
 ```
 
 This automated script will:
+
 1. ✓ Check Docker is running
 2. ✓ Start MySQL container
 3. ✓ Wait for MySQL to be healthy
@@ -26,11 +27,13 @@ This automated script will:
 ## Running Tests
 
 ### Run All Tests
+
 ```bash
 npm test
 ```
 
 ### Run Specific Test Suites
+
 ```bash
 # Unit tests only (fast)
 npm run test:unit
@@ -49,11 +52,13 @@ npm run test:e2e
 ```
 
 ### Run Tests with Coverage
+
 ```bash
 npm run test:coverage
 ```
 
 ### Watch Mode (Development)
+
 ```bash
 npm run test:watch
 ```
@@ -63,11 +68,13 @@ npm run test:watch
 ## Test Database Management
 
 ### Reset Test Database
+
 ```bash
 npm run test:db:reset
 ```
 
 ### Manual Database Access
+
 ```bash
 # Connect to MySQL in Docker
 docker-compose exec mysql mysql -u root -prootpassword nt_taxoffice_test
@@ -81,6 +88,7 @@ SELECT * FROM availability;
 ```
 
 ### Stop Docker Services
+
 ```bash
 docker-compose down
 ```
@@ -90,9 +98,11 @@ docker-compose down
 ## Troubleshooting
 
 ### Docker Not Running
+
 **Problem**: `ERROR: Docker is not running`
 
 **Solution**: Start Docker Desktop or Docker daemon
+
 ```bash
 # Linux
 sudo systemctl start docker
@@ -102,9 +112,11 @@ sudo systemctl start docker
 ```
 
 ### MySQL Not Starting
+
 **Problem**: MySQL container fails to start
 
 **Solution**: Check if port 3306 is already in use
+
 ```bash
 # Check what's using port 3306
 sudo lsof -i :3306
@@ -114,9 +126,11 @@ sudo systemctl stop mysql  # or: brew services stop mysql
 ```
 
 ### Tests Failing After Setup
+
 **Problem**: Tests fail with database connection errors
 
 **Solution**: Verify MySQL is healthy
+
 ```bash
 # Check container status
 docker-compose ps
@@ -130,9 +144,11 @@ npm run test:setup
 ```
 
 ### Permission Denied on test-setup.sh
+
 **Problem**: `Permission denied: scripts/test-setup.sh`
 
 **Solution**: Make script executable
+
 ```bash
 chmod +x scripts/test-setup.sh
 ```
@@ -142,6 +158,7 @@ chmod +x scripts/test-setup.sh
 ## Understanding Test Output
 
 ### Unit Test Output
+
 ```
 PASS backend tests/unit/middleware/validator.test.js
   Appointment Validator
@@ -151,6 +168,7 @@ PASS backend tests/unit/middleware/validator.test.js
 ```
 
 ### Integration Test Output
+
 ```
 PASS backend tests/integration/api/appointments.test.js
   Appointments API Integration Tests
@@ -159,6 +177,7 @@ PASS backend tests/integration/api/appointments.test.js
 ```
 
 ### Coverage Report
+
 ```
 ----------------------|---------|----------|---------|---------|
 File                  | % Stmts | % Branch | % Funcs | % Lines |
@@ -196,38 +215,38 @@ tests/
 ## Writing Your First Test
 
 ### Unit Test Example
+
 ```javascript
 // tests/unit/utils/myUtil.test.js
 describe('myFunction', () => {
-    test('should do something', () => {
-        const result = myFunction('input');
-        expect(result).toBe('expected output');
-    });
+  test('should do something', () => {
+    const result = myFunction('input');
+    expect(result).toBe('expected output');
+  });
 });
 ```
 
 ### Integration Test Example
+
 ```javascript
 // tests/integration/api/myRoute.test.js
 const request = require('supertest');
 const { createTestApp } = require('../../helpers/testApp');
 
 describe('My API Tests', () => {
-    let app;
+  let app;
 
-    beforeAll(async () => {
-        const { initializeDatabase } = require('../../../services/database');
-        await initializeDatabase();
-        app = createTestApp();
-    });
+  beforeAll(async () => {
+    const { initializeDatabase } = require('../../../services/database');
+    await initializeDatabase();
+    app = createTestApp();
+  });
 
-    test('should return 200', async () => {
-        const response = await request(app)
-            .get('/api/my-endpoint')
-            .expect(200);
+  test('should return 200', async () => {
+    const response = await request(app).get('/api/my-endpoint').expect(200);
 
-        expect(response.body.success).toBe(true);
-    });
+    expect(response.body.success).toBe(true);
+  });
 });
 ```
 
@@ -236,6 +255,7 @@ describe('My API Tests', () => {
 ## Best Practices
 
 ### ✅ DO
+
 - Run `npm run test:setup` before first test run
 - Use `test:watch` during development
 - Write tests for new features
@@ -245,6 +265,7 @@ describe('My API Tests', () => {
 - Use descriptive test names
 
 ### ❌ DON'T
+
 - Don't commit with failing tests
 - Don't skip test setup
 - Don't test implementation details
@@ -258,11 +279,13 @@ describe('My API Tests', () => {
 ## CI/CD Integration
 
 Tests automatically run on:
+
 - Every push to GitHub
 - Every pull request
 - Before deployment
 
 ### GitHub Actions Workflow
+
 ```yaml
 # .github/workflows/test.yml
 - name: Setup test database
@@ -298,12 +321,14 @@ Tests automatically run on:
 ## Getting Help
 
 ### Documentation
+
 - **Full testing guide**: [docs/TESTING.md](../TESTING.md)
 - **Test findings**: [TEST_FINDINGS.md](TEST_FINDINGS.md)
 - **Testing plan**: [TESTING_COMPLETION_PLAN.md](TESTING_COMPLETION_PLAN.md)
 - **Integration setup**: [INTEGRATION_TESTS_SETUP.md](INTEGRATION_TESTS_SETUP.md)
 
 ### Common Commands Reference
+
 ```bash
 # Setup
 npm run test:setup              # First-time setup

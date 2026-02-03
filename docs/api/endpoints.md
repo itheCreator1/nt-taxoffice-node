@@ -39,14 +39,17 @@ All endpoints return JSON responses and follow RESTful conventions.
 ## Authentication
 
 ### Client API
+
 No authentication required. These endpoints are publicly accessible.
 
 ### Admin API
+
 Requires session-based authentication. After logging in via `/api/admin/login`, a session cookie is set that must be included in all subsequent requests.
 
 **Session Cookie:** `connect.sid` (HTTP-only, secure in production)
 
 **How Sessions Work:**
+
 - Login creates a server-side session stored in memory
 - Session ID is sent to client as HTTP-only cookie
 - Client automatically includes cookie in subsequent requests
@@ -58,15 +61,16 @@ Requires session-based authentication. After logging in via `/api/admin/login`, 
 
 All endpoints are rate-limited to prevent abuse.
 
-| Endpoint Type | Window | Max Requests | Why? |
-|---------------|--------|--------------|------|
-| Booking | 1 hour | 5 | Prevents spam bookings |
-| Cancellation | 1 hour | 10 | Allows legitimate cancellations |
-| Login | 15 minutes | 5 | Prevents brute-force attacks |
-| Setup | 15 minutes | 3 | First-time setup is rare |
-| General Admin API | 15 minutes | 100 | Normal admin usage |
+| Endpoint Type     | Window     | Max Requests | Why?                            |
+| ----------------- | ---------- | ------------ | ------------------------------- |
+| Booking           | 1 hour     | 5            | Prevents spam bookings          |
+| Cancellation      | 1 hour     | 10           | Allows legitimate cancellations |
+| Login             | 15 minutes | 5            | Prevents brute-force attacks    |
+| Setup             | 15 minutes | 3            | First-time setup is rare        |
+| General Admin API | 15 minutes | 100          | Normal admin usage              |
 
 **Rate Limit Headers:**
+
 ```http
 X-RateLimit-Limit: 5
 X-RateLimit-Remaining: 3
@@ -74,6 +78,7 @@ X-RateLimit-Reset: 1638360000
 ```
 
 **When Rate Limited:**
+
 ```json
 {
   "success": false,
@@ -86,21 +91,24 @@ X-RateLimit-Reset: 1638360000
 ## Response Format
 
 ### Success Response
+
 ```json
 {
   "success": true,
   "message": "Optional success message",
-  "data": { },
-  "count": 10  // Optional, for lists
+  "data": {},
+  "count": 10 // Optional, for lists
 }
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,
   "message": "Human-readable error message",
-  "errors": {  // Optional, for validation errors
+  "errors": {
+    // Optional, for validation errors
     "field_name": "Error description"
   }
 }
@@ -112,21 +120,22 @@ X-RateLimit-Reset: 1638360000
 
 ### HTTP Status Codes
 
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 200 | OK | Request succeeded |
-| 201 | Created | Resource created (e.g., new appointment) |
-| 400 | Bad Request | Invalid input, validation errors |
-| 401 | Unauthorized | Not logged in (admin endpoints) |
-| 403 | Forbidden | Logged in but insufficient permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Slot already booked, race condition |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server-side error |
+| Code | Meaning               | Common Causes                            |
+| ---- | --------------------- | ---------------------------------------- |
+| 200  | OK                    | Request succeeded                        |
+| 201  | Created               | Resource created (e.g., new appointment) |
+| 400  | Bad Request           | Invalid input, validation errors         |
+| 401  | Unauthorized          | Not logged in (admin endpoints)          |
+| 403  | Forbidden             | Logged in but insufficient permissions   |
+| 404  | Not Found             | Resource doesn't exist                   |
+| 409  | Conflict              | Slot already booked, race condition      |
+| 429  | Too Many Requests     | Rate limit exceeded                      |
+| 500  | Internal Server Error | Server-side error                        |
 
 ### Common Error Scenarios
 
 **Validation Error (400):**
+
 ```json
 {
   "success": false,
@@ -139,6 +148,7 @@ X-RateLimit-Reset: 1638360000
 ```
 
 **Conflict Error (409):**
+
 ```json
 {
   "success": false,
@@ -147,6 +157,7 @@ X-RateLimit-Reset: 1638360000
 ```
 
 **Authentication Error (401):**
+
 ```json
 {
   "success": false,
@@ -173,13 +184,14 @@ Get all available dates with time slots for the booking window (next 30 days).
 **Rate Limiting:** General rate limit (100 requests per 15 minutes)
 
 **Response:**
+
 ```json
 {
   "success": true,
   "data": [
     {
       "date": "2025-12-15",
-      "dayOfWeek": 1,  // 0 = Sunday, 6 = Saturday
+      "dayOfWeek": 1, // 0 = Sunday, 6 = Saturday
       "slots": ["09:00", "09:30", "10:00", "10:30"],
       "availableCount": 4
     },
@@ -195,6 +207,7 @@ Get all available dates with time slots for the booking window (next 30 days).
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/availability/dates
 ```
@@ -210,14 +223,17 @@ Get available time slots for a specific date.
 **Authentication:** None required
 
 **Parameters:**
+
 - `date` (URL parameter) - Date in YYYY-MM-DD format
 
 **Validation:**
+
 - Date must be in future
 - Date must be within booking window (30 days)
 - Date must be a working day
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -230,6 +246,7 @@ Get available time slots for a specific date.
 ```
 
 **Error - Invalid Date:**
+
 ```json
 {
   "success": false,
@@ -238,6 +255,7 @@ Get available time slots for a specific date.
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/availability/slots/2025-12-15
 ```
@@ -253,6 +271,7 @@ Check if a specific date and time slot is available.
 **Authentication:** None required
 
 **Request Body:**
+
 ```json
 {
   "date": "2025-12-15",
@@ -261,6 +280,7 @@ Check if a specific date and time slot is available.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -273,6 +293,7 @@ Check if a specific date and time slot is available.
 ```
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/availability/check \
   -H "Content-Type: application/json" \
@@ -290,6 +311,7 @@ Get the next available appointment slot.
 **Authentication:** None required
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -302,6 +324,7 @@ Get the next available appointment slot.
 ```
 
 **Response - No Availability:**
+
 ```json
 {
   "success": true,
@@ -311,6 +334,7 @@ Get the next available appointment slot.
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/availability/next
 ```
@@ -330,6 +354,7 @@ Create a new appointment booking.
 **Rate Limiting:** 5 requests per hour per IP
 
 **Request Body:**
+
 ```json
 {
   "client_name": "John Doe",
@@ -344,17 +369,18 @@ Create a new appointment booking.
 
 **Field Validation:**
 
-| Field | Rules | Example |
-|-------|-------|---------|
-| `client_name` | Required, 2-100 chars, letters and spaces | "John Doe" |
-| `client_email` | Required, valid email format | "john@example.com" |
-| `client_phone` | Required, 10 digits | "2101234567" |
-| `appointment_date` | Required, future date, YYYY-MM-DD | "2025-12-15" |
-| `appointment_time` | Required, HH:MM format | "09:00" |
-| `service_type` | Required, one of predefined types | "tax_consultation" |
-| `notes` | Optional, max 500 chars | "Need help with VAT" |
+| Field              | Rules                                     | Example              |
+| ------------------ | ----------------------------------------- | -------------------- |
+| `client_name`      | Required, 2-100 chars, letters and spaces | "John Doe"           |
+| `client_email`     | Required, valid email format              | "john@example.com"   |
+| `client_phone`     | Required, 10 digits                       | "2101234567"         |
+| `appointment_date` | Required, future date, YYYY-MM-DD         | "2025-12-15"         |
+| `appointment_time` | Required, HH:MM format                    | "09:00"              |
+| `service_type`     | Required, one of predefined types         | "tax_consultation"   |
+| `notes`            | Optional, max 500 chars                   | "Need help with VAT" |
 
 **Service Types:**
+
 - `tax_consultation` - Tax Consultation
 - `annual_tax_return` - Annual Tax Return
 - `payroll` - Payroll Services
@@ -362,6 +388,7 @@ Create a new appointment booking.
 - `other` - Other Services
 
 **Success Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -378,6 +405,7 @@ Create a new appointment booking.
 ```
 
 **Error - Validation Failed (400):**
+
 ```json
 {
   "success": false,
@@ -390,6 +418,7 @@ Create a new appointment booking.
 ```
 
 **Error - Slot No Longer Available (409):**
+
 ```json
 {
   "success": false,
@@ -401,6 +430,7 @@ Create a new appointment booking.
 This can happen due to a race condition when two users try to book the same slot simultaneously. The application uses database-level locking to prevent double bookings, but one user will get a 409 error.
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/appointments/book \
   -H "Content-Type: application/json" \
@@ -426,9 +456,11 @@ Get appointment details using the cancellation token.
 **Authentication:** None required (token provides authorization)
 
 **Parameters:**
+
 - `token` (URL parameter) - UUID cancellation token (36 characters)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -448,6 +480,7 @@ Get appointment details using the cancellation token.
 ```
 
 **Error - Invalid Token (400):**
+
 ```json
 {
   "success": false,
@@ -456,6 +489,7 @@ Get appointment details using the cancellation token.
 ```
 
 **Error - Not Found (404):**
+
 ```json
 {
   "success": false,
@@ -464,6 +498,7 @@ Get appointment details using the cancellation token.
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/appointments/a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
@@ -481,9 +516,11 @@ Cancel an appointment using the cancellation token.
 **Rate Limiting:** 10 requests per hour per IP
 
 **Parameters:**
+
 - `token` (URL parameter) - UUID cancellation token
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -497,6 +534,7 @@ Cancel an appointment using the cancellation token.
 ```
 
 **Error - Already Cancelled (400):**
+
 ```json
 {
   "success": false,
@@ -505,6 +543,7 @@ Cancel an appointment using the cancellation token.
 ```
 
 **Error - Cannot Cancel (400):**
+
 ```json
 {
   "success": false,
@@ -513,6 +552,7 @@ Cancel an appointment using the cancellation token.
 ```
 
 **Example:**
+
 ```bash
 curl -X DELETE http://localhost:3000/api/appointments/cancel/a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
@@ -536,6 +576,7 @@ Create the first admin user. Only works when no admin account exists.
 **Rate Limiting:** 3 requests per 15 minutes
 
 **Request Body:**
+
 ```json
 {
   "username": "admin",
@@ -545,11 +586,13 @@ Create the first admin user. Only works when no admin account exists.
 ```
 
 **Field Validation:**
+
 - `username`: 3-30 characters, alphanumeric and underscores
 - `email`: Valid email format
 - `password`: Minimum 8 characters
 
 **Success Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -563,6 +606,7 @@ Create the first admin user. Only works when no admin account exists.
 ```
 
 **Error - Admin Already Exists (400):**
+
 ```json
 {
   "success": false,
@@ -571,6 +615,7 @@ Create the first admin user. Only works when no admin account exists.
 ```
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/admin/setup \
   -H "Content-Type: application/json" \
@@ -594,6 +639,7 @@ Authenticate admin user and create a session.
 **Rate Limiting:** 5 requests per 15 minutes (prevents brute-force)
 
 **Request Body:**
+
 ```json
 {
   "username": "admin",
@@ -602,6 +648,7 @@ Authenticate admin user and create a session.
 ```
 
 **Success Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -615,11 +662,13 @@ Authenticate admin user and create a session.
 ```
 
 **Sets Session Cookie:**
+
 ```http
 Set-Cookie: connect.sid=s%3A...; Path=/; HttpOnly; SameSite=Strict
 ```
 
 **Error - Invalid Credentials (401):**
+
 ```json
 {
   "success": false,
@@ -628,11 +677,13 @@ Set-Cookie: connect.sid=s%3A...; Path=/; HttpOnly; SameSite=Strict
 ```
 
 **Security Notes:**
+
 - Failed login attempts are logged for security monitoring
 - Password is hashed with bcrypt (12 rounds by default)
 - Session cookie is HTTP-only (not accessible via JavaScript)
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/admin/login \
   -H "Content-Type: application/json" \
@@ -651,6 +702,7 @@ End the current admin session.
 **Authentication:** Required (must be logged in)
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -659,6 +711,7 @@ End the current admin session.
 ```
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/admin/logout \
   -b cookies.txt  # Include session cookie
@@ -675,6 +728,7 @@ Check if initial setup is complete (admin account exists).
 **Authentication:** None required
 
 **Response - Setup Complete:**
+
 ```json
 {
   "success": true,
@@ -683,6 +737,7 @@ Check if initial setup is complete (admin account exists).
 ```
 
 **Response - Setup Needed:**
+
 ```json
 {
   "success": true,
@@ -691,6 +746,7 @@ Check if initial setup is complete (admin account exists).
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/admin/check-setup
 ```
@@ -709,18 +765,19 @@ List all appointments with filtering, sorting, and pagination.
 
 **Query Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `status` | string | Filter by status | `pending`, `confirmed`, `declined`, `completed`, `cancelled` |
-| `startDate` | string | Filter by date range (start) | `2025-12-01` |
-| `endDate` | string | Filter by date range (end) | `2025-12-31` |
-| `search` | string | Search in name, email, phone | `John` |
-| `page` | number | Page number (default: 1) | `1` |
-| `limit` | number | Results per page (default: 50) | `20` |
-| `sortBy` | string | Sort field | `appointment_date`, `created_at`, `status`, `client_name` |
-| `sortOrder` | string | Sort direction | `ASC`, `DESC` |
+| Parameter   | Type   | Description                    | Example                                                      |
+| ----------- | ------ | ------------------------------ | ------------------------------------------------------------ |
+| `status`    | string | Filter by status               | `pending`, `confirmed`, `declined`, `completed`, `cancelled` |
+| `startDate` | string | Filter by date range (start)   | `2025-12-01`                                                 |
+| `endDate`   | string | Filter by date range (end)     | `2025-12-31`                                                 |
+| `search`    | string | Search in name, email, phone   | `John`                                                       |
+| `page`      | number | Page number (default: 1)       | `1`                                                          |
+| `limit`     | number | Results per page (default: 50) | `20`                                                         |
+| `sortBy`    | string | Sort field                     | `appointment_date`, `created_at`, `status`, `client_name`    |
+| `sortOrder` | string | Sort direction                 | `ASC`, `DESC`                                                |
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -753,12 +810,14 @@ List all appointments with filtering, sorting, and pagination.
 ```
 
 **Example - Get Pending Appointments:**
+
 ```bash
 curl http://localhost:3000/api/admin/appointments?status=pending \
   -b cookies.txt
 ```
 
 **Example - Search and Sort:**
+
 ```bash
 curl "http://localhost:3000/api/admin/appointments?search=John&sortBy=created_at&sortOrder=DESC" \
   -b cookies.txt
@@ -773,9 +832,11 @@ Get detailed information about a specific appointment.
 **Authentication:** Required
 
 **Parameters:**
+
 - `id` (URL parameter) - Appointment ID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -799,6 +860,7 @@ Get detailed information about a specific appointment.
 ```
 
 **Error - Not Found (404):**
+
 ```json
 {
   "success": false,
@@ -807,6 +869,7 @@ Get detailed information about a specific appointment.
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/admin/appointments/123 \
   -b cookies.txt
@@ -821,9 +884,11 @@ Update the status of an appointment (approve, decline, complete).
 **Authentication:** Required
 
 **Parameters:**
+
 - `id` (URL parameter) - Appointment ID
 
 **Request Body:**
+
 ```json
 {
   "status": "confirmed",
@@ -833,14 +898,15 @@ Update the status of an appointment (approve, decline, complete).
 
 **Valid Status Transitions:**
 
-| From | To | Notes |
-|------|-----|-------|
-| `pending` | `confirmed` | Approve booking |
-| `pending` | `declined` | Reject booking (requires `decline_reason`) |
-| `confirmed` | `completed` | Mark as completed |
-| `confirmed` | `declined` | Cancel confirmed appointment |
+| From        | To          | Notes                                      |
+| ----------- | ----------- | ------------------------------------------ |
+| `pending`   | `confirmed` | Approve booking                            |
+| `pending`   | `declined`  | Reject booking (requires `decline_reason`) |
+| `confirmed` | `completed` | Mark as completed                          |
+| `confirmed` | `declined`  | Cancel confirmed appointment               |
 
 **Success Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -854,6 +920,7 @@ Update the status of an appointment (approve, decline, complete).
 ```
 
 **Error - Invalid Transition (400):**
+
 ```json
 {
   "success": false,
@@ -862,6 +929,7 @@ Update the status of an appointment (approve, decline, complete).
 ```
 
 **Error - Missing Decline Reason (400):**
+
 ```json
 {
   "success": false,
@@ -870,11 +938,13 @@ Update the status of an appointment (approve, decline, complete).
 ```
 
 **Email Notifications:**
+
 - `confirmed`: Client receives appointment confirmation email
 - `declined`: Client receives decline notification with reason
 - `completed`: No automatic email (manual process)
 
 **Example - Confirm Appointment:**
+
 ```bash
 curl -X PUT http://localhost:3000/api/admin/appointments/123/status \
   -H "Content-Type: application/json" \
@@ -883,6 +953,7 @@ curl -X PUT http://localhost:3000/api/admin/appointments/123/status \
 ```
 
 **Example - Decline with Reason:**
+
 ```bash
 curl -X PUT http://localhost:3000/api/admin/appointments/123/status \
   -H "Content-Type: application/json" \
@@ -902,9 +973,11 @@ Permanently delete an appointment.
 **Authentication:** Required
 
 **Parameters:**
+
 - `id` (URL parameter) - Appointment ID
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -915,6 +988,7 @@ Permanently delete an appointment.
 **Warning:** This permanently deletes the appointment. Consider using status updates instead for audit trail.
 
 **Example:**
+
 ```bash
 curl -X DELETE http://localhost:3000/api/admin/appointments/123 \
   -b cookies.txt
@@ -931,25 +1005,26 @@ Get current working hours configuration for all days of the week.
 **Authentication:** Required
 
 **Response:**
+
 ```json
 {
   "success": true,
   "data": {
     "days": [
       {
-        "day_of_week": 0,  // 0 = Sunday
+        "day_of_week": 0, // 0 = Sunday
         "is_working_day": false,
         "start_time": null,
         "end_time": null
       },
       {
-        "day_of_week": 1,  // 1 = Monday
+        "day_of_week": 1, // 1 = Monday
         "is_working_day": true,
         "start_time": "09:00:00",
         "end_time": "17:00:00"
       },
       {
-        "day_of_week": 2,  // 2 = Tuesday
+        "day_of_week": 2, // 2 = Tuesday
         "is_working_day": true,
         "start_time": "09:00:00",
         "end_time": "17:00:00"
@@ -961,6 +1036,7 @@ Get current working hours configuration for all days of the week.
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/admin/availability/settings \
   -b cookies.txt
@@ -975,6 +1051,7 @@ Update working hours configuration for all days.
 **Authentication:** Required
 
 **Request Body:**
+
 ```json
 {
   "days": [
@@ -996,12 +1073,14 @@ Update working hours configuration for all days.
 ```
 
 **Validation Rules:**
+
 - Must provide exactly 7 days (0-6)
 - Working days must have `start_time` and `end_time`
 - Times must be in HH:MM:SS format
 - At least one working day required
 
 **Success Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -1010,6 +1089,7 @@ Update working hours configuration for all days.
 ```
 
 **Error - Validation Failed (400):**
+
 ```json
 {
   "success": false,
@@ -1018,6 +1098,7 @@ Update working hours configuration for all days.
 ```
 
 **Example:**
+
 ```bash
 curl -X PUT http://localhost:3000/api/admin/availability/settings \
   -H "Content-Type: application/json" \
@@ -1044,6 +1125,7 @@ Get list of blocked dates (holidays, closures).
 **Authentication:** Required
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -1066,6 +1148,7 @@ Get list of blocked dates (holidays, closures).
 ```
 
 **Example:**
+
 ```bash
 curl http://localhost:3000/api/admin/availability/blocked-dates \
   -b cookies.txt
@@ -1080,6 +1163,7 @@ Add a new blocked date.
 **Authentication:** Required
 
 **Request Body:**
+
 ```json
 {
   "date": "2025-12-25",
@@ -1088,6 +1172,7 @@ Add a new blocked date.
 ```
 
 **Success Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -1101,6 +1186,7 @@ Add a new blocked date.
 ```
 
 **Error - Date Already Blocked (400):**
+
 ```json
 {
   "success": false,
@@ -1109,6 +1195,7 @@ Add a new blocked date.
 ```
 
 **Example:**
+
 ```bash
 curl -X POST http://localhost:3000/api/admin/availability/blocked-dates \
   -H "Content-Type: application/json" \
@@ -1125,9 +1212,11 @@ Remove a blocked date.
 **Authentication:** Required
 
 **Parameters:**
+
 - `id` (URL parameter) - Blocked date ID
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -1136,6 +1225,7 @@ Remove a blocked date.
 ```
 
 **Example:**
+
 ```bash
 curl -X DELETE http://localhost:3000/api/admin/availability/blocked-dates/1 \
   -b cookies.txt
@@ -1146,12 +1236,14 @@ curl -X DELETE http://localhost:3000/api/admin/availability/blocked-dates/1 \
 ## Best Practices
 
 ### Error Handling
+
 Always check the `success` field before processing data:
+
 ```javascript
 const response = await fetch('/api/appointments/book', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
+  body: JSON.stringify(data),
 });
 
 const result = await response.json();
@@ -1172,7 +1264,9 @@ if (!result.success) {
 ```
 
 ### Rate Limiting
+
 Implement exponential backoff when rate limited:
+
 ```javascript
 async function makeRequest(url, options, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
@@ -1184,7 +1278,7 @@ async function makeRequest(url, options, maxRetries = 3) {
 
     // Wait before retry (exponential backoff)
     const delay = Math.pow(2, i) * 1000;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
 
   throw new Error('Rate limit exceeded');
@@ -1192,19 +1286,21 @@ async function makeRequest(url, options, maxRetries = 3) {
 ```
 
 ### Session Management
+
 Store and include session cookies:
+
 ```javascript
 // Login
 const loginResponse = await fetch('/api/admin/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username, password }),
-  credentials: 'include'  // Important: include cookies
+  credentials: 'include', // Important: include cookies
 });
 
 // Subsequent requests
 const appointmentsResponse = await fetch('/api/admin/appointments', {
-  credentials: 'include'  // Include session cookie
+  credentials: 'include', // Include session cookie
 });
 ```
 
@@ -1213,6 +1309,7 @@ const appointmentsResponse = await fetch('/api/admin/appointments', {
 ## Support
 
 For additional help:
+
 - **Main Documentation:** [README.md](../README.md)
 - **Admin Guide:** [ADMIN_GUIDE.md](ADMIN_GUIDE.md)
 - **Deployment:** [DEPLOYMENT.md](DEPLOYMENT.md)

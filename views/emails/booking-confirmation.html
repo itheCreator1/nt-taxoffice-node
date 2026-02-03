@@ -1,96 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="el">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Επιβεβαίωση Ραντεβού</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f3f4f6;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <!-- Header -->
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px;">NT TAXOFFICE</h1>
-                            <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px;">Επιβεβαίωση Ραντεβού</p>
-                        </td>
-                    </tr>
+  </head>
+  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f3f4f6">
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #f3f4f6; padding: 20px 0"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  padding: 40px 30px;
+                  text-align: center;
+                "
+              >
+                <h1 style="margin: 0; color: #ffffff; font-size: 28px">NT TAXOFFICE</h1>
+                <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px">
+                  Επιβεβαίωση Ραντεβού
+                </p>
+              </td>
+            </tr>
 
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding: 40px 30px;">
-                            <p style="margin: 0 0 20px 0; font-size: 16px; color: #1f2937;">Αγαπητέ/ή {{clientName}},</p>
+            <!-- Content -->
+            <tr>
+              <td style="padding: 40px 30px">
+                <p style="margin: 0 0 20px 0; font-size: 16px; color: #1f2937">
+                  Αγαπητέ/ή {{clientName}},
+                </p>
 
-                            <p style="margin: 0 0 30px 0; font-size: 16px; color: #1f2937; line-height: 1.6;">
-                                Ευχαριστούμε που επιλέξατε τις υπηρεσίες μας! Το αίτημά σας για ραντεβού έχει καταχωρηθεί επιτυχώς και θα το επεξεργαστούμε το συντομότερο δυνατό.
-                            </p>
+                <p style="margin: 0 0 30px 0; font-size: 16px; color: #1f2937; line-height: 1.6">
+                  Ευχαριστούμε που επιλέξατε τις υπηρεσίες μας! Το αίτημά σας για ραντεβού έχει
+                  καταχωρηθεί επιτυχώς και θα το επεξεργαστούμε το συντομότερο δυνατό.
+                </p>
 
-                            <!-- Appointment Details Box -->
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9fafb; border-radius: 8px; border: 2px solid #e5e7eb; margin: 0 0 30px 0;">
-                                <tr>
-                                    <td style="padding: 30px;">
-                                        <h2 style="margin: 0 0 20px 0; font-size: 18px; color: #1f2937;">Στοιχεία Ραντεβού</h2>
+                <!-- Appointment Details Box -->
+                <table
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="
+                    background-color: #f9fafb;
+                    border-radius: 8px;
+                    border: 2px solid #e5e7eb;
+                    margin: 0 0 30px 0;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 30px">
+                      <h2 style="margin: 0 0 20px 0; font-size: 18px; color: #1f2937">
+                        Στοιχεία Ραντεβού
+                      </h2>
 
-                                        <table width="100%" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #6b7280; width: 40%;">Ημερομηνία:</td>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #1f2937; font-weight: 600;">{{appointmentDate}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #6b7280;">Ώρα:</td>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #1f2937; font-weight: 600;">{{appointmentTime}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #6b7280;">Υπηρεσία:</td>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #1f2937; font-weight: 600;">{{serviceType}}</td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p style="margin: 0 0 20px 0; font-size: 16px; color: #1f2937; line-height: 1.6;">
-                                <strong>Τι ακολουθεί:</strong><br>
-                                Θα λάβετε email επιβεβαίωσης μόλις εγκρίνουμε το ραντεβού σας. Παρακαλούμε ελέγξτε το email σας τακτικά.
-                            </p>
-
-                            <p style="margin: 0 0 30px 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
-                                Εάν χρειαστεί να ακυρώσετε το ραντεβού σας, μπορείτε να το κάνετε μέσω του παρακάτω συνδέσμου:
-                            </p>
-
-                            <!-- Cancel Button -->
-                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="{{cancellationUrl}}" style="display: inline-block; padding: 14px 32px; background-color: #ef4444; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 15px; font-weight: 600;">
-                                            Ακύρωση Ραντεβού
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
-                                Για οποιαδήποτε ερώτηση, μπορείτε να επικοινωνήσετε μαζί μας στο <a href="tel:{{officePhone}}" style="color: #2563eb;">{{officePhone}}</a> ή στο <a href="mailto:{{officeEmail}}" style="color: #2563eb;">{{officeEmail}}</a>.
-                            </p>
-                        </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
-                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #6b7280;">
-                                © 2025 NT TAXOFFICE. Με εκτίμηση.
-                            </p>
-                            <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-                                Λάβατε αυτό το email επειδή κλείσατε ραντεβού μέσω της ιστοσελίδας μας.
-                            </p>
-                        </td>
-                    </tr>
+                      <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td style="padding: 8px 0; font-size: 14px; color: #6b7280; width: 40%">
+                            Ημερομηνία:
+                          </td>
+                          <td
+                            style="
+                              padding: 8px 0;
+                              font-size: 14px;
+                              color: #1f2937;
+                              font-weight: 600;
+                            "
+                          >
+                            {{appointmentDate}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-size: 14px; color: #6b7280">Ώρα:</td>
+                          <td
+                            style="
+                              padding: 8px 0;
+                              font-size: 14px;
+                              color: #1f2937;
+                              font-weight: 600;
+                            "
+                          >
+                            {{appointmentTime}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-size: 14px; color: #6b7280">Υπηρεσία:</td>
+                          <td
+                            style="
+                              padding: 8px 0;
+                              font-size: 14px;
+                              color: #1f2937;
+                              font-weight: 600;
+                            "
+                          >
+                            {{serviceType}}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
                 </table>
-            </td>
-        </tr>
+
+                <p style="margin: 0 0 20px 0; font-size: 16px; color: #1f2937; line-height: 1.6">
+                  <strong>Τι ακολουθεί:</strong><br />
+                  Θα λάβετε email επιβεβαίωσης μόλις εγκρίνουμε το ραντεβού σας. Παρακαλούμε ελέγξτε
+                  το email σας τακτικά.
+                </p>
+
+                <p style="margin: 0 0 30px 0; font-size: 14px; color: #6b7280; line-height: 1.6">
+                  Εάν χρειαστεί να ακυρώσετε το ραντεβού σας, μπορείτε να το κάνετε μέσω του
+                  παρακάτω συνδέσμου:
+                </p>
+
+                <!-- Cancel Button -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0">
+                  <tr>
+                    <td align="center">
+                      <a
+                        href="{{cancellationUrl}}"
+                        style="
+                          display: inline-block;
+                          padding: 14px 32px;
+                          background-color: #ef4444;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 6px;
+                          font-size: 15px;
+                          font-weight: 600;
+                        "
+                      >
+                        Ακύρωση Ραντεβού
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.6">
+                  Για οποιαδήποτε ερώτηση, μπορείτε να επικοινωνήσετε μαζί μας στο
+                  <a href="tel:{{officePhone}}" style="color: #2563eb">{{officePhone}}</a> ή στο
+                  <a href="mailto:{{officeEmail}}" style="color: #2563eb">{{officeEmail}}</a>.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  background-color: #f9fafb;
+                  padding: 30px;
+                  text-align: center;
+                  border-top: 1px solid #e5e7eb;
+                "
+              >
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #6b7280">
+                  © 2025 NT TAXOFFICE. Με εκτίμηση.
+                </p>
+                <p style="margin: 0; font-size: 12px; color: #9ca3af">
+                  Λάβατε αυτό το email επειδή κλείσατε ραντεβού μέσω της ιστοσελίδας μας.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
     </table>
-</body>
+  </body>
 </html>

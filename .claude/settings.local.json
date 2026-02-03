@@ -4,7 +4,11 @@
       "Bash(docker compose:*)",
       "Bash(npm outdated:*)",
       "Bash(npm run lint)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(docker exec:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

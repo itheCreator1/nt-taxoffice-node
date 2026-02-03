@@ -12,6 +12,7 @@
 ## 🔄 Implementation Updates (v2.1)
 
 **Key Changes from Original Plan:**
+
 - ✅ **Database Changed**: MySQL 8.x instead of SQLite (client preference)
 - ✅ **Phased Approach**: 9 sequential phases for manageable implementation
 - ✅ **Strict Git Strategy**: One commit per file/change (~67 commits total)
@@ -19,12 +20,14 @@
 - ✅ **Detailed Plan**: Complete file-by-file breakdown in `~/.claude/plans/compiled-gliding-narwhal.md`
 
 **Database Rationale:**
+
 - Better concurrency handling for appointment bookings
 - Production-ready with standard backup/replication tools
 - Row-level locking for concurrent booking protection
 - Industry-standard RDBMS features
 
 **Implementation Status:**
+
 - All prerequisites identified
 - Gmail configuration pending (client contact required)
 - MySQL schema adapted from SQLite
@@ -57,11 +60,11 @@ Create an online appointment booking system that allows NT - TAXOFFICE clients t
 
 ### 2.1 Operating Hours
 
-| Day | Hours |
-|-----|-------|
+| Day             | Hours         |
+| --------------- | ------------- |
 | Monday - Friday | 09:00 - 17:00 |
-| Saturday | Closed |
-| Sunday | Closed |
+| Saturday        | Closed        |
+| Sunday          | Closed        |
 
 - **Appointment duration:** 1 hour
 - **Lunch break:** None (continuous availability)
@@ -70,32 +73,32 @@ Create an online appointment booking system that allows NT - TAXOFFICE clients t
 
 ### 2.2 Booking Constraints
 
-| Rule | Value |
-|------|-------|
-| Maximum advance booking | 60 days |
-| Minimum notice required | 24 hours |
-| Calendar week start | Monday |
+| Rule                             | Value                       |
+| -------------------------------- | --------------------------- |
+| Maximum advance booking          | 60 days                     |
+| Minimum notice required          | 24 hours                    |
+| Calendar week start              | Monday                      |
 | Buffer time between appointments | None (back-to-back allowed) |
 
 ### 2.3 Appointment Statuses
 
-| Status | Description | Color (Admin) | Who Can Set |
-|--------|-------------|---------------|-------------|
-| `pending` | Awaiting admin review | Yellow | System |
-| `confirmed` | Accepted by admin | Green | Admin |
-| `declined` | Rejected by admin | Red | Admin |
-| `cancelled` | Cancelled by client | Gray | Client |
-| `completed` | Past appointment (auto-updated) | Blue | System |
+| Status      | Description                     | Color (Admin) | Who Can Set |
+| ----------- | ------------------------------- | ------------- | ----------- |
+| `pending`   | Awaiting admin review           | Yellow        | System      |
+| `confirmed` | Accepted by admin               | Green         | Admin       |
+| `declined`  | Rejected by admin               | Red           | Admin       |
+| `cancelled` | Cancelled by client             | Gray          | Client      |
+| `completed` | Past appointment (auto-updated) | Blue          | System      |
 
 ### 2.4 Service Types (Sample - To Be Confirmed)
 
-| Service | Description |
-|---------|-------------|
-| Φορολογική Δήλωση | Tax return consultation |
-| Λογιστική Υποστήριξη | Accounting support |
-| Έναρξη Επιχείρησης | Business startup consultation |
-| Μισθοδοσία | Payroll services |
-| Γενική Συμβουλευτική | General consultation |
+| Service              | Description                   |
+| -------------------- | ----------------------------- |
+| Φορολογική Δήλωση    | Tax return consultation       |
+| Λογιστική Υποστήριξη | Accounting support            |
+| Έναρξη Επιχείρησης   | Business startup consultation |
+| Μισθοδοσία           | Payroll services              |
+| Γενική Συμβουλευτική | General consultation          |
 
 ---
 
@@ -204,16 +207,16 @@ Create an online appointment booking system that allows NT - TAXOFFICE clients t
 
 ### 4.1 Technology Stack
 
-| Component | Technology | Version |
-|-----------|------------|---------|
-| Backend | Node.js + Express | 5.x |
-| Database | SQLite | 3.x |
-| Database Driver | better-sqlite3 | ^11.0.0 |
-| Authentication | express-session + bcrypt | Latest |
-| Email | Nodemailer + Gmail SMTP | Latest |
-| Frontend | Vanilla JavaScript (ES6 modules) | - |
-| Styling | Existing modular CSS architecture | - |
-| Timezone | moment-timezone | ^0.5.45 |
+| Component       | Technology                        | Version |
+| --------------- | --------------------------------- | ------- |
+| Backend         | Node.js + Express                 | 5.x     |
+| Database        | SQLite                            | 3.x     |
+| Database Driver | better-sqlite3                    | ^11.0.0 |
+| Authentication  | express-session + bcrypt          | Latest  |
+| Email           | Nodemailer + Gmail SMTP           | Latest  |
+| Frontend        | Vanilla JavaScript (ES6 modules)  | -       |
+| Styling         | Existing modular CSS architecture | -       |
+| Timezone        | moment-timezone                   | ^0.5.45 |
 
 ### 4.2 Dependencies to Install
 
@@ -377,7 +380,7 @@ CREATE INDEX idx_appointment_date_time ON appointments(appointment_date, appoint
 CREATE INDEX idx_appointment_status ON appointments(status);
 CREATE INDEX idx_appointment_email ON appointments(client_email);
 CREATE INDEX idx_cancellation_token ON appointments(cancellation_token);
-CREATE UNIQUE INDEX idx_unique_slot ON appointments(appointment_date, appointment_time) 
+CREATE UNIQUE INDEX idx_unique_slot ON appointments(appointment_date, appointment_time)
     WHERE status NOT IN ('cancelled', 'declined');
 ```
 
@@ -474,23 +477,23 @@ const DB_PATH = path.join(__dirname, 'nt-taxoffice.db');
 const SCHEMA_PATH = path.join(__dirname, 'schema.sql');
 
 function initializeDatabase() {
-    const dbExists = fs.existsSync(DB_PATH);
-    const db = new Database(DB_PATH);
-    
-    if (!dbExists) {
-        console.log('Creating new database...');
-        const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
-        db.exec(schema);
-        console.log('Database schema created successfully');
-    }
-    
-    // Enable foreign keys
-    db.pragma('foreign_keys = ON');
-    
-    // Set journal mode to WAL for better concurrent access
-    db.pragma('journal_mode = WAL');
-    
-    return db;
+  const dbExists = fs.existsSync(DB_PATH);
+  const db = new Database(DB_PATH);
+
+  if (!dbExists) {
+    console.log('Creating new database...');
+    const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
+    db.exec(schema);
+    console.log('Database schema created successfully');
+  }
+
+  // Enable foreign keys
+  db.pragma('foreign_keys = ON');
+
+  // Set journal mode to WAL for better concurrent access
+  db.pragma('journal_mode = WAL');
+
+  return db;
 }
 
 module.exports = { initializeDatabase };
@@ -972,42 +975,46 @@ Response:
 ```javascript
 // middleware/auth.js
 const requireAuth = (req, res, next) => {
-    if (!req.session.adminId) {
-        return res.status(401).json({
-            success: false,
-            error: 'Authentication required'
-        });
-    }
-    next();
+  if (!req.session.adminId) {
+    return res.status(401).json({
+      success: false,
+      error: 'Authentication required',
+    });
+  }
+  next();
 };
 ```
 
 **Password Requirements:**
+
 - Minimum 8 characters
 - Hashed with bcrypt (cost factor 12)
 - No maximum length (bcrypt handles this)
 
 **Session Configuration:**
+
 ```javascript
 // In server.js
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 
-app.use(session({
+app.use(
+  session({
     store: new SQLiteStore({
-        db: 'sessions.db',
-        dir: './database'
+      db: 'sessions.db',
+      dir: './database',
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 8 * 60 * 60 * 1000 // 8 hours
-    }
-}));
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 8 * 60 * 60 * 1000, // 8 hours
+    },
+  })
+);
 ```
 
 ### 7.2 Input Validation & Sanitization
@@ -1015,18 +1022,18 @@ app.use(session({
 ```javascript
 // utils/validation.js
 const validators = {
-    email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-    phone: (phone) => /^(\+30)?[0-9]{10}$/.test(phone.replace(/\s/g, '')),
-    date: (date) => /^\d{4}-\d{2}-\d{2}$/.test(date),
-    time: (time) => /^(09|1[0-6]):\d{2}$/.test(time),
-    name: (name) => name.length >= 2 && name.length <= 100
+  email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+  phone: (phone) => /^(\+30)?[0-9]{10}$/.test(phone.replace(/\s/g, '')),
+  date: (date) => /^\d{4}-\d{2}-\d{2}$/.test(date),
+  time: (time) => /^(09|1[0-6]):\d{2}$/.test(time),
+  name: (name) => name.length >= 2 && name.length <= 100,
 };
 
 // utils/sanitization.js
 const sanitize = {
-    string: (str) => str.trim().replace(/[<>]/g, ''),
-    email: (email) => email.toLowerCase().trim(),
-    phone: (phone) => phone.replace(/\s/g, '')
+  string: (str) => str.trim().replace(/[<>]/g, ''),
+  email: (email) => email.toLowerCase().trim(),
+  phone: (phone) => phone.replace(/\s/g, ''),
 };
 ```
 
@@ -1037,21 +1044,21 @@ const sanitize = {
 const rateLimit = require('express-rate-limit');
 
 const bookingLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 5,
-    message: 'Too many booking attempts, please try again later'
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: 'Too many booking attempts, please try again later',
 });
 
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5,
-    message: 'Too many login attempts, please try again later'
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: 'Too many login attempts, please try again later',
 });
 
 const apiLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute
-    max: 100,
-    message: 'Too many requests, please slow down'
+  windowMs: 60 * 1000, // 1 minute
+  max: 100,
+  message: 'Too many requests, please slow down',
 });
 ```
 
@@ -1061,14 +1068,10 @@ const apiLimiter = rateLimit({
 
 ```javascript
 // ✅ CORRECT
-const appointment = db.prepare(
-    'SELECT * FROM appointments WHERE id = ?'
-).get(appointmentId);
+const appointment = db.prepare('SELECT * FROM appointments WHERE id = ?').get(appointmentId);
 
 // ❌ WRONG - Never do this!
-const appointment = db.prepare(
-    `SELECT * FROM appointments WHERE id = ${appointmentId}`
-).get();
+const appointment = db.prepare(`SELECT * FROM appointments WHERE id = ${appointmentId}`).get();
 ```
 
 ### 7.5 CSRF Protection
@@ -1086,17 +1089,19 @@ const cancellationToken = uuidv4();
 // In server.js
 const helmet = require('helmet');
 
-app.use(helmet({
+app.use(
+  helmet({
     contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-            fontSrc: ["'self'", "fonts.gstatic.com"],
-            scriptSrc: ["'self'", "cdnjs.cloudflare.com"],
-            imgSrc: ["'self'", "data:", "https:"]
-        }
-    }
-}));
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        scriptSrc: ["'self'", 'cdnjs.cloudflare.com'],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+  })
+);
 ```
 
 ---
@@ -1108,88 +1113,101 @@ app.use(helmet({
 ```javascript
 // services/appointments.js
 function createAppointment(appointmentData) {
-    const db = require('./database').getDb();
-    
-    try {
-        // Begin immediate transaction for exclusive lock
-        db.prepare('BEGIN IMMEDIATE').run();
-        
-        // Check availability within transaction
-        const existingAppointment = db.prepare(`
+  const db = require('./database').getDb();
+
+  try {
+    // Begin immediate transaction for exclusive lock
+    db.prepare('BEGIN IMMEDIATE').run();
+
+    // Check availability within transaction
+    const existingAppointment = db
+      .prepare(
+        `
             SELECT id FROM appointments 
             WHERE appointment_date = ? 
             AND appointment_time = ? 
             AND status NOT IN ('cancelled', 'declined')
-        `).get(appointmentData.appointmentDate, appointmentData.appointmentTime);
-        
-        if (existingAppointment) {
-            db.prepare('ROLLBACK').run();
-            return { success: false, error: 'Slot no longer available' };
-        }
-        
-        // Check if date is blocked
-        const blockedDate = db.prepare(`
+        `
+      )
+      .get(appointmentData.appointmentDate, appointmentData.appointmentTime);
+
+    if (existingAppointment) {
+      db.prepare('ROLLBACK').run();
+      return { success: false, error: 'Slot no longer available' };
+    }
+
+    // Check if date is blocked
+    const blockedDate = db
+      .prepare(
+        `
             SELECT id FROM blocked_dates 
             WHERE blocked_date = ? 
             AND deleted_at IS NULL
-        `).get(appointmentData.appointmentDate);
-        
-        if (blockedDate) {
-            db.prepare('ROLLBACK').run();
-            return { success: false, error: 'Date is not available' };
-        }
-        
-        // Create appointment
-        const cancellationToken = require('uuid').v4();
-        const result = db.prepare(`
+        `
+      )
+      .get(appointmentData.appointmentDate);
+
+    if (blockedDate) {
+      db.prepare('ROLLBACK').run();
+      return { success: false, error: 'Date is not available' };
+    }
+
+    // Create appointment
+    const cancellationToken = require('uuid').v4();
+    const result = db
+      .prepare(
+        `
             INSERT INTO appointments (
                 client_name, client_email, client_phone,
                 appointment_date, appointment_time, service_type,
                 notes, status, cancellation_token
             ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-        `).run(
-            appointmentData.clientName,
-            appointmentData.clientEmail,
-            appointmentData.clientPhone,
-            appointmentData.appointmentDate,
-            appointmentData.appointmentTime,
-            appointmentData.serviceType,
-            appointmentData.notes || null,
-            cancellationToken
-        );
-        
-        // Log to history
-        db.prepare(`
+        `
+      )
+      .run(
+        appointmentData.clientName,
+        appointmentData.clientEmail,
+        appointmentData.clientPhone,
+        appointmentData.appointmentDate,
+        appointmentData.appointmentTime,
+        appointmentData.serviceType,
+        appointmentData.notes || null,
+        cancellationToken
+      );
+
+    // Log to history
+    db.prepare(
+      `
             INSERT INTO appointment_history 
             (appointment_id, old_status, new_status, changed_by)
             VALUES (?, NULL, 'pending', 'client')
-        `).run(result.lastInsertRowid);
-        
-        // Commit transaction
-        db.prepare('COMMIT').run();
-        
-        // Queue emails (outside transaction)
-        queueEmail('client', appointmentData.clientEmail, 'booking-received', {
-            appointmentId: result.lastInsertRowid,
-            cancellationToken
-        });
-        
-        queueEmail('admin', process.env.ADMIN_EMAIL, 'admin-new-booking', {
-            appointmentId: result.lastInsertRowid
-        });
-        
-        return {
-            success: true,
-            data: {
-                id: result.lastInsertRowid,
-                cancellationToken
-            }
-        };
-        
-    } catch (error) {
-        db.prepare('ROLLBACK').run();
-        throw error;
-    }
+        `
+    ).run(result.lastInsertRowid);
+
+    // Commit transaction
+    db.prepare('COMMIT').run();
+
+    // Queue emails (outside transaction)
+    queueEmail('client', appointmentData.clientEmail, 'booking-received', {
+      appointmentId: result.lastInsertRowid,
+      cancellationToken,
+    });
+
+    queueEmail('admin', process.env.ADMIN_EMAIL, 'admin-new-booking', {
+      appointmentId: result.lastInsertRowid,
+    });
+
+    return {
+      success: true,
+      data: {
+        id: result.lastInsertRowid,
+        cancellationToken,
+      },
+    };
+  } catch (error) {
+    db.prepare('ROLLBACK').run();
+    throw error;
+  }
 }
 ```
 
@@ -1197,22 +1215,26 @@ function createAppointment(appointmentData) {
 
 ```javascript
 function updateAppointmentStatus(appointmentId, newStatus, currentVersion) {
-    const db = require('./database').getDb();
-    
-    const result = db.prepare(`
+  const db = require('./database').getDb();
+
+  const result = db
+    .prepare(
+      `
         UPDATE appointments 
         SET status = ?, 
             version = version + 1,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ? 
         AND version = ?
-    `).run(newStatus, appointmentId, currentVersion);
-    
-    if (result.changes === 0) {
-        throw new Error('Appointment was modified by another user');
-    }
-    
-    return result;
+    `
+    )
+    .run(newStatus, appointmentId, currentVersion);
+
+  if (result.changes === 0) {
+    throw new Error('Appointment was modified by another user');
+  }
+
+  return result;
 }
 ```
 
@@ -1225,57 +1247,68 @@ function updateAppointmentStatus(appointmentId, newStatus, currentVersion) {
 ```javascript
 // services/emailQueue.js
 function queueEmail(recipient, subject, templateName, data) {
-    const db = require('./database').getDb();
-    const { renderEmailTemplate } = require('./email');
-    
-    const { html, text } = renderEmailTemplate(templateName, data);
-    
-    db.prepare(`
+  const db = require('./database').getDb();
+  const { renderEmailTemplate } = require('./email');
+
+  const { html, text } = renderEmailTemplate(templateName, data);
+
+  db.prepare(
+    `
         INSERT INTO email_queue (recipient, subject, html_body, text_body)
         VALUES (?, ?, ?, ?)
-    `).run(recipient, subject, html, text);
+    `
+  ).run(recipient, subject, html, text);
 }
 
 // Background processor (runs every 30 seconds)
 function processEmailQueue() {
-    const db = require('./database').getDb();
-    const { sendEmail } = require('./email');
-    
-    const pendingEmails = db.prepare(`
+  const db = require('./database').getDb();
+  const { sendEmail } = require('./email');
+
+  const pendingEmails = db
+    .prepare(
+      `
         SELECT * FROM email_queue 
         WHERE status = 'pending' 
         AND attempts < 3
         ORDER BY created_at ASC
         LIMIT 10
-    `).all();
-    
-    for (const email of pendingEmails) {
-        try {
-            sendEmail(email.recipient, email.subject, email.html_body, email.text_body);
-            
-            db.prepare(`
+    `
+    )
+    .all();
+
+  for (const email of pendingEmails) {
+    try {
+      sendEmail(email.recipient, email.subject, email.html_body, email.text_body);
+
+      db.prepare(
+        `
                 UPDATE email_queue 
                 SET status = 'sent', sent_at = CURRENT_TIMESTAMP
                 WHERE id = ?
-            `).run(email.id);
-            
-        } catch (error) {
-            db.prepare(`
+            `
+      ).run(email.id);
+    } catch (error) {
+      db.prepare(
+        `
                 UPDATE email_queue 
                 SET attempts = attempts + 1,
                     last_error = ?
                 WHERE id = ?
-            `).run(error.message, email.id);
-            
-            if (email.attempts >= 2) {
-                db.prepare(`
+            `
+      ).run(error.message, email.id);
+
+      if (email.attempts >= 2) {
+        db.prepare(
+          `
                     UPDATE email_queue 
                     SET status = 'failed'
                     WHERE id = ?
-                `).run(email.id);
-            }
-        }
+                `
+        ).run(email.id);
+      }
     }
+  }
 }
 
 // Start processor
@@ -1287,48 +1320,70 @@ setInterval(processEmailQueue, 30000);
 Each template must have both HTML and plain text versions:
 
 **HTML Template (`views/emails/booking-received.html`):**
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <style>
-        /* Inline CSS for email client compatibility */
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #1e3a5f; color: white; padding: 20px; }
-        .content { padding: 20px; background: #f0f4f8; }
-        .button { background: #2980b9; color: white; padding: 12px 24px; 
-                  text-decoration: none; display: inline-block; border-radius: 5px; }
+      /* Inline CSS for email client compatibility */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: #1e3a5f;
+        color: white;
+        padding: 20px;
+      }
+      .content {
+        padding: 20px;
+        background: #f0f4f8;
+      }
+      .button {
+        background: #2980b9;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>NT - TAXOFFICE</h1>
-        </div>
-        <div class="content">
-            <h2>Το αίτημά σας καταχωρήθηκε</h2>
-            <p>Αγαπητέ/ή {{clientName}},</p>
-            <p>Το αίτημα κράτησης ραντεβού σας έχει καταχωρηθεί επιτυχώς:</p>
-            
-            <ul>
-                <li><strong>Ημερομηνία:</strong> {{appointmentDate}}</li>
-                <li><strong>Ώρα:</strong> {{appointmentTime}}</li>
-                <li><strong>Υπηρεσία:</strong> {{serviceType}}</li>
-            </ul>
-            
-            <p>Θα επικοινωνήσουμε μαζί σας σύντομα για επιβεβαίωση.</p>
-            
-            <p>Αν χρειαστεί να ακυρώσετε το ραντεβού σας:</p>
-            <a href="{{cancellationLink}}" class="button">Ακύρωση Ραντεβού</a>
-        </div>
+      <div class="header">
+        <h1>NT - TAXOFFICE</h1>
+      </div>
+      <div class="content">
+        <h2>Το αίτημά σας καταχωρήθηκε</h2>
+        <p>Αγαπητέ/ή {{clientName}},</p>
+        <p>Το αίτημα κράτησης ραντεβού σας έχει καταχωρηθεί επιτυχώς:</p>
+
+        <ul>
+          <li><strong>Ημερομηνία:</strong> {{appointmentDate}}</li>
+          <li><strong>Ώρα:</strong> {{appointmentTime}}</li>
+          <li><strong>Υπηρεσία:</strong> {{serviceType}}</li>
+        </ul>
+
+        <p>Θα επικοινωνήσουμε μαζί σας σύντομα για επιβεβαίωση.</p>
+
+        <p>Αν χρειαστεί να ακυρώσετε το ραντεβού σας:</p>
+        <a href="{{cancellationLink}}" class="button">Ακύρωση Ραντεβού</a>
+      </div>
     </div>
-</body>
+  </body>
 </html>
 ```
 
 **Plain Text Template (`views/emails/booking-received.txt`):**
+
 ```
 NT - TAXOFFICE
 ==============
@@ -1364,20 +1419,20 @@ const fs = require('fs');
 const path = require('path');
 
 function renderEmailTemplate(templateName, data) {
-    const htmlPath = path.join(__dirname, '../views/emails', `${templateName}.html`);
-    const textPath = path.join(__dirname, '../views/emails', `${templateName}.txt`);
-    
-    let html = fs.readFileSync(htmlPath, 'utf8');
-    let text = fs.readFileSync(textPath, 'utf8');
-    
-    // Simple template replacement
-    Object.keys(data).forEach(key => {
-        const regex = new RegExp(`{{${key}}}`, 'g');
-        html = html.replace(regex, data[key]);
-        text = text.replace(regex, data[key]);
-    });
-    
-    return { html, text };
+  const htmlPath = path.join(__dirname, '../views/emails', `${templateName}.html`);
+  const textPath = path.join(__dirname, '../views/emails', `${templateName}.txt`);
+
+  let html = fs.readFileSync(htmlPath, 'utf8');
+  let text = fs.readFileSync(textPath, 'utf8');
+
+  // Simple template replacement
+  Object.keys(data).forEach((key) => {
+    const regex = new RegExp(`{{${key}}}`, 'g');
+    html = html.replace(regex, data[key]);
+    text = text.replace(regex, data[key]);
+  });
+
+  return { html, text };
 }
 ```
 
@@ -1388,6 +1443,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Το αίτημά σας καταχωρήθηκε | NT - TAXOFFICE
 
 **Variables:**
+
 - `{{clientName}}` - Client's full name
 - `{{appointmentDate}}` - Date in Greek format (e.g., "15 Δεκεμβρίου 2025")
 - `{{appointmentTime}}` - Time (e.g., "10:00")
@@ -1399,6 +1455,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Επιβεβαίωση Ραντεβού | NT - TAXOFFICE
 
 **Variables:**
+
 - `{{clientName}}`
 - `{{appointmentDate}}`
 - `{{appointmentTime}}`
@@ -1412,6 +1469,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Ενημέρωση για το αίτημά σας | NT - TAXOFFICE
 
 **Variables:**
+
 - `{{clientName}}`
 - `{{appointmentDate}}`
 - `{{appointmentTime}}`
@@ -1424,6 +1482,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Ακύρωση Ραντεβού | NT - TAXOFFICE
 
 **Variables:**
+
 - `{{clientName}}`
 - `{{appointmentDate}}`
 - `{{appointmentTime}}`
@@ -1434,6 +1493,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Νέο Αίτημα Ραντεβού - {{clientName}}
 
 **Variables:**
+
 - `{{clientName}}`
 - `{{clientEmail}}`
 - `{{clientPhone}}`
@@ -1450,6 +1510,7 @@ function renderEmailTemplate(templateName, data) {
 **Subject:** Ακύρωση Ραντεβού - {{clientName}}
 
 **Variables:**
+
 - `{{clientName}}`
 - `{{clientEmail}}`
 - `{{appointmentDate}}`
@@ -1470,39 +1531,30 @@ const moment = require('moment-timezone');
 const TIMEZONE = 'Europe/Athens';
 
 module.exports = {
-    now: () => moment.tz(TIMEZONE),
-    
-    parseDate: (dateString) => moment.tz(dateString, TIMEZONE),
-    
-    formatDate: (date, format = 'DD/MM/YYYY') => 
-        moment.tz(date, TIMEZONE).format(format),
-    
-    formatTime: (time) => time, // Already in HH:mm format
-    
-    isInPast: (date, time) => {
-        const appointmentMoment = moment.tz(
-            `${date} ${time}`, 
-            'YYYY-MM-DD HH:mm', 
-            TIMEZONE
-        );
-        return appointmentMoment.isBefore(moment.tz(TIMEZONE));
-    },
-    
-    isBeyondBookingWindow: (date) => {
-        const dateMoment = moment.tz(date, TIMEZONE);
-        const maxDate = moment.tz(TIMEZONE).add(60, 'days');
-        return dateMoment.isAfter(maxDate);
-    },
-    
-    isWithinMinimumNotice: (date, time) => {
-        const appointmentMoment = moment.tz(
-            `${date} ${time}`, 
-            'YYYY-MM-DD HH:mm', 
-            TIMEZONE
-        );
-        const minNotice = moment.tz(TIMEZONE).add(24, 'hours');
-        return appointmentMoment.isBefore(minNotice);
-    }
+  now: () => moment.tz(TIMEZONE),
+
+  parseDate: (dateString) => moment.tz(dateString, TIMEZONE),
+
+  formatDate: (date, format = 'DD/MM/YYYY') => moment.tz(date, TIMEZONE).format(format),
+
+  formatTime: (time) => time, // Already in HH:mm format
+
+  isInPast: (date, time) => {
+    const appointmentMoment = moment.tz(`${date} ${time}`, 'YYYY-MM-DD HH:mm', TIMEZONE);
+    return appointmentMoment.isBefore(moment.tz(TIMEZONE));
+  },
+
+  isBeyondBookingWindow: (date) => {
+    const dateMoment = moment.tz(date, TIMEZONE);
+    const maxDate = moment.tz(TIMEZONE).add(60, 'days');
+    return dateMoment.isAfter(maxDate);
+  },
+
+  isWithinMinimumNotice: (date, time) => {
+    const appointmentMoment = moment.tz(`${date} ${time}`, 'YYYY-MM-DD HH:mm', TIMEZONE);
+    const minNotice = moment.tz(TIMEZONE).add(24, 'hours');
+    return appointmentMoment.isBefore(minNotice);
+  },
 };
 ```
 
@@ -1513,15 +1565,15 @@ module.exports = {
 const { now, parseDate, isInPast, isBeyondBookingWindow } = require('./timezone');
 
 function getAvailableSlots(month) {
-    const currentDate = now().startOf('day');
-    const requestedMonth = parseDate(`${month}-01`);
-    
-    // Validate month is within booking window
-    if (isBeyondBookingWindow(requestedMonth.format('YYYY-MM-DD'))) {
-        throw new Error('Date is beyond booking window');
-    }
-    
-    // ... rest of logic
+  const currentDate = now().startOf('day');
+  const requestedMonth = parseDate(`${month}-01`);
+
+  // Validate month is within booking window
+  if (isBeyondBookingWindow(requestedMonth.format('YYYY-MM-DD'))) {
+    throw new Error('Date is beyond booking window');
+  }
+
+  // ... rest of logic
 }
 ```
 
@@ -1616,25 +1668,23 @@ BCRYPT_ROUNDS=12
 ```javascript
 // middleware/errorHandler.js
 function errorHandler(err, req, res, next) {
-    // Log error
-    console.error('Error:', {
-        message: err.message,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-        url: req.url,
-        method: req.method,
-        timestamp: new Date().toISOString()
-    });
-    
-    // Determine status code
-    const statusCode = err.statusCode || 500;
-    
-    // Send response
-    res.status(statusCode).json({
-        success: false,
-        error: process.env.NODE_ENV === 'production' 
-            ? 'An error occurred' 
-            : err.message
-    });
+  // Log error
+  console.error('Error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.url,
+    method: req.method,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Determine status code
+  const statusCode = err.statusCode || 500;
+
+  // Send response
+  res.status(statusCode).json({
+    success: false,
+    error: process.env.NODE_ENV === 'production' ? 'An error occurred' : err.message,
+  });
 }
 
 module.exports = errorHandler;
@@ -1645,43 +1695,43 @@ module.exports = errorHandler;
 ```javascript
 // utils/errors.js
 class ValidationError extends Error {
-    constructor(message, details) {
-        super(message);
-        this.name = 'ValidationError';
-        this.statusCode = 400;
-        this.details = details;
-    }
+  constructor(message, details) {
+    super(message);
+    this.name = 'ValidationError';
+    this.statusCode = 400;
+    this.details = details;
+  }
 }
 
 class NotFoundError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'NotFoundError';
-        this.statusCode = 404;
-    }
+  constructor(message) {
+    super(message);
+    this.name = 'NotFoundError';
+    this.statusCode = 404;
+  }
 }
 
 class UnauthorizedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'UnauthorizedError';
-        this.statusCode = 401;
-    }
+  constructor(message) {
+    super(message);
+    this.name = 'UnauthorizedError';
+    this.statusCode = 401;
+  }
 }
 
 class ConflictError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'ConflictError';
-        this.statusCode = 409;
-    }
+  constructor(message) {
+    super(message);
+    this.name = 'ConflictError';
+    this.statusCode = 409;
+  }
 }
 
 module.exports = {
-    ValidationError,
-    NotFoundError,
-    UnauthorizedError,
-    ConflictError
+  ValidationError,
+  NotFoundError,
+  UnauthorizedError,
+  ConflictError,
 };
 ```
 
@@ -1692,6 +1742,7 @@ module.exports = {
 ### 13.1 Public Booking Page (`/appointments`)
 
 #### Page Layout
+
 - Clean, centered layout (max-width: 1200px)
 - Sticky header with NT - TAXOFFICE branding
 - Progress indicator: Select Date → Select Time → Enter Details → Confirm
@@ -1699,56 +1750,59 @@ module.exports = {
 #### Calendar Component
 
 **Visual Design:**
+
 - Month view grid (7 columns for days of week)
 - Navigation: Previous/Next month arrows
 - Current month displayed prominently
 - Week starts on Monday
 
 **Day Cell States:**
+
 ```css
 /* Available day - has open slots */
 .calendar-day.available {
-    background: #d4edda;
-    cursor: pointer;
-    border: 2px solid #28a745;
+  background: #d4edda;
+  cursor: pointer;
+  border: 2px solid #28a745;
 }
 
 /* Fully booked */
 .calendar-day.booked {
-    background: #f8d7da;
-    color: #721c24;
-    cursor: not-allowed;
+  background: #f8d7da;
+  color: #721c24;
+  cursor: not-allowed;
 }
 
 /* Past date, weekend, or blocked */
 .calendar-day.unavailable {
-    background: #e9ecef;
-    color: #6c757d;
-    cursor: not-allowed;
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
 }
 
 /* Beyond booking window */
 .calendar-day.out-of-range {
-    background: #f8f9fa;
-    color: #dee2e6;
-    cursor: not-allowed;
+  background: #f8f9fa;
+  color: #dee2e6;
+  cursor: not-allowed;
 }
 
 /* Selected */
 .calendar-day.selected {
-    background: #007bff;
-    color: white;
-    border: 2px solid #0056b3;
+  background: #007bff;
+  color: white;
+  border: 2px solid #0056b3;
 }
 
 /* Hover state (available only) */
 .calendar-day.available:hover {
-    background: #c3e6cb;
-    transform: scale(1.05);
+  background: #c3e6cb;
+  transform: scale(1.05);
 }
 ```
 
 **Accessibility:**
+
 - Keyboard navigation (arrow keys)
 - Enter key to select
 - Tab to navigate between controls
@@ -1758,43 +1812,47 @@ module.exports = {
 #### Time Slot Selection
 
 **Display:**
+
 - Shown in modal or slide-down panel
 - Grid layout (3-4 columns)
 - Only show available slots (hide booked)
 
 **Slot Button:**
+
 ```css
 .time-slot {
-    padding: 16px;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 500;
+  padding: 16px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .time-slot:hover {
-    background: #e7f3ff;
-    border-color: #007bff;
+  background: #e7f3ff;
+  border-color: #007bff;
 }
 
 .time-slot.selected {
-    background: #007bff;
-    color: white;
-    border-color: #0056b3;
+  background: #007bff;
+  color: white;
+  border-color: #0056b3;
 }
 ```
 
 #### Booking Form
 
 **Layout:**
+
 - Single column, left-aligned labels
 - Input fields: 100% width, 48px height
 - Spacing: 24px between fields
 
 **Fields:**
+
 1. **Full Name**
    - Type: text
    - Required: Yes
@@ -1828,6 +1886,7 @@ module.exports = {
    - Placeholder: "Προαιρετικές σημειώσεις..."
 
 **Validation:**
+
 - Real-time validation on blur
 - Error messages below fields
 - Red border for invalid fields
@@ -1836,6 +1895,7 @@ module.exports = {
 #### Success State
 
 **Display:**
+
 - Full-screen overlay or centered card
 - Large checkmark icon (green)
 - Success message
@@ -1844,6 +1904,7 @@ module.exports = {
 - Button: "Επιστροφή στην Αρχική"
 
 **Content:**
+
 ```
 ✓ Επιτυχής Υποβολή!
 
@@ -1863,11 +1924,13 @@ module.exports = {
 #### Login Page (`/admin/login`)
 
 **Layout:**
+
 - Centered card (max-width: 400px)
 - NT - TAXOFFICE logo at top
 - Clean, minimal design
 
 **Elements:**
+
 - Username field
 - Password field (with show/hide toggle)
 - "Σύνδεση" button
@@ -1876,22 +1939,26 @@ module.exports = {
 #### Setup Page (`/admin/setup`)
 
 **Display Conditions:**
+
 - Only shown when `admin_users` table is empty
 - After setup, redirects to login
 - Attempting to access setup when admin exists → redirect to login
 
 **Layout:**
+
 - Centered card (max-width: 500px)
 - Welcome message
 - Instructions
 
 **Fields:**
+
 1. Username (required)
 2. Email (required)
 3. Password (required, show strength indicator)
 4. Confirm Password (required, must match)
 
 **Password Requirements Display:**
+
 ```
 ✓ At least 8 characters
 ✓ Contains letters and numbers (optional but recommended)
@@ -1901,11 +1968,13 @@ module.exports = {
 #### Dashboard (`/admin/dashboard`)
 
 **Header:**
+
 - NT - TAXOFFICE Admin
 - Current admin username
 - Logout button
 
 **Navigation Tabs:**
+
 ```
 [Dashboard] [Pending (3)] [All Appointments] [Availability] [Settings]
 ```
@@ -1931,6 +2000,7 @@ module.exports = {
 **All Appointments Tab:**
 
 **Filters:**
+
 ```
 [Status: All ▾] [From: ___] [To: ___] [Search: _______] [Apply]
 ```
@@ -1942,15 +2012,32 @@ module.exports = {
 | 16/12 14:00 | Μαρία Κ. | Λογιστική | Confirmed | [View] |
 
 **Status Badges:**
+
 ```css
-.status-pending { background: #ffc107; color: #000; }
-.status-confirmed { background: #28a745; color: #fff; }
-.status-declined { background: #dc3545; color: #fff; }
-.status-cancelled { background: #6c757d; color: #fff; }
-.status-completed { background: #007bff; color: #fff; }
+.status-pending {
+  background: #ffc107;
+  color: #000;
+}
+.status-confirmed {
+  background: #28a745;
+  color: #fff;
+}
+.status-declined {
+  background: #dc3545;
+  color: #fff;
+}
+.status-cancelled {
+  background: #6c757d;
+  color: #fff;
+}
+.status-completed {
+  background: #007bff;
+  color: #fff;
+}
 ```
 
 **Pagination:**
+
 ```
 ← Previous  [1] 2 3 ... 10  Next →
 Showing 1-20 of 195 appointments
@@ -1961,6 +2048,7 @@ Showing 1-20 of 195 appointments
 **Trigger:** Click "View" or click appointment row
 
 **Layout:**
+
 - Modal overlay (80% width, max 800px)
 - Close button (X) top-right
 
@@ -1972,6 +2060,7 @@ Showing 1-20 of 195 appointments
    - Created date
 
 2. **Client Information**
+
    ```
    Name: Γιώργος Παπαδόπουλος
    Email: giorgos@example.com
@@ -1979,6 +2068,7 @@ Showing 1-20 of 195 appointments
    ```
 
 3. **Appointment Details**
+
    ```
    Date: 15 Δεκεμβρίου 2025
    Time: 10:00
@@ -1990,11 +2080,12 @@ Showing 1-20 of 195 appointments
    - Gray box, italic text
 
 5. **Client History** (if exists)
+
    ```
    Previous Appointments:
    • 20/11/2025 14:00 - Λογιστική Υποστήριξη (Completed)
    • 15/10/2025 10:00 - Γενική Συμβουλευτική (Completed)
-   
+
    Total appointments: 3
    ```
 
@@ -2009,6 +2100,7 @@ Showing 1-20 of 195 appointments
      ```
 
 **Decline Flow:**
+
 - Click "Decline"
 - Modal expands to show textarea
 - Label: "Αιτία απόρριψης (προαιρετικό)"
@@ -2027,6 +2119,7 @@ Showing 1-20 of 195 appointments
 | ... | ... | ... | ... | ... |
 
 **Edit Mode:**
+
 - Toggle: Working / Not Working
 - If working: Time pickers for start/end
 - Save/Cancel buttons
@@ -2034,11 +2127,13 @@ Showing 1-20 of 195 appointments
 **Blocked Dates Section:**
 
 **Add Blocked Date Form:**
+
 ```
 [Date Picker] [Reason: ________________] [+ Block Date]
 ```
 
 **Blocked Dates List:**
+
 ```
 • 25/12/2025 - Χριστούγεννα [Remove]
 • 26/12/2025 - Επόμενη Χριστουγέννων [Remove]
@@ -2047,6 +2142,7 @@ Showing 1-20 of 195 appointments
 
 **Warning:**
 If removing blocked date with existing appointments:
+
 ```
 ⚠ Cannot unblock this date
 The following confirmed appointments exist:
@@ -2059,6 +2155,7 @@ Please contact clients before unblocking.
 **URL:** `/appointments/cancel?token=xxxxx`
 
 **Valid Token Display:**
+
 ```
 NT - TAXOFFICE
 Ακύρωση Ραντεβού
@@ -2074,6 +2171,7 @@ NT - TAXOFFICE
 ```
 
 **After Cancellation:**
+
 ```
 ✓ Το ραντεβού ακυρώθηκε
 
@@ -2085,6 +2183,7 @@ NT - TAXOFFICE
 ```
 
 **Invalid Token:**
+
 ```
 ⚠ Μη Έγκυρος Σύνδεσμος
 
@@ -2103,7 +2202,9 @@ NT - TAXOFFICE
 ### Phase 1: Foundation & Database (5-6 hours)
 
 **Tasks:**
+
 1. Install new dependencies
+
    ```bash
    npm install better-sqlite3 bcrypt express-session connect-sqlite3 nodemailer uuid moment-timezone express-rate-limit helmet
    ```
@@ -2135,12 +2236,14 @@ NT - TAXOFFICE
    - `services/timezone.js`
 
 **Deliverables:**
+
 - Working database with all tables
 - Environment configuration documented
 - Security middleware configured
 - Utility functions ready
 
 **Testing:**
+
 - Database initialization works
 - Can insert/query test data
 - Environment variables load correctly
@@ -2151,6 +2254,7 @@ NT - TAXOFFICE
 ### Phase 2: Public Availability API (6-8 hours)
 
 **Tasks:**
+
 1. Create availability service
    - `services/availability.js`
    - Function: `getMonthAvailability(year, month)`
@@ -2178,12 +2282,14 @@ NT - TAXOFFICE
    - Return proper error codes
 
 **Deliverables:**
+
 - Availability calculation working
 - Real-time slot checking functional
 - Timezone handling correct
 - API endpoints tested
 
 **Testing:**
+
 - Test with various months
 - Test past dates (should be unavailable)
 - Test beyond 60 days (should be unavailable)
@@ -2196,6 +2302,7 @@ NT - TAXOFFICE
 ### Phase 3: Public Booking System (7-9 hours)
 
 **Tasks:**
+
 1. Create appointments service
    - `services/appointments.js`
    - Function: `createAppointment(data)` with transaction
@@ -2248,6 +2355,7 @@ NT - TAXOFFICE
    - Success/error handling
 
 **Deliverables:**
+
 - Functional booking page
 - Clients can view availability
 - Clients can submit requests
@@ -2255,6 +2363,7 @@ NT - TAXOFFICE
 - Concurrent booking protection works
 
 **Testing:**
+
 - Book appointment (success case)
 - Try to book same slot twice (should fail)
 - Try to book past date (should fail)
@@ -2267,6 +2376,7 @@ NT - TAXOFFICE
 ### Phase 4: Admin Authentication (4-5 hours)
 
 **Tasks:**
+
 1. Create auth middleware
    - `middleware/auth.js`
    - Function: `requireAuth(req, res, next)`
@@ -2310,12 +2420,14 @@ NT - TAXOFFICE
    - Redirect handling
 
 **Deliverables:**
+
 - First-time setup working
 - Admin can log in/out
 - Protected routes functional
 - Sessions persist correctly
 
 **Testing:**
+
 - First setup creates admin
 - Cannot access setup again
 - Login with correct credentials
@@ -2328,6 +2440,7 @@ NT - TAXOFFICE
 ### Phase 5: Admin Dashboard (6-8 hours)
 
 **Tasks:**
+
 1. Implement admin appointment endpoints
    - `routes/admin/appointments.js`
    - `GET /api/admin/appointments` (with filters, pagination)
@@ -2372,6 +2485,7 @@ NT - TAXOFFICE
    - Real-time updates
 
 **Deliverables:**
+
 - Admin can view all appointments
 - Admin can filter/search
 - Admin can accept/decline requests
@@ -2379,6 +2493,7 @@ NT - TAXOFFICE
 - History is logged
 
 **Testing:**
+
 - View pending appointments
 - View all appointments
 - Filter by status
@@ -2394,6 +2509,7 @@ NT - TAXOFFICE
 ### Phase 6: Email System (5-6 hours)
 
 **Tasks:**
+
 1. Set up Nodemailer
    - Configure Gmail SMTP
    - Test connection
@@ -2433,12 +2549,14 @@ NT - TAXOFFICE
    - Verify links work
 
 **Deliverables:**
+
 - All email notifications working
 - Templates styled professionally
 - Emails delivered reliably
 - Queue handles retries
 
 **Testing:**
+
 - Create appointment (client + admin emails)
 - Approve appointment (client email)
 - Decline appointment (client email)
@@ -2452,6 +2570,7 @@ NT - TAXOFFICE
 ### Phase 7: Cancellation System (3-4 hours)
 
 **Tasks:**
+
 1. Build cancellation page HTML
    - `public/cancel-appointment.html`
    - Show appointment details
@@ -2478,11 +2597,13 @@ NT - TAXOFFICE
    - Past appointment
 
 **Deliverables:**
+
 - Clients can cancel via email link
 - Admin notified of cancellations
 - Error states handled
 
 **Testing:**
+
 - Click cancellation link (valid)
 - Confirm cancellation
 - Try to cancel again (should show already cancelled)
@@ -2495,6 +2616,7 @@ NT - TAXOFFICE
 ### Phase 8: Availability Management (4-5 hours)
 
 **Tasks:**
+
 1. Implement availability admin endpoints
    - `routes/admin/availability.js`
    - `GET /api/admin/availability`
@@ -2528,11 +2650,13 @@ NT - TAXOFFICE
    - Test conflict detection
 
 **Deliverables:**
+
 - Admin can modify weekly schedule
 - Admin can block specific dates
 - Changes reflect immediately
 
 **Testing:**
+
 - Change working hours
 - Toggle working days on/off
 - Block a date
@@ -2545,6 +2669,7 @@ NT - TAXOFFICE
 ### Phase 9: Polish & Testing (4-6 hours)
 
 **Tasks:**
+
 1. Add navigation links
    - Update index.html with appointments link
    - Add admin links in dashboard
@@ -2595,6 +2720,7 @@ NT - TAXOFFICE
    - Review session security
 
 **Deliverables:**
+
 - Fully integrated system
 - Mobile-friendly
 - Accessible
@@ -2602,6 +2728,7 @@ NT - TAXOFFICE
 - Documented
 
 **Testing:**
+
 - Complete end-to-end user flows
 - Test all error scenarios
 - Security testing
@@ -2612,20 +2739,21 @@ NT - TAXOFFICE
 
 ## 15. Total Estimated Time
 
-| Phase | Hours |
-|-------|-------|
-| Phase 1: Foundation | 5-6 |
-| Phase 2: Availability API | 6-8 |
-| Phase 3: Public Booking | 7-9 |
-| Phase 4: Admin Auth | 4-5 |
-| Phase 5: Admin Dashboard | 6-8 |
-| Phase 6: Email System | 5-6 |
-| Phase 7: Cancellation | 3-4 |
-| Phase 8: Availability Mgmt | 4-5 |
-| Phase 9: Polish & Testing | 4-6 |
-| **Total** | **44-57 hours** |
+| Phase                      | Hours           |
+| -------------------------- | --------------- |
+| Phase 1: Foundation        | 5-6             |
+| Phase 2: Availability API  | 6-8             |
+| Phase 3: Public Booking    | 7-9             |
+| Phase 4: Admin Auth        | 4-5             |
+| Phase 5: Admin Dashboard   | 6-8             |
+| Phase 6: Email System      | 5-6             |
+| Phase 7: Cancellation      | 3-4             |
+| Phase 8: Availability Mgmt | 4-5             |
+| Phase 9: Polish & Testing  | 4-6             |
+| **Total**                  | **44-57 hours** |
 
 **Recommended Schedule:**
+
 - Week 1: Phases 1-3 (Foundation + Booking)
 - Week 2: Phases 4-6 (Admin + Email)
 - Week 3: Phases 7-9 (Cancellation + Polish)
@@ -2786,12 +2914,14 @@ NT - TAXOFFICE
 ### 17.2 Server Requirements
 
 **Minimum:**
+
 - Node.js 18.x or higher
 - 512 MB RAM
 - 1 GB disk space
 - HTTPS support
 
 **Recommended:**
+
 - Node.js 20.x
 - 1 GB RAM
 - 2 GB disk space
@@ -2800,17 +2930,20 @@ NT - TAXOFFICE
 ### 17.3 Deployment Steps
 
 1. **Clone Repository**
+
    ```bash
    git clone <repository-url>
    cd nt-taxoffice-node
    ```
 
 2. **Install Dependencies**
+
    ```bash
    npm install --production
    ```
 
 3. **Configure Environment**
+
    ```bash
    cp .env.example .env
    # Edit .env with production values
@@ -2818,16 +2951,19 @@ NT - TAXOFFICE
    ```
 
 4. **Initialize Database**
+
    ```bash
    node database/init.js
    ```
 
 5. **Start Application**
+
    ```bash
    NODE_ENV=production npm start
    ```
 
 6. **Set Up Process Manager (PM2)**
+
    ```bash
    npm install -g pm2
    pm2 start server.js --name nt-taxoffice
@@ -2836,11 +2972,12 @@ NT - TAXOFFICE
    ```
 
 7. **Configure Reverse Proxy (Nginx)**
+
    ```nginx
    server {
        listen 80;
        server_name appointments.ntallas.com;
-       
+
        location / {
            proxy_pass http://localhost:3000;
            proxy_http_version 1.1;
@@ -2860,6 +2997,7 @@ NT - TAXOFFICE
 ### 17.4 Monitoring
 
 **What to Monitor:**
+
 - Server uptime
 - Database size
 - Email queue length
@@ -2869,6 +3007,7 @@ NT - TAXOFFICE
 - Response times
 
 **Tools:**
+
 - PM2 for process monitoring
 - `winston` for logging
 - Database backup cron job
@@ -2876,12 +3015,14 @@ NT - TAXOFFICE
 ### 17.5 Backup Strategy
 
 **Database Backup:**
+
 ```bash
 # Daily backup cron job
 0 2 * * * cp /path/to/nt-taxoffice.db /backups/nt-taxoffice-$(date +\%Y\%m\%d).db
 ```
 
 **Keep:**
+
 - Daily backups: 7 days
 - Weekly backups: 4 weeks
 - Monthly backups: 12 months
@@ -2893,16 +3034,19 @@ NT - TAXOFFICE
 ### 18.1 Scheduled Maintenance Tasks
 
 **Daily:**
+
 - Check email queue for failures
 - Review error logs
 - Monitor disk space
 
 **Weekly:**
+
 - Review booking patterns
 - Check for failed emails
 - Update appointment statuses (mark past as completed)
 
 **Monthly:**
+
 - Database cleanup (old cancelled appointments)
 - Backup verification
 - Security updates
@@ -2914,31 +3058,38 @@ NT - TAXOFFICE
 const db = require('./services/database').getDb();
 
 // Mark past appointments as completed
-db.prepare(`
+db.prepare(
+  `
     UPDATE appointments 
     SET status = 'completed'
     WHERE status IN ('confirmed', 'pending')
     AND appointment_date < date('now', '-1 day')
-`).run();
+`
+).run();
 
 // Delete very old cancelled appointments (optional, after 1 year)
-db.prepare(`
+db.prepare(
+  `
     DELETE FROM appointments
     WHERE status IN ('cancelled', 'declined')
     AND created_at < date('now', '-1 year')
-`).run();
+`
+).run();
 
 // Clean up old email queue entries (after 30 days)
-db.prepare(`
+db.prepare(
+  `
     DELETE FROM email_queue
     WHERE status = 'sent'
     AND sent_at < date('now', '-30 days')
-`).run();
+`
+).run();
 
 console.log('Cleanup completed');
 ```
 
 **Run via Cron:**
+
 ```bash
 0 3 * * * cd /path/to/nt-taxoffice-node && node scripts/cleanup.js
 ```
@@ -3069,12 +3220,14 @@ The appointment booking system will be considered successful when:
 ### 21.3 Emergency Procedures
 
 **Database Corruption:**
+
 1. Stop application
 2. Restore from latest backup
 3. Restart application
 4. Verify data integrity
 
 **Email System Failure:**
+
 1. Check Gmail credentials
 2. Verify email queue table
 3. Check for rate limiting from Gmail

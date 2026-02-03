@@ -11,21 +11,25 @@ Generates and displays comprehensive test coverage reports with color-coded outp
 ### Usage
 
 **Run tests and generate report**:
+
 ```bash
 npm run coverage:report
 ```
 
 Or directly:
+
 ```bash
 ./scripts/coverage-report.sh
 ```
 
 **View existing coverage (without running tests)**:
+
 ```bash
 npm run coverage:view
 ```
 
 Or directly:
+
 ```bash
 ./scripts/coverage-report.sh no
 ```
@@ -78,6 +82,7 @@ Open HTML report in browser? (y/n)
 ### Coverage Thresholds
 
 The script checks the following minimum thresholds:
+
 - Statements: 70%
 - Branches: 70%
 - Functions: 70%
@@ -86,10 +91,12 @@ The script checks the following minimum thresholds:
 ### CI/CD Integration
 
 The script exits with:
+
 - **Exit code 0**: All thresholds met
 - **Exit code 1**: One or more thresholds not met
 
 Use in CI/CD pipelines:
+
 ```bash
 npm run coverage:report || exit 1
 ```
@@ -119,11 +126,13 @@ Initialize or reset the test database.
 ### Usage
 
 **Initialize test database**:
+
 ```bash
 npm run test:db:init
 ```
 
 **Reset test database**:
+
 ```bash
 npm run test:db:reset
 ```

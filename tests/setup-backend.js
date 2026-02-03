@@ -11,13 +11,13 @@ process.env.NODE_ENV = 'test';
 
 // Mock console to reduce noise (keep errors visible)
 global.console = {
-    ...console,
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    // Keep error visible for debugging
-    error: console.error
+  ...console,
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  // Keep error visible for debugging
+  error: console.error,
 };
 
 // Global test timeout (10 seconds for database operations)
@@ -29,15 +29,16 @@ require('./helpers/customMatchers');
 // Initialize test performance monitoring (track slow tests)
 // Set DISABLE_PERF_MONITOR=true to disable
 const { initializePerformanceMonitoring } = require('./helpers/performanceMonitor');
+
 initializePerformanceMonitoring();
 
 // Clean up after all tests
 afterAll(async () => {
-    // Close any open database connections
-    const { closeDatabase } = require('../services/database');
-    try {
-        await closeDatabase();
-    } catch (error) {
-        // Ignore if database wasn't initialized
-    }
+  // Close any open database connections
+  const { closeDatabase } = require('../services/database');
+  try {
+    await closeDatabase();
+  } catch (error) {
+    // Ignore if database wasn't initialized
+  }
 });

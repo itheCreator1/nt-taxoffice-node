@@ -1,259 +1,259 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('Appointment Booking System', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/appointments.html');
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/appointments.html');
+  });
+
+  test('should load appointment page successfully', async ({ page }) => {
+    await expect(page).toHaveTitle(/Κράτηση Ραντεβού/);
+    await expect(page.locator('h2')).toContainText('Κλείστε Ραντεβού');
+  });
+
+  test('should display DD/MM/YYYY format in date picker', async ({ page }) => {
+    // Step 1: Select service to enable step 2
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
+
+    // Wait for step 2 to be visible
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
+
+    // Click date field to open flatpickr
+    await page.click('#appointment_date');
+
+    // Verify flatpickr calendar is visible
+    await expect(page.locator('.flatpickr-calendar')).toBeVisible({ timeout: 5000 });
+
+    // Verify date format configuration
+    const dateFormat = await page.evaluate(() => {
+      const input = document.getElementById('appointment_date');
+      return input._flatpickr ? input._flatpickr.config.dateFormat : null;
     });
+    expect(dateFormat).toBe('d/m/Y');
+  });
 
-    test('should load appointment page successfully', async ({ page }) => {
-        await expect(page).toHaveTitle(/Κράτηση Ραντεβού/);
-        await expect(page.locator('h2')).toContainText('Κλείστε Ραντεβού');
-    });
+  test('should disable weekends in calendar', async ({ page }) => {
+    // Navigate to step 2
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
 
-    test('should display DD/MM/YYYY format in date picker', async ({ page }) => {
-        // Step 1: Select service to enable step 2
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
+    // Open date picker
+    await page.click('#appointment_date');
+    await expect(page.locator('.flatpickr-calendar')).toBeVisible();
 
-        // Wait for step 2 to be visible
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
+    // Check if weekend days are disabled
+    const disabledDays = await page.locator('.flatpickr-day.flatpickr-disabled').count();
+    expect(disabledDays).toBeGreaterThan(0);
+  });
 
-        // Click date field to open flatpickr
-        await page.click('#appointment_date');
+  test('should navigate through all three steps', async ({ page }) => {
+    // Step 1: Service selection
+    await expect(page.locator('#step-1')).toHaveClass(/active/);
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
 
-        // Verify flatpickr calendar is visible
-        await expect(page.locator('.flatpickr-calendar')).toBeVisible({ timeout: 5000 });
+    // Verify Step 2 is active
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
+    await expect(page.locator('#step-1')).not.toHaveClass(/active/);
 
-        // Verify date format configuration
-        const dateFormat = await page.evaluate(() => {
-            const input = document.getElementById('appointment_date');
-            return input._flatpickr ? input._flatpickr.config.dateFormat : null;
-        });
-        expect(dateFormat).toBe('d/m/Y');
-    });
+    // Step 2: Date and time selection
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
 
-    test('should disable weekends in calendar', async ({ page }) => {
-        // Navigate to step 2
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
+    // Wait for time slots to load
+    await page.waitForTimeout(1000);
 
-        // Open date picker
-        await page.click('#appointment_date');
-        await expect(page.locator('.flatpickr-calendar')).toBeVisible();
+    // Select first available time slot
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    await expect(firstTimeOption).toBeVisible({ timeout: 5000 });
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        // Check if weekend days are disabled
-        const disabledDays = await page.locator('.flatpickr-day.flatpickr-disabled').count();
-        expect(disabledDays).toBeGreaterThan(0);
-    });
+    await page.click('#next-to-step-3');
 
-    test('should navigate through all three steps', async ({ page }) => {
-        // Step 1: Service selection
-        await expect(page.locator('#step-1')).toHaveClass(/active/);
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
+    // Verify Step 3 is active
+    await expect(page.locator('#step-3')).toHaveClass(/active/);
+    await expect(page.locator('#step-2')).not.toHaveClass(/active/);
+  });
 
-        // Verify Step 2 is active
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
-        await expect(page.locator('#step-1')).not.toHaveClass(/active/);
+  test('should validate required fields in each step', async ({ page }) => {
+    // Step 1: Try to proceed without selecting service
+    await page.click('#next-to-step-2');
+    await expect(page.locator('#error-message')).toBeVisible();
+    await expect(page.locator('#error-text')).toContainText('επιλέξτε τύπο υπηρεσίας');
 
-        // Step 2: Date and time selection
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    // Select service and proceed
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
 
-        // Wait for time slots to load
-        await page.waitForTimeout(1000);
+    // Step 2: Try to proceed without selecting date
+    await page.click('#next-to-step-3');
+    await expect(page.locator('#error-message')).toBeVisible();
 
-        // Select first available time slot
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        await expect(firstTimeOption).toBeVisible({ timeout: 5000 });
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
+    // Select date and time
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        await page.click('#next-to-step-3');
+    // Try to proceed without selecting time
+    await page.click('#next-to-step-3');
+    await expect(page.locator('#error-message')).toBeVisible();
+  });
 
-        // Verify Step 3 is active
-        await expect(page.locator('#step-3')).toHaveClass(/active/);
-        await expect(page.locator('#step-2')).not.toHaveClass(/active/);
-    });
+  test('should update booking summary in real-time', async ({ page }) => {
+    // Navigate to step 3
+    await page.selectOption('#service_type', 'Γενική Συμβουλευτική');
+    await page.click('#next-to-step-2');
 
-    test('should validate required fields in each step', async ({ page }) => {
-        // Step 1: Try to proceed without selecting service
-        await page.click('#next-to-step-2');
-        await expect(page.locator('#error-message')).toBeVisible();
-        await expect(page.locator('#error-text')).toContainText('επιλέξτε τύπο υπηρεσίας');
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        // Select service and proceed
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        // Step 2: Try to proceed without selecting date
-        await page.click('#next-to-step-3');
-        await expect(page.locator('#error-message')).toBeVisible();
+    await page.click('#next-to-step-3');
 
-        // Select date and time
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
+    // Verify summary is visible
+    await expect(page.locator('#booking-summary')).toBeVisible();
+    await expect(page.locator('#summary-service')).toContainText('Γενική Συμβουλευτική');
 
-        // Try to proceed without selecting time
-        await page.click('#next-to-step-3');
-        await expect(page.locator('#error-message')).toBeVisible();
-    });
+    // Type in name field and verify real-time update
+    await page.fill('#client_name', 'Ιωάννης');
+    await expect(page.locator('#summary-name')).toContainText('Ιωάννης');
 
-    test('should update booking summary in real-time', async ({ page }) => {
-        // Navigate to step 3
-        await page.selectOption('#service_type', 'Γενική Συμβουλευτική');
-        await page.click('#next-to-step-2');
+    // Continue typing
+    await page.fill('#client_name', 'Ιωάννης Παπαδόπουλος');
+    await expect(page.locator('#summary-name')).toContainText('Ιωάννης Παπαδόπουλος');
 
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
+    // Type email
+    await page.fill('#client_email', 'test@example.com');
+    await expect(page.locator('#summary-email')).toContainText('test@example.com');
 
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
+    // Type phone
+    await page.fill('#client_phone', '6912345678');
+    await expect(page.locator('#summary-phone')).toContainText('6912345678');
+  });
 
-        await page.click('#next-to-step-3');
+  test('should validate email format', async ({ page }) => {
+    // Navigate to step 3
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
 
-        // Verify summary is visible
-        await expect(page.locator('#booking-summary')).toBeVisible();
-        await expect(page.locator('#summary-service')).toContainText('Γενική Συμβουλευτική');
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        // Type in name field and verify real-time update
-        await page.fill('#client_name', 'Ιωάννης');
-        await expect(page.locator('#summary-name')).toContainText('Ιωάννης');
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        // Continue typing
-        await page.fill('#client_name', 'Ιωάννης Παπαδόπουλος');
-        await expect(page.locator('#summary-name')).toContainText('Ιωάννης Παπαδόπουλος');
+    await page.click('#next-to-step-3');
 
-        // Type email
-        await page.fill('#client_email', 'test@example.com');
-        await expect(page.locator('#summary-email')).toContainText('test@example.com');
+    // Fill form with invalid email
+    await page.fill('#client_name', 'Test User');
+    await page.fill('#client_email', 'invalid-email');
+    await page.fill('#client_phone', '6912345678');
 
-        // Type phone
-        await page.fill('#client_phone', '6912345678');
-        await expect(page.locator('#summary-phone')).toContainText('6912345678');
-    });
+    // Try to submit
+    await page.click('#submit-booking');
 
-    test('should validate email format', async ({ page }) => {
-        // Navigate to step 3
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
+    // Verify error message
+    await expect(page.locator('#error-message')).toBeVisible();
+    await expect(page.locator('#error-text')).toContainText('email');
+  });
 
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
+  test('should validate Greek phone format', async ({ page }) => {
+    // Navigate to step 3
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
 
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        await page.click('#next-to-step-3');
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        // Fill form with invalid email
-        await page.fill('#client_name', 'Test User');
-        await page.fill('#client_email', 'invalid-email');
-        await page.fill('#client_phone', '6912345678');
+    await page.click('#next-to-step-3');
 
-        // Try to submit
-        await page.click('#submit-booking');
+    // Fill form with invalid phone
+    await page.fill('#client_name', 'Test User');
+    await page.fill('#client_email', 'test@example.com');
+    await page.fill('#client_phone', '123'); // Invalid
 
-        // Verify error message
-        await expect(page.locator('#error-message')).toBeVisible();
-        await expect(page.locator('#error-text')).toContainText('email');
-    });
+    // Try to submit
+    await page.click('#submit-booking');
 
-    test('should validate Greek phone format', async ({ page }) => {
-        // Navigate to step 3
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
+    // Verify error message
+    await expect(page.locator('#error-message')).toBeVisible();
+    await expect(page.locator('#error-text')).toContainText('τηλέφωνο');
+  });
 
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
+  test('should allow navigation back through steps', async ({ page }) => {
+    // Go to step 2
+    await page.selectOption('#service_type', 'Φορολογική Δήλωση');
+    await page.click('#next-to-step-2');
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
 
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
+    // Go back to step 1
+    await page.click('#back-to-step-1');
+    await expect(page.locator('#step-1')).toHaveClass(/active/);
+    await expect(page.locator('#step-2')).not.toHaveClass(/active/);
 
-        await page.click('#next-to-step-3');
+    // Go forward again
+    await page.click('#next-to-step-2');
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
 
-        // Fill form with invalid phone
-        await page.fill('#client_name', 'Test User');
-        await page.fill('#client_email', 'test@example.com');
-        await page.fill('#client_phone', '123'); // Invalid
+    // Select date and time, go to step 3
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        // Try to submit
-        await page.click('#submit-booking');
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        // Verify error message
-        await expect(page.locator('#error-message')).toBeVisible();
-        await expect(page.locator('#error-text')).toContainText('τηλέφωνο');
-    });
+    await page.click('#next-to-step-3');
+    await expect(page.locator('#step-3')).toHaveClass(/active/);
 
-    test('should allow navigation back through steps', async ({ page }) => {
-        // Go to step 2
-        await page.selectOption('#service_type', 'Φορολογική Δήλωση');
-        await page.click('#next-to-step-2');
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
+    // Go back to step 2
+    await page.click('#back-to-step-2');
+    await expect(page.locator('#step-2')).toHaveClass(/active/);
+    await expect(page.locator('#step-3')).not.toHaveClass(/active/);
+  });
 
-        // Go back to step 1
-        await page.click('#back-to-step-1');
-        await expect(page.locator('#step-1')).toHaveClass(/active/);
-        await expect(page.locator('#step-2')).not.toHaveClass(/active/);
+  test('should preserve form data when navigating between steps', async ({ page }) => {
+    // Fill step 1
+    await page.selectOption('#service_type', 'Μισθοδοσία');
+    await page.click('#next-to-step-2');
 
-        // Go forward again
-        await page.click('#next-to-step-2');
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
+    // Fill step 2
+    await page.click('#appointment_date');
+    await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
+    await page.waitForTimeout(1000);
 
-        // Select date and time, go to step 3
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
+    const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
+    const timeValue = await firstTimeOption.getAttribute('value');
+    await page.selectOption('#appointment_time', timeValue);
 
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
+    const selectedDate = await page.inputValue('#appointment_date');
 
-        await page.click('#next-to-step-3');
-        await expect(page.locator('#step-3')).toHaveClass(/active/);
+    // Go back to step 1
+    await page.click('#back-to-step-1');
 
-        // Go back to step 2
-        await page.click('#back-to-step-2');
-        await expect(page.locator('#step-2')).toHaveClass(/active/);
-        await expect(page.locator('#step-3')).not.toHaveClass(/active/);
-    });
+    // Verify service selection is preserved
+    const serviceValue = await page.inputValue('#service_type');
+    expect(serviceValue).toBe('Μισθοδοσία');
 
-    test('should preserve form data when navigating between steps', async ({ page }) => {
-        // Fill step 1
-        await page.selectOption('#service_type', 'Μισθοδοσία');
-        await page.click('#next-to-step-2');
+    // Go forward to step 2
+    await page.click('#next-to-step-2');
 
-        // Fill step 2
-        await page.click('#appointment_date');
-        await page.locator('.flatpickr-day:not(.flatpickr-disabled)').first().click();
-        await page.waitForTimeout(1000);
-
-        const firstTimeOption = await page.locator('#appointment_time option:not([value=""])').first();
-        const timeValue = await firstTimeOption.getAttribute('value');
-        await page.selectOption('#appointment_time', timeValue);
-
-        const selectedDate = await page.inputValue('#appointment_date');
-
-        // Go back to step 1
-        await page.click('#back-to-step-1');
-
-        // Verify service selection is preserved
-        const serviceValue = await page.inputValue('#service_type');
-        expect(serviceValue).toBe('Μισθοδοσία');
-
-        // Go forward to step 2
-        await page.click('#next-to-step-2');
-
-        // Verify date is still selected
-        const dateValue = await page.inputValue('#appointment_date');
-        expect(dateValue).toBe(selectedDate);
-    });
+    // Verify date is still selected
+    const dateValue = await page.inputValue('#appointment_date');
+    expect(dateValue).toBe(selectedDate);
+  });
 });
