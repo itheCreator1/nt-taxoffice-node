@@ -173,14 +173,14 @@ npm run test:coverage
 
 ## Progress Tracking
 
-**Started**: ****\_\_\_****
-**Phase 1 Complete**: ****\_\_\_****
-**Phase 2 Complete**: ****\_\_\_****
-**Phase 3 Complete**: ****\_\_\_****
-**Phase 4 Complete**: ****\_\_\_****
-**Phase 5 Complete**: ****\_\_\_****
-**Phase 6 Complete**: ****\_\_\_****
-**Finished**: ****\_\_\_****
+**Started**: \***\*\_\_\_\*\***
+**Phase 1 Complete**: \***\*\_\_\_\*\***
+**Phase 2 Complete**: \***\*\_\_\_\*\***
+**Phase 3 Complete**: \***\*\_\_\_\*\***
+**Phase 4 Complete**: \***\*\_\_\_\*\***
+**Phase 5 Complete**: \***\*\_\_\_\*\***
+**Phase 6 Complete**: \***\*\_\_\_\*\***
+**Finished**: \***\*\_\_\_\*\***
 
 **Total Tests**:
 
