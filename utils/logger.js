@@ -7,10 +7,10 @@ const { formatDateTime } = require('./timezone');
 
 // Log levels
 const LOG_LEVELS = {
-    ERROR: 0,
-    WARN: 1,
-    INFO: 2,
-    DEBUG: 3
+  ERROR: 0,
+  WARN: 1,
+  INFO: 2,
+  DEBUG: 3,
 };
 
 // Current log level from environment (default: INFO)
@@ -18,12 +18,12 @@ const CURRENT_LOG_LEVEL = LOG_LEVELS[process.env.LOG_LEVEL?.toUpperCase()] ?? LO
 
 // Colors for terminal output (ANSI escape codes)
 const COLORS = {
-    RESET: '\x1b[0m',
-    RED: '\x1b[31m',
-    YELLOW: '\x1b[33m',
-    GREEN: '\x1b[32m',
-    BLUE: '\x1b[34m',
-    GRAY: '\x1b[90m'
+  RESET: '\x1b[0m',
+  RED: '\x1b[31m',
+  YELLOW: '\x1b[33m',
+  GREEN: '\x1b[32m',
+  BLUE: '\x1b[34m',
+  GRAY: '\x1b[90m',
 };
 
 /**
@@ -34,9 +34,9 @@ const COLORS = {
  * @returns {string}
  */
 function formatLogMessage(level, message, metadata = {}) {
-    const timestamp = formatDateTime(new Date());
-    const metaStr = Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : '';
-    return `[${timestamp}] [${level}] ${message} ${metaStr}`.trim();
+  const timestamp = formatDateTime(new Date());
+  const metaStr = Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : '';
+  return `[${timestamp}] [${level}] ${message} ${metaStr}`.trim();
 }
 
 /**
@@ -45,27 +45,27 @@ function formatLogMessage(level, message, metadata = {}) {
  * @returns {boolean}
  */
 function shouldLog(level) {
-    return level <= CURRENT_LOG_LEVEL;
+  return level <= CURRENT_LOG_LEVEL;
 }
 
 /**
  * Log error message
  * @param {string} message
- * @param {Error|object} error - Error object or metadata
+ * @param {Error|object} err - Error object or metadata
  */
-function error(message, error = null) {
-    if (!shouldLog(LOG_LEVELS.ERROR)) return;
+function error(message, err = null) {
+  if (!shouldLog(LOG_LEVELS.ERROR)) return;
 
-    const metadata = {};
-    if (error instanceof Error) {
-        metadata.error = error.message;
-        metadata.stack = error.stack;
-    } else if (error) {
-        Object.assign(metadata, error);
-    }
+  const metadata = {};
+  if (err instanceof Error) {
+    metadata.error = err.message;
+    metadata.stack = err.stack;
+  } else if (err) {
+    Object.assign(metadata, err);
+  }
 
-    const logMessage = formatLogMessage('ERROR', message, metadata);
-    console.error(`${COLORS.RED}${logMessage}${COLORS.RESET}`);
+  const logMessage = formatLogMessage('ERROR', message, metadata);
+  console.error(`${COLORS.RED}${logMessage}${COLORS.RESET}`);
 }
 
 /**
@@ -74,10 +74,10 @@ function error(message, error = null) {
  * @param {object} metadata - Additional metadata
  */
 function warn(message, metadata = {}) {
-    if (!shouldLog(LOG_LEVELS.WARN)) return;
+  if (!shouldLog(LOG_LEVELS.WARN)) return;
 
-    const logMessage = formatLogMessage('WARN', message, metadata);
-    console.warn(`${COLORS.YELLOW}${logMessage}${COLORS.RESET}`);
+  const logMessage = formatLogMessage('WARN', message, metadata);
+  console.warn(`${COLORS.YELLOW}${logMessage}${COLORS.RESET}`);
 }
 
 /**
@@ -86,10 +86,10 @@ function warn(message, metadata = {}) {
  * @param {object} metadata - Additional metadata
  */
 function info(message, metadata = {}) {
-    if (!shouldLog(LOG_LEVELS.INFO)) return;
+  if (!shouldLog(LOG_LEVELS.INFO)) return;
 
-    const logMessage = formatLogMessage('INFO', message, metadata);
-    console.log(`${COLORS.GREEN}${logMessage}${COLORS.RESET}`);
+  const logMessage = formatLogMessage('INFO', message, metadata);
+  console.log(`${COLORS.GREEN}${logMessage}${COLORS.RESET}`);
 }
 
 /**
@@ -98,10 +98,10 @@ function info(message, metadata = {}) {
  * @param {object} metadata - Additional metadata
  */
 function debug(message, metadata = {}) {
-    if (!shouldLog(LOG_LEVELS.DEBUG)) return;
+  if (!shouldLog(LOG_LEVELS.DEBUG)) return;
 
-    const logMessage = formatLogMessage('DEBUG', message, metadata);
-    console.log(`${COLORS.GRAY}${logMessage}${COLORS.RESET}`);
+  const logMessage = formatLogMessage('DEBUG', message, metadata);
+  console.log(`${COLORS.GRAY}${logMessage}${COLORS.RESET}`);
 }
 
 /**
@@ -109,16 +109,16 @@ function debug(message, metadata = {}) {
  * @param {object} req - Express request object
  */
 function logRequest(req) {
-    if (!shouldLog(LOG_LEVELS.INFO)) return;
+  if (!shouldLog(LOG_LEVELS.INFO)) return;
 
-    const metadata = {
-        method: req.method,
-        path: req.path,
-        ip: req.ip || req.connection.remoteAddress,
-        userAgent: req.get('user-agent')
-    };
+  const metadata = {
+    method: req.method,
+    path: req.path,
+    ip: req.ip || req.connection.remoteAddress,
+    userAgent: req.get('user-agent'),
+  };
 
-    info('HTTP Request', metadata);
+  info('HTTP Request', metadata);
 }
 
 /**
@@ -128,27 +128,37 @@ function logRequest(req) {
  * @param {number} duration - Request duration in ms
  */
 function logResponse(req, res, duration) {
-    if (!shouldLog(LOG_LEVELS.INFO)) return;
+  if (!shouldLog(LOG_LEVELS.INFO)) return;
 
-    const metadata = {
-        method: req.method,
-        path: req.path,
-        status: res.statusCode,
-        duration: `${duration}ms`
-    };
+  const metadata = {
+    method: req.method,
+    path: req.path,
+    status: res.statusCode,
+    duration: `${duration}ms`,
+  };
 
-    const level = res.statusCode >= 500 ? 'ERROR' : res.statusCode >= 400 ? 'WARN' : 'INFO';
-    const color = res.statusCode >= 500 ? COLORS.RED : res.statusCode >= 400 ? COLORS.YELLOW : COLORS.GREEN;
+  let level;
+  let color;
+  if (res.statusCode >= 500) {
+    level = 'ERROR';
+    color = COLORS.RED;
+  } else if (res.statusCode >= 400) {
+    level = 'WARN';
+    color = COLORS.YELLOW;
+  } else {
+    level = 'INFO';
+    color = COLORS.GREEN;
+  }
 
-    const logMessage = formatLogMessage(level, 'HTTP Response', metadata);
+  const logMessage = formatLogMessage(level, 'HTTP Response', metadata);
 
-    if (level === 'ERROR') {
-        console.error(`${color}${logMessage}${COLORS.RESET}`);
-    } else if (level === 'WARN') {
-        console.warn(`${color}${logMessage}${COLORS.RESET}`);
-    } else {
-        console.log(`${color}${logMessage}${COLORS.RESET}`);
-    }
+  if (level === 'ERROR') {
+    console.error(`${color}${logMessage}${COLORS.RESET}`);
+  } else if (level === 'WARN') {
+    console.warn(`${color}${logMessage}${COLORS.RESET}`);
+  } else {
+    console.log(`${color}${logMessage}${COLORS.RESET}`);
+  }
 }
 
 /**
@@ -157,14 +167,14 @@ function logResponse(req, res, duration) {
  * @param {array} params - Query parameters
  */
 function logQuery(query, params = []) {
-    if (!shouldLog(LOG_LEVELS.DEBUG)) return;
+  if (!shouldLog(LOG_LEVELS.DEBUG)) return;
 
-    const metadata = {
-        query: query.replace(/\s+/g, ' ').trim(),
-        params: params.length > 0 ? params : undefined
-    };
+  const metadata = {
+    query: query.replace(/\s+/g, ' ').trim(),
+    params: params.length > 0 ? params : undefined,
+  };
 
-    debug('Database Query', metadata);
+  debug('Database Query', metadata);
 }
 
 /**
@@ -174,17 +184,17 @@ function logQuery(query, params = []) {
  * @param {boolean} success - Whether email was sent successfully
  */
 function logEmail(recipient, subject, success = true) {
-    const metadata = {
-        recipient,
-        subject,
-        status: success ? 'sent' : 'failed'
-    };
+  const metadata = {
+    recipient,
+    subject,
+    status: success ? 'sent' : 'failed',
+  };
 
-    if (success) {
-        info('Email Sent', metadata);
-    } else {
-        error('Email Failed', metadata);
-    }
+  if (success) {
+    info('Email Sent', metadata);
+  } else {
+    error('Email Failed', metadata);
+  }
 }
 
 /**
@@ -194,11 +204,11 @@ function logEmail(recipient, subject, success = true) {
  * @param {string} appointmentTime
  */
 function logAppointmentCreated(clientName, appointmentDate, appointmentTime) {
-    info('Appointment Created', {
-        client: clientName,
-        date: appointmentDate,
-        time: appointmentTime
-    });
+  info('Appointment Created', {
+    client: clientName,
+    date: appointmentDate,
+    time: appointmentTime,
+  });
 }
 
 /**
@@ -209,12 +219,12 @@ function logAppointmentCreated(clientName, appointmentDate, appointmentTime) {
  * @param {string} changedBy
  */
 function logAppointmentStatusChange(appointmentId, oldStatus, newStatus, changedBy) {
-    info('Appointment Status Changed', {
-        id: appointmentId,
-        oldStatus,
-        newStatus,
-        changedBy
-    });
+  info('Appointment Status Changed', {
+    id: appointmentId,
+    oldStatus,
+    newStatus,
+    changedBy,
+  });
 }
 
 /**
@@ -223,11 +233,11 @@ function logAppointmentStatusChange(appointmentId, oldStatus, newStatus, changed
  * @param {boolean} success
  */
 function logAdminLogin(username, success = true) {
-    if (success) {
-        info('Admin Login Successful', { username });
-    } else {
-        warn('Admin Login Failed', { username });
-    }
+  if (success) {
+    info('Admin Login Successful', { username });
+  } else {
+    warn('Admin Login Failed', { username });
+  }
 }
 
 /**
@@ -236,7 +246,7 @@ function logAdminLogin(username, success = true) {
  * @param {object} metadata - Additional metadata
  */
 function logSecurityEvent(event, metadata = {}) {
-    warn(`Security Event: ${event}`, metadata);
+  warn(`Security Event: ${event}`, metadata);
 }
 
 /**
@@ -244,42 +254,42 @@ function logSecurityEvent(event, metadata = {}) {
  * @returns {function}
  */
 function requestLoggerMiddleware() {
-    return (req, res, next) => {
-        const startTime = Date.now();
+  return (req, res, next) => {
+    const startTime = Date.now();
 
-        // Log request
-        logRequest(req);
+    // Log request
+    logRequest(req);
 
-        // Capture response
-        res.on('finish', () => {
-            const duration = Date.now() - startTime;
-            logResponse(req, res, duration);
-        });
+    // Capture response
+    res.on('finish', () => {
+      const duration = Date.now() - startTime;
+      logResponse(req, res, duration);
+    });
 
-        next();
-    };
+    next();
+  };
 }
 
 module.exports = {
-    // Log levels
-    LOG_LEVELS,
+  // Log levels
+  LOG_LEVELS,
 
-    // Basic logging
-    error,
-    warn,
-    info,
-    debug,
+  // Basic logging
+  error,
+  warn,
+  info,
+  debug,
 
-    // Specialized logging
-    logRequest,
-    logResponse,
-    logQuery,
-    logEmail,
-    logAppointmentCreated,
-    logAppointmentStatusChange,
-    logAdminLogin,
-    logSecurityEvent,
+  // Specialized logging
+  logRequest,
+  logResponse,
+  logQuery,
+  logEmail,
+  logAppointmentCreated,
+  logAppointmentStatusChange,
+  logAdminLogin,
+  logSecurityEvent,
 
-    // Middleware
-    requestLoggerMiddleware
+  // Middleware
+  requestLoggerMiddleware,
 };

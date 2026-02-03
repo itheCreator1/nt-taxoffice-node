@@ -15,7 +15,7 @@ const MINIMUM_NOTICE_HOURS = 24; // Minimum notice required for booking
  * @returns {moment.Moment}
  */
 function now() {
-    return moment.tz(TIMEZONE);
+  return moment.tz(TIMEZONE);
 }
 
 /**
@@ -24,7 +24,7 @@ function now() {
  * @returns {moment.Moment}
  */
 function parseDate(dateString) {
-    return moment.tz(dateString, 'YYYY-MM-DD', TIMEZONE);
+  return moment.tz(dateString, 'YYYY-MM-DD', TIMEZONE);
 }
 
 /**
@@ -34,7 +34,7 @@ function parseDate(dateString) {
  * @returns {moment.Moment}
  */
 function parseDateTime(dateString, timeString) {
-    return moment.tz(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm:ss', TIMEZONE);
+  return moment.tz(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm:ss', TIMEZONE);
 }
 
 /**
@@ -43,8 +43,8 @@ function parseDateTime(dateString, timeString) {
  * @returns {string}
  */
 function formatDate(date) {
-    if (!date) return '';
-    return moment.tz(date, TIMEZONE).format('DD/MM/YYYY');
+  if (!date) return '';
+  return moment.tz(date, TIMEZONE).format('DD/MM/YYYY');
 }
 
 /**
@@ -53,8 +53,8 @@ function formatDate(date) {
  * @returns {string}
  */
 function formatTime(time) {
-    if (!time) return '';
-    return moment.tz(time, TIMEZONE).format('HH:mm');
+  if (!time) return '';
+  return moment.tz(time, TIMEZONE).format('HH:mm');
 }
 
 /**
@@ -63,8 +63,8 @@ function formatTime(time) {
  * @returns {string}
  */
 function formatDateTime(datetime) {
-    if (!datetime) return '';
-    return moment.tz(datetime, TIMEZONE).format('DD/MM/YYYY HH:mm');
+  if (!datetime) return '';
+  return moment.tz(datetime, TIMEZONE).format('DD/MM/YYYY HH:mm');
 }
 
 /**
@@ -73,11 +73,11 @@ function formatDateTime(datetime) {
  * @returns {string}
  */
 function formatGreekDate(date) {
-    if (!date) return '';
-    const m = moment.tz(date, TIMEZONE);
-    const dayName = getGreekDayName(m.day());
-    const monthName = getGreekMonthName(m.month());
-    return `${dayName} ${m.date()} ${monthName} ${m.year()}`;
+  if (!date) return '';
+  const m = moment.tz(date, TIMEZONE);
+  const dayName = getGreekDayName(m.day());
+  const monthName = getGreekMonthName(m.month());
+  return `${dayName} ${m.date()} ${monthName} ${m.year()}`;
 }
 
 /**
@@ -87,7 +87,7 @@ function formatGreekDate(date) {
  * @returns {string}
  */
 function formatGreekTime(time) {
-    return formatTime(time);
+  return formatTime(time);
 }
 
 /**
@@ -96,16 +96,16 @@ function formatGreekTime(time) {
  * @returns {string}
  */
 function getGreekDayName(dayOfWeek) {
-    const greekDays = [
-        'Κυριακή',    // Sunday
-        'Δευτέρα',    // Monday
-        'Τρίτη',      // Tuesday
-        'Τετάρτη',    // Wednesday
-        'Πέμπτη',     // Thursday
-        'Παρασκευή',  // Friday
-        'Σάββατο'     // Saturday
-    ];
-    return greekDays[dayOfWeek] || '';
+  const greekDays = [
+    'Κυριακή', // Sunday
+    'Δευτέρα', // Monday
+    'Τρίτη', // Tuesday
+    'Τετάρτη', // Wednesday
+    'Πέμπτη', // Thursday
+    'Παρασκευή', // Friday
+    'Σάββατο', // Saturday
+  ];
+  return greekDays[dayOfWeek] || '';
 }
 
 /**
@@ -114,21 +114,21 @@ function getGreekDayName(dayOfWeek) {
  * @returns {string}
  */
 function getGreekMonthName(month) {
-    const greekMonths = [
-        'Ιανουαρίου',   // January
-        'Φεβρουαρίου',  // February
-        'Μαρτίου',      // March
-        'Απριλίου',     // April
-        'Μαΐου',        // May
-        'Ιουνίου',      // June
-        'Ιουλίου',      // July
-        'Αυγούστου',    // August
-        'Σεπτεμβρίου',  // September
-        'Οκτωβρίου',    // October
-        'Νοεμβρίου',    // November
-        'Δεκεμβρίου'    // December
-    ];
-    return greekMonths[month] || '';
+  const greekMonths = [
+    'Ιανουαρίου', // January
+    'Φεβρουαρίου', // February
+    'Μαρτίου', // March
+    'Απριλίου', // April
+    'Μαΐου', // May
+    'Ιουνίου', // June
+    'Ιουλίου', // July
+    'Αυγούστου', // August
+    'Σεπτεμβρίου', // September
+    'Οκτωβρίου', // October
+    'Νοεμβρίου', // November
+    'Δεκεμβρίου', // December
+  ];
+  return greekMonths[month] || '';
 }
 
 /**
@@ -137,8 +137,8 @@ function getGreekMonthName(month) {
  * @returns {string}
  */
 function toMySQLDate(date) {
-    if (!date) return null;
-    return moment.tz(date, TIMEZONE).format('YYYY-MM-DD');
+  if (!date) return null;
+  return moment.tz(date, TIMEZONE).format('YYYY-MM-DD');
 }
 
 /**
@@ -147,8 +147,8 @@ function toMySQLDate(date) {
  * @returns {string}
  */
 function toMySQLTime(time) {
-    if (!time) return null;
-    return moment.tz(time, TIMEZONE).format('HH:mm:ss');
+  if (!time) return null;
+  return moment.tz(time, TIMEZONE).format('HH:mm:ss');
 }
 
 /**
@@ -157,8 +157,8 @@ function toMySQLTime(time) {
  * @returns {string}
  */
 function toMySQLDateTime(datetime) {
-    if (!datetime) return null;
-    return moment.tz(datetime, TIMEZONE).format('YYYY-MM-DD HH:mm:ss');
+  if (!datetime) return null;
+  return moment.tz(datetime, TIMEZONE).format('YYYY-MM-DD HH:mm:ss');
 }
 
 /**
@@ -168,8 +168,8 @@ function toMySQLDateTime(datetime) {
  * @returns {boolean}
  */
 function isInPast(dateString, timeString) {
-    const appointmentDateTime = parseDateTime(dateString, timeString);
-    return appointmentDateTime.isBefore(now());
+  const appointmentDateTime = parseDateTime(dateString, timeString);
+  return appointmentDateTime.isBefore(now());
 }
 
 /**
@@ -178,9 +178,9 @@ function isInPast(dateString, timeString) {
  * @returns {boolean}
  */
 function isBeyondBookingWindow(dateString) {
-    const appointmentDate = parseDate(dateString);
-    const maxBookingDate = now().add(BOOKING_WINDOW_DAYS, 'days');
-    return appointmentDate.isAfter(maxBookingDate);
+  const appointmentDate = parseDate(dateString);
+  const maxBookingDate = now().add(BOOKING_WINDOW_DAYS, 'days');
+  return appointmentDate.isAfter(maxBookingDate);
 }
 
 /**
@@ -190,9 +190,9 @@ function isBeyondBookingWindow(dateString) {
  * @returns {boolean}
  */
 function isWithinMinimumNotice(dateString, timeString) {
-    const appointmentDateTime = parseDateTime(dateString, timeString);
-    const minimumDateTime = now().add(MINIMUM_NOTICE_HOURS, 'hours');
-    return appointmentDateTime.isBefore(minimumDateTime);
+  const appointmentDateTime = parseDateTime(dateString, timeString);
+  const minimumDateTime = now().add(MINIMUM_NOTICE_HOURS, 'hours');
+  return appointmentDateTime.isBefore(minimumDateTime);
 }
 
 /**
@@ -201,7 +201,7 @@ function isWithinMinimumNotice(dateString, timeString) {
  * @returns {moment.Moment}
  */
 function startOfDay(date) {
-    return moment.tz(date, TIMEZONE).startOf('day');
+  return moment.tz(date, TIMEZONE).startOf('day');
 }
 
 /**
@@ -210,7 +210,7 @@ function startOfDay(date) {
  * @returns {moment.Moment}
  */
 function endOfDay(date) {
-    return moment.tz(date, TIMEZONE).endOf('day');
+  return moment.tz(date, TIMEZONE).endOf('day');
 }
 
 /**
@@ -220,7 +220,7 @@ function endOfDay(date) {
  * @returns {boolean}
  */
 function isSameDay(date1, date2) {
-    return moment.tz(date1, TIMEZONE).isSame(moment.tz(date2, TIMEZONE), 'day');
+  return moment.tz(date1, TIMEZONE).isSame(moment.tz(date2, TIMEZONE), 'day');
 }
 
 /**
@@ -229,7 +229,7 @@ function isSameDay(date1, date2) {
  * @returns {number}
  */
 function getDayOfWeek(date) {
-    return moment.tz(date, TIMEZONE).day();
+  return moment.tz(date, TIMEZONE).day();
 }
 
 /**
@@ -239,7 +239,7 @@ function getDayOfWeek(date) {
  * @returns {moment.Moment}
  */
 function addDays(date, days) {
-    return moment.tz(date, TIMEZONE).add(days, 'days');
+  return moment.tz(date, TIMEZONE).add(days, 'days');
 }
 
 /**
@@ -247,7 +247,7 @@ function addDays(date, days) {
  * @returns {string}
  */
 function getCurrentDate() {
-    return now().format('YYYY-MM-DD');
+  return now().format('YYYY-MM-DD');
 }
 
 /**
@@ -255,7 +255,7 @@ function getCurrentDate() {
  * @returns {string}
  */
 function getCurrentTime() {
-    return now().format('HH:mm:ss');
+  return now().format('HH:mm:ss');
 }
 
 /**
@@ -264,7 +264,7 @@ function getCurrentTime() {
  * @returns {boolean}
  */
 function isValidDate(dateString) {
-    return moment(dateString, 'YYYY-MM-DD', true).isValid();
+  return moment(dateString, 'YYYY-MM-DD', true).isValid();
 }
 
 /**
@@ -273,49 +273,49 @@ function isValidDate(dateString) {
  * @returns {boolean}
  */
 function isValidTime(timeString) {
-    return moment(timeString, ['HH:mm:ss', 'HH:mm'], true).isValid();
+  return moment(timeString, ['HH:mm:ss', 'HH:mm'], true).isValid();
 }
 
 module.exports = {
-    // Constants
-    TIMEZONE,
-    BOOKING_WINDOW_DAYS,
-    MINIMUM_NOTICE_HOURS,
+  // Constants
+  TIMEZONE,
+  BOOKING_WINDOW_DAYS,
+  MINIMUM_NOTICE_HOURS,
 
-    // Core functions
-    now,
-    parseDate,
-    parseDateTime,
+  // Core functions
+  now,
+  parseDate,
+  parseDateTime,
 
-    // Formatting
-    formatDate,
-    formatTime,
-    formatDateTime,
-    formatGreekDate,
-    formatGreekTime,
-    getGreekDayName,
-    getGreekMonthName,
+  // Formatting
+  formatDate,
+  formatTime,
+  formatDateTime,
+  formatGreekDate,
+  formatGreekTime,
+  getGreekDayName,
+  getGreekMonthName,
 
-    // MySQL conversion
-    toMySQLDate,
-    toMySQLTime,
-    toMySQLDateTime,
+  // MySQL conversion
+  toMySQLDate,
+  toMySQLTime,
+  toMySQLDateTime,
 
-    // Validation & checks
-    isInPast,
-    isBeyondBookingWindow,
-    isWithinMinimumNotice,
-    isValidDate,
-    isValidTime,
+  // Validation & checks
+  isInPast,
+  isBeyondBookingWindow,
+  isWithinMinimumNotice,
+  isValidDate,
+  isValidTime,
 
-    // Date manipulation
-    startOfDay,
-    endOfDay,
-    isSameDay,
-    getDayOfWeek,
-    addDays,
+  // Date manipulation
+  startOfDay,
+  endOfDay,
+  isSameDay,
+  getDayOfWeek,
+  addDays,
 
-    // Current values
-    getCurrentDate,
-    getCurrentTime
+  // Current values
+  getCurrentDate,
+  getCurrentTime,
 };
