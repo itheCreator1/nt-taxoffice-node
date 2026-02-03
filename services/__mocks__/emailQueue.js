@@ -6,5 +6,5 @@
 const queueEmail = jest.fn().mockResolvedValue({ id: 1, queued: true });
 
 module.exports = {
-    queueEmail
+  queueEmail,
 };
